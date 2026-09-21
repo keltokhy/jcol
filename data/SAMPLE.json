@@ -1,0 +1,50 @@
+{
+  "source": "https://huggingface.co/datasets/BEE-spoke-data/consumer-finance-complaints (config has-text), a CC0 snapshot of the CFPB Consumer Complaint Database",
+  "why_a_snapshot": "As of 2026-09-18 the CFPB's own bulk file and API no longer include complaint narratives.",
+  "population": 1689573,
+  "sample": 5000,
+  "seed": 70,
+  "method": "simple random sample without replacement, polars DataFrame.sample(seed=70); no filtering by length, date or topic",
+  "drawn": "2026-09-18",
+  "date_range": [
+    "2015-03-24",
+    "2024-02-03"
+  ],
+  "product_group": {
+    "credit reporting": [
+      "credit report"
+    ],
+    "debt collection": [
+      "debt collection"
+    ],
+    "mortgage": [
+      "mortgage"
+    ],
+    "credit card": [
+      "credit card",
+      "prepaid card"
+    ],
+    "bank account": [
+      "checking or savings",
+      "bank account"
+    ],
+    "student loan": [
+      "student loan"
+    ],
+    "vehicle loan": [
+      "vehicle loan",
+      "consumer loan"
+    ],
+    "money transfer": [
+      "money transfer",
+      "virtual currency",
+      "money service"
+    ],
+    "personal loan": [
+      "payday loan",
+      "personal loan",
+      "title loan",
+      "advance loan"
+    ]
+  }
+}

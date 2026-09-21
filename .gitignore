@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+dist/
+data/cfpb-has-text-*.parquet
+data/*.csv
+data/*.zip
+data/shards.txt
+spike/texts.json
+.env
+*.key

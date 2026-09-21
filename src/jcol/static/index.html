@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jcol</title>
+<style>
+  :root { --bg:#F6F4EE; --ink:#182D2B; --muted:#5F6D67; --grid:#DADFD6; --teal:#087F72; --rust:#C45231; --base:#A4AFA5;
+          --sans:"TeX Gyre Heros","Helvetica Neue",Helvetica,Arial,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace; --rowh:38px; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.35 var(--sans); }
+  body { display: flex; flex-direction: column; }
+  #top { display: flex; align-items: baseline; gap: 16px; padding: 14px 20px 8px; }
+  #top h1 { font-size: 20px; margin: 0; letter-spacing: -0.2px; }
+  #top .src { color: var(--muted); }
+  #ticker { margin-left: auto; font: 12px var(--mono); color: var(--muted); white-space: nowrap; }
+  #ticker b { color: var(--ink); font-weight: 600; }
+  #bar { display: flex; align-items: center; gap: 8px; padding: 0 20px 10px; min-height: 34px; flex-wrap: wrap; }
+  #count { font: 12px var(--mono); color: var(--muted); margin-right: 6px; }
+  .chip { font: 12px var(--mono); background: var(--ink); color: var(--bg); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+  .chip:hover { background: var(--rust); }
+  button, select { font: 12px var(--sans); color: var(--ink); background: transparent; border: 1px solid var(--grid); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button:hover { border-color: var(--ink); }
+  #bar .right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  #fieldsbox { position: relative; }
+  #fieldmenu { display: none; position: absolute; right: 0; top: 30px; z-index: 5; background: var(--bg); border: 1px solid var(--ink); border-radius: 8px; padding: 8px 12px; min-width: 190px; }
+  #fieldmenu label { display: block; padding: 3px 0; white-space: nowrap; cursor: pointer; }
+  #main { flex: 1; display: flex; min-height: 0; border-top: 1px solid var(--ink); }
+  #scroller { flex: 1; overflow: auto; position: relative; }
+  .row { display: grid; grid-template-columns: var(--cols); height: var(--rowh); align-items: center; border-bottom: 1px solid var(--grid); min-width: var(--minw); }
+  .row > div { min-width: 0; }
+  .row > div { padding: 0 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; height: 100%; display: flex; align-items: center; }
+  .row .n { font: 11px var(--mono); color: var(--base); justify-content: flex-end; }
+  .row .text { cursor: pointer; display: block; line-height: var(--rowh); }
+  .row .text:hover { color: var(--teal); }
+  .row .f { color: var(--muted); font-size: 13px; display: block; line-height: var(--rowh); }
+  .row.sel { background: #ECE8DC; }
+  #head { position: sticky; top: 0; z-index: 3; background: var(--bg); height: 62px; border-bottom: 1px solid var(--ink); align-items: stretch; }
+  #head > div { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; white-space: normal; position: relative; }
+  #head .name { font-weight: 700; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  #head .name:hover { color: var(--teal); }
+  #head .est { font: 11px var(--mono); color: var(--muted); white-space: nowrap; }
+  #head .est b { color: var(--ink); }
+  #head .x { position: absolute; right: 6px; top: 6px; color: var(--base); cursor: pointer; font-size: 13px; }
+  #head .x:hover { color: var(--rust); }
+  #head .prog { position: absolute; left: 0; bottom: -1px; height: 2px; background: var(--teal); transition: width .12s linear; }
+  #head select { font-size: 11px; padding: 0 2px; border: 0; color: var(--muted); max-width: 100%; }
+  #head .label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  #draft { width: 100%; font: 14px var(--sans); color: var(--ink); background: #fff; border: 1.5px solid var(--ink); border-radius: 6px; padding: 7px 10px; outline: none; }
+  #draft:focus { border-color: var(--teal); box-shadow: 0 0 0 3px #087f7222; }
+  #hint { font: 11px var(--mono); color: var(--muted); white-space: nowrap; }
+  #hint b { color: var(--teal); }
+  #space { position: relative; }
+  #rows { position: absolute; left: 0; right: 0; top: 0; will-change: transform; }
+  .cell { font: 12px var(--mono); position: relative; cursor: pointer; }
+  .cell .bar { position: absolute; left: 0; top: 7px; bottom: 7px; background: var(--teal); opacity: .16; border-radius: 0 3px 3px 0; }
+  .cell.no .bar { background: var(--base); }
+  .cell span { position: relative; }
+  .cell .lab { font-family: var(--sans); font-size: 13px; }
+  .cell .p { color: var(--muted); margin-left: 6px; font-size: 11px; }
+  .cell.ghost { color: var(--teal); }
+  .cell.wait::after { content: "·"; color: var(--base); animation: blink .7s infinite; }
+  @keyframes blink { 50% { opacity: .2; } }
+  #drawer { width: 0; overflow: auto; border-left: 0 solid var(--ink); transition: width .15s; }
+  #drawer.open { width: 420px; border-left-width: 1px; padding: 18px 20px; }
+  #drawer h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+  #drawer p { font-size: 15px; line-height: 1.5; margin: 0 0 16px; white-space: pre-wrap; }
+  #drawer dl { font-size: 13px; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; }
+  #drawer dt { color: var(--muted); }
+  #drawer dd { margin: 0; }
+  #alert { display: none; background: var(--rust); color: #fff; padding: 8px 20px; font-size: 13px; }
+</style>
+
+<div id="top">
+  <h1>jcol</h1><span class="src" id="src"></span>
+  <span id="ticker"></span>
+</div>
+<div id="alert"></div>
+<div id="bar">
+  <span id="count"></span><span id="chips"></span>
+  <span class="right">
+    <span id="fieldsbox"><button id="fieldsbtn">show fields</button><div id="fieldmenu"></div></span>
+    <button id="export">export csv</button>
+  </span>
+</div>
+<div id="main">
+  <div id="scroller">
+    <div id="head" class="row"></div>
+    <div id="space"><div id="rows"></div></div>
+  </div>
+  <aside id="drawer"></aside>
+</div>
+
+<script>
+const ROWH = 38, OVERSCAN = 6;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = n => n.toLocaleString("en-US");
+
+let T = null;                 // table from /api/init
+let cols = [];                // committed columns, in order
+let ghost = null;             // the column being typed
+let shown = new Set();        // dataset fields on display
+let sort = null, filters = [], view = [], selected = null;
+let ws, dirty = true, headDirty = true, lastSort = 0;
+let timing = null;            // {id, t0, rows}: how long until the screen was full
+let draftTimer = null, viewTimer = null;
+
+const newCol = d => ({ ...d, cells: new Map(), ptr: 0, yes: 0, sum: 0, sumsq: 0, counts: {}, screen: null, compare: "" });
+
+// ---- estimates from the random-order prefix --------------------------------------------------------
+function advance(c) {            // rows finished in background order are a simple random sample of the table
+  while (c.ptr < T.n && c.cells.has(T.order[c.ptr])) {
+    const [v] = c.cells.get(T.order[c.ptr]);
+    if (c.kind === "noul") c.yes += v >= 0.5;
+    else if (c.kind === "choice") c.counts[v] = (c.counts[v] || 0) + 1;
+    else { c.sum += v; c.sumsq += v * v; }
+    c.ptr++;
+  }
+}
+function estimate(c) {
+  const n = c.ptr, N = T.n;
+  if (!n) return "";
+  const fpc = Math.sqrt(Math.max(0, (N - n) / Math.max(1, N - 1))), exact = n === N;
+  if (c.kind === "noul") {
+    const s = c.yes / n, moe = 1.96 * Math.sqrt(s * (1 - s) / n) * fpc * 100;
+    return exact ? `<b>${(s * 100).toFixed(1)}%</b> yes` : `≈ <b>${Math.round(s * 100)}%</b> yes ± ${Math.max(1, Math.round(moe))}`;
+  }
+  if (c.kind === "choice") {
+    const top = Object.entries(c.counts).sort((a, b) => b[1] - a[1]).slice(0, 2);
+    return (exact ? "" : "≈ ") + top.map(([k, v]) => `<b>${Math.round(v / n * 100)}%</b> ${esc(k)}`).join(" · ");
+  }
+  const mean = c.sum / n, sd = Math.sqrt(Math.max(0, c.sumsq / n - mean * mean)), moe = 1.96 * sd / Math.sqrt(n) * fpc;
+  const lab = c.options[Math.max(0, Math.min(c.options.length - 1, Math.round(mean)))];
+  return exact ? `mean <b>${mean.toFixed(2)}</b> ${esc(lab)}` : `≈ <b>${mean.toFixed(1)}</b> ± ${moe.toFixed(1)} ${esc(lab)}`;
+}
+function agreement(c) {
+  if (!c.compare) return "";
+  const truth = T.values[c.compare]; let n = 0, ok = 0;
+  for (let k = 0; k < c.ptr; k++) { const r = T.order[k]; n++; ok += String(c.cells.get(r)[0]).toLowerCase() === truth[r].toLowerCase(); }
+  return n ? ` · <b>${Math.round(ok / n * 100)}%</b> match (n=${fmt(n)})` : "";
+}
+
+// ---- which rows, in what order -----------------------------------------------------------------------
+function recompute() {
+  let rows = [...Array(T.n).keys()];
+  for (const f of filters) {
+    const c = cols.find(x => x.id === f.id); if (!c) continue;
+    rows = rows.filter(r => { const x = c.cells.get(r); return x && (f.op === "=" ? x[0] === f.value : x[0] >= f.value); });
+  }
+  if (sort) {
+    const c = cols.find(x => x.id === sort.id);
+    if (c) {
+      const key = r => { const x = c.cells.get(r); return x ? x[0] : null; };
+      rows.sort((a, b) => { const x = key(a), y = key(b); if (x === null) return y === null ? a - b : 1; if (y === null) return -1;
+        return (x < y ? -1 : x > y ? 1 : 0) * sort.dir || a - b; });
+    }
+  }
+  view = rows; lastSort = performance.now();
+  $("space").style.height = view.length * ROWH + "px";
+  dirty = headDirty = true;
+}
+function visibleRows() {
+  const sc = $("scroller"), first = Math.floor(sc.scrollTop / ROWH), count = Math.ceil((sc.clientHeight - 62) / ROWH) + 1;
+  return view.slice(first, first + count);
+}
+function tellView() { clearTimeout(viewTimer); viewTimer = setTimeout(() => send({ type: "view", rows: visibleRows() }), 70); }
+
+// ---- drawing -------------------------------------------------------------------------------------------
+function template() {
+  const parts = ["60px", "minmax(440px, 1fr)", ...[...shown].map(() => "170px"), ...cols.map(() => "176px"), "360px"];
+  const sc = $("scroller");
+  sc.style.setProperty("--cols", parts.join(" "));
+  sc.style.setProperty("--minw", 60 + 440 + shown.size * 170 + cols.length * 176 + 360 + "px");   // scroll sideways past this, never squash
+}
+function cellHTML(c, r, isGhost) {
+  const x = c.cells.get(r);
+  if (!x) return `<div class="cell ${isGhost || c.ptr < T.n ? "wait" : ""}"></div>`;
+  const [v, p] = x, g = isGhost ? " ghost" : "";
+  if (c.kind === "noul") return `<div class="cell${g} ${v >= 0.5 ? "" : "no"}" data-c="${c.id}" data-r="${r}"><div class="bar" style="width:${Math.round(v * 100)}%"></div><span>${v.toFixed(2)}</span></div>`;
+  if (c.kind === "choice") return `<div class="cell${g}" data-c="${c.id}" data-r="${r}" style="opacity:${0.45 + 0.55 * p}"><span class="lab">${esc(v)}</span><span class="p">${p.toFixed(2)}</span></div>`;
+  const k = c.options.length - 1, lab = c.options[Math.max(0, Math.min(k, Math.round(v)))];
+  return `<div class="cell${g}" data-c="${c.id}" data-r="${r}"><div class="bar" style="width:${Math.round(v / k * 100)}%"></div><span class="lab">${esc(lab)}</span><span class="p">${v.toFixed(1)}</span></div>`;
+}
+function drawHead() {
+  template();
+  const h = [`<div class="n"></div>`, `<div><span class="label">${esc(T.text)}</span><span class="est">${fmt(T.n)} rows · click a row to read it</span></div>`];
+  for (const f of shown) h.push(`<div><span class="label">${esc(f)}</span></div>`);
+  for (const c of cols) {
+    advance(c);
+    const arrow = sort && sort.id === c.id ? (sort.dir < 0 ? " ↓" : " ↑") : "";
+    const done = c.cells.size, pct = done / T.n * 100;
+    const time = c.seconds ? `${fmt(T.n)} rows in ${c.seconds}s` : c.screen ? `screen in ${c.screen}s · ${fmt(done)}/${fmt(T.n)}` : `${fmt(done)}/${fmt(T.n)}`;
+    const cmp = c.kind === "choice" ? `<select data-cmp="${c.id}"><option value="">compare with…</option>${T.fields.map(f => `<option ${c.compare === f ? "selected" : ""}>${esc(f)}</option>`).join("")}</select>` : "";
+    h.push(`<div><span class="name" data-sort="${c.id}" title="${esc(c.header)}">${esc(c.name)}${arrow}</span><span class="est">${estimate(c)}${agreement(c)}</span><span class="est">${time}</span>${cmp}<span class="x" data-x="${c.id}">✕</span><div class="prog" style="width:${pct}%"></div></div>`);
+  }
+  const head = $("head"), keep = $("draft");
+  if (keep && head.lastElementChild && head.lastElementChild.contains(keep)) {   // never rebuild the input while it has focus
+    while (head.children.length > 1) head.removeChild(head.firstChild);
+    head.insertAdjacentHTML("afterbegin", h.join(""));
+  } else {
+    head.innerHTML = h.join("") + `<div><input id="draft" autocomplete="off" spellcheck="false" placeholder="add a column…   e.g.  alleges fraud?"><span id="hint"></span></div>`;
+    wireDraft();
+  }
+  hint(); headDirty = false;
+}
+function hint() {
+  const el = $("hint"); if (!el) return;
+  if (ghost && ghost.screen) el.innerHTML = `answered in <b>${ghost.screen}s</b> · enter to keep`;
+  else if (ghost) el.innerHTML = `${ghost.kind === "noul" ? "yes / no" : ghost.kind === "choice" ? ghost.options.length + " categories" : ghost.options.length + "-point scale"} …`;
+  else el.innerHTML = `yes/no? &nbsp;·&nbsp; name: a, b, c &nbsp;·&nbsp; name: low &lt; mid &lt; high`;
+}
+function drawRows() {
+  const sc = $("scroller"), first = Math.max(0, Math.floor(sc.scrollTop / ROWH) - OVERSCAN);
+  const count = Math.ceil(sc.clientHeight / ROWH) + 2 * OVERSCAN, slice = view.slice(first, first + count), out = [];
+  for (const r of slice) {
+    const cells = [`<div class="n">${r + 1}</div>`, `<div class="text" data-open="${r}">${esc(T.previews[r])}</div>`];
+    for (const f of shown) cells.push(`<div class="f">${esc(T.values[f][r])}</div>`);
+    for (const c of cols) cells.push(cellHTML(c, r, false));
+    cells.push(ghost ? cellHTML(ghost, r, true) : "<div></div>");
+    out.push(`<div class="row${r === selected ? " sel" : ""}">${cells.join("")}</div>`);
+  }
+  const rows = $("rows"); rows.style.transform = `translateY(${first * ROWH}px)`; rows.innerHTML = out.join("");
+  $("count").textContent = view.length === T.n ? `${fmt(T.n)} rows` : `${fmt(view.length)} of ${fmt(T.n)} rows`;
+  dirty = false;
+}
+function drawChips() {
+  $("chips").innerHTML = filters.map((f, i) => { const c = cols.find(x => x.id === f.id); if (!c) return "";
+    const v = c.kind === "score" ? c.options[f.value] : f.value; return `<span class="chip" data-chip="${i}">${esc(c.name)} ${f.op === "=" ? "=" : "≥"} ${esc(v)} ✕</span>`; }).join(" ");
+}
+function checkScreen(c) {       // how long did the rows on screen take? This is the number "instant" is about.
+  if (!timing || timing.id !== c.id || c.screen) return;
+  if (timing.rows.every(r => c.cells.has(r))) { c.screen = ((performance.now() - timing.t0) / 1000).toFixed(2); headDirty = true; hint(); }
+}
+function frame() {
+  if (sort && performance.now() - lastSort > 450) { const c = cols.find(x => x.id === sort.id); if (c && c.cells.size < T.n && c._grew) { c._grew = false; recompute(); } }
+  if (headDirty) drawHead();
+  if (dirty) drawRows();
+  requestAnimationFrame(frame);
+}
+
+// ---- the wire ------------------------------------------------------------------------------------------
+function send(m) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); }
+function ticker(s) {
+  if (!s) return;
+  $("ticker").innerHTML = `<b>${fmt(s.calls)}</b> calls · ${fmt(s.cached)} cached · ${fmt(s.hedges)} re-sent · <b>$${s.dollars.toFixed(4)}</b> of $${s.budget.toFixed(2)} · ${esc(s.model)}`;
+}
+function onMessage(m) {
+  if (m.type === "snapshot") { cols = m.columns.map(newCol); for (const [id, r, v, p] of m.cells) cols.find(c => c.id === id)?.cells.set(r, [v, p]); ticker(m.stats); recompute(); }
+  else if (m.type === "preview") { ghost = m.column ? newCol(m.column) : null; if (ghost && timing && timing.id === "draft") timing.id = ghost.id; dirty = true; hint(); }
+  else if (m.type === "column") { const c = newCol(m.column); if (timing && timing.id === "draft") timing.id = c.id; cols.push(c); ghost = null; headDirty = dirty = true; }
+  else if (m.type === "cells") {
+    for (const [id, r, v, p] of m.cells) { const c = ghost && ghost.id === id ? ghost : cols.find(x => x.id === id); if (!c) continue; c.cells.set(r, [v, p]); c._grew = true; checkScreen(c); }
+    ticker(m.stats); dirty = headDirty = true;
+  }
+  else if (m.type === "done") { const c = cols.find(x => x.id === m.id); if (c) { c.seconds = m.seconds; headDirty = true; if (sort && sort.id === c.id) recompute(); } }
+  else if (m.type === "removed") { cols = cols.filter(c => c.id !== m.id); filters = filters.filter(f => f.id !== m.id); if (sort && sort.id === m.id) sort = null; drawChips(); recompute(); }
+  else if (m.type === "budget") alertBar(`The $${m.budget.toFixed(2)} budget is spent, so background filling has stopped. Restart with a higher --budget to continue.`);
+  else if (m.type === "fatal") alertBar(m.message);
+}
+function alertBar(text) { const a = $("alert"); a.textContent = text; a.style.display = "block"; }
+function connect() {
+  ws = new WebSocket(`ws://${location.host}/ws`);
+  ws.onmessage = e => onMessage(JSON.parse(e.data));
+  ws.onclose = () => setTimeout(connect, 800);
+}
+
+// ---- typing a column -----------------------------------------------------------------------------------
+function wireDraft() {
+  const input = $("draft");
+  input.addEventListener("input", () => {
+    clearTimeout(draftTimer);
+    const text = input.value, wait = text.includes(":") ? 450 : 160;   // categories are still being listed; do not ask on every comma
+    draftTimer = setTimeout(() => { const rows = visibleRows(); timing = { id: "draft", t0: performance.now(), rows }; send({ type: "preview", header: text, rows }); }, wait);
+  });
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter" && input.value.trim()) {
+      clearTimeout(draftTimer); const rows = visibleRows();
+      timing = { id: "draft", t0: performance.now(), rows }; send({ type: "commit", header: input.value, rows }); input.value = ""; ghost = null; dirty = true;
+    } else if (e.key === "Escape") { clearTimeout(draftTimer); input.value = ""; send({ type: "preview", header: "", rows: [] }); }
+  });
+}
+
+// ---- clicks ----------------------------------------------------------------------------------------------
+document.addEventListener("click", async e => {
+  const t = e.target.closest("[data-sort],[data-x],[data-chip],[data-open],[data-c]"); if (!t) { $("fieldmenu").style.display = e.target.closest("#fieldsbox") ? $("fieldmenu").style.display : "none"; return; }
+  if (t.dataset.sort) { const id = t.dataset.sort; sort = sort && sort.id === id ? (sort.dir < 0 ? { id, dir: 1 } : null) : { id, dir: -1 }; recompute(); $("scroller").scrollTop = 0; tellView(); }
+  else if (t.dataset.x) send({ type: "remove", id: t.dataset.x });
+  else if (t.dataset.chip) { filters.splice(+t.dataset.chip, 1); drawChips(); recompute(); tellView(); }
+  else if (t.dataset.open) openRow(+t.dataset.open);
+  else if (t.dataset.c) {
+    const c = cols.find(x => x.id === t.dataset.c); if (!c) return; const x = c.cells.get(+t.dataset.r); if (!x) return;
+    const f = c.kind === "noul" ? { id: c.id, op: "≥", value: 0.5 } : c.kind === "choice" ? { id: c.id, op: "=", value: x[0] } : { id: c.id, op: "≥", value: Math.round(x[0]) };
+    filters = filters.filter(g => g.id !== c.id); filters.push(f); drawChips(); recompute(); $("scroller").scrollTop = 0; tellView();
+  }
+});
+document.addEventListener("change", e => { const id = e.target.dataset && e.target.dataset.cmp; if (id) { cols.find(c => c.id === id).compare = e.target.value; headDirty = true; }
+  if (e.target.dataset && e.target.dataset.field) { e.target.checked ? shown.add(e.target.dataset.field) : shown.delete(e.target.dataset.field); headDirty = dirty = true; $("head").innerHTML = ""; } });
+async function openRow(r) {
+  selected = r; dirty = true;
+  const rec = await (await fetch(`/api/row/${r}`)).json(), d = $("drawer");
+  const meta = Object.entries(rec).filter(([k]) => k !== T.text).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v ?? "")}</dd>`).join("");
+  const mine = cols.map(c => { const x = c.cells.get(r); return x ? `<dt>${esc(c.name)}</dt><dd>${esc(c.kind === "score" ? c.options[Math.round(x[0])] + " (" + x[0] + ")" : x[0])} <span style="color:var(--muted)">p ${x[1]}</span></dd>` : ""; }).join("");
+  d.innerHTML = `<h2>row ${r + 1} <span style="float:right;cursor:pointer" id="closedrawer">✕</span></h2><p>${esc(rec[T.text])}</p>${mine ? `<h2>your columns</h2><dl>${mine}</dl><br>` : ""}<h2>fields</h2><dl>${meta}</dl>`;
+  d.classList.add("open"); $("closedrawer").onclick = () => { d.classList.remove("open"); selected = null; dirty = true; };
+}
+$("fieldsbtn").onclick = () => { const m = $("fieldmenu"); m.style.display = m.style.display === "block" ? "none" : "block"; };
+$("export").onclick = () => {
+  const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`, head = ["row", T.text, ...T.fields, ...cols.flatMap(c => [c.name, c.name + " (p)"])];
+  const lines = [head.map(q).join(",")];
+  for (const r of view) lines.push([r + 1, T.previews[r], ...T.fields.map(f => T.values[f][r]), ...cols.flatMap(c => { const x = c.cells.get(r); return x ? [c.kind === "score" ? c.options[Math.round(x[0])] : x[0], x[1]] : ["", ""]; })].map(q).join(","));
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" })); a.download = "jcol-export.csv"; a.click();
+};
+$("scroller").addEventListener("scroll", () => { dirty = true; tellView(); });
+window.addEventListener("resize", () => { dirty = true; tellView(); });
+
+(async function start() {
+  T = await (await fetch("/api/init")).json();
+  $("src").textContent = `${T.source} · reading “${T.text}”`;
+  $("fieldmenu").innerHTML = T.fields.map(f => `<label><input type="checkbox" data-field="${esc(f)}"> ${esc(f)}</label>`).join("");
+  ticker(T.stats); recompute(); connect(); requestAnimationFrame(frame);
+  setTimeout(() => { $("draft")?.focus(); tellView(); }, 150);
+})();
+</script>
+</html>
