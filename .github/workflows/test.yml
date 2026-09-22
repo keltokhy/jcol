@@ -27,8 +27,9 @@ jobs:
       - run: uv build
       - name: Install and smoke-test the wheel outside the checkout
         run: |
+          uv build --project ../jevkit-core --no-sources --out-dir /tmp/jevkit-wheels
           uv venv /tmp/jcol-wheel-smoke
-          uv pip install --python /tmp/jcol-wheel-smoke/bin/python dist/*.whl
+          uv pip install --python /tmp/jcol-wheel-smoke/bin/python /tmp/jevkit-wheels/*.whl dist/*.whl
           /tmp/jcol-wheel-smoke/bin/python tests/test_process.py /tmp/jcol-wheel-smoke/bin/jcol
           cd /tmp
           /tmp/jcol-wheel-smoke/bin/jcol --version
