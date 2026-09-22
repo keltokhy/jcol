@@ -7,6 +7,7 @@ license = "MIT"
 authors = [{ name = "Khaled Eltokhy" }]
 requires-python = ">=3.10"
 dependencies = [
+    "jevkit-runtime[http2]>=0.1.0,<0.2.0",
     "httpx[http2]>=0.27",
     "starlette>=0.37",
     "uvicorn>=0.30",
@@ -33,3 +34,6 @@ packages = ["src/jcol"]
 
 [tool.uv.workspace]
 members = []
+
+[tool.uv.sources]
+jevkit-runtime = { path = "../jevkit-core", editable = true }
