@@ -14,13 +14,13 @@ import multiprocessing as mp
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
-from .core import Backend, Jev, JevError, JevFatal
+from jevkit_runtime import Backend, Client, JevError, JevFatal
 
 HEDGE_AFTER = 0.35  # seconds; measured: trims a screenful's worst case from about 1.4 s to 0.7 s
 Job = tuple  # (job_id, state, questions, hot)
 
 
-def _totals(jev: Jev) -> dict:
+def _totals(jev: Client) -> dict:
     m = jev.meter
     return {"calls": m.calls, "hedges": m.hedges, "retries": m.retries, "tokens": m.input_tokens, "cost": m.cost,
             "model": m.model or jev.model}
@@ -29,7 +29,7 @@ def _totals(jev: Jev) -> dict:
 class LocalPool:
     """Everything in this process. Fine for tests and small tables."""
 
-    def __init__(self, jev: Jev, per_worker: int = 128, *, warmup: bool = True):
+    def __init__(self, jev: Client, per_worker: int = 128, *, warmup: bool = True):
         self.jev, self.sem, self.on_result = jev, asyncio.Semaphore(per_worker), None
         self.warmup = warmup
         self.capacity = per_worker
@@ -75,7 +75,7 @@ class LocalPool:
 
 def _worker(wid: int, backend: Backend, per_worker: int, hot_q, bg_q, out_q) -> None:
     async def main() -> None:
-        jev = Jev(backend, timeout=12)
+        jev = Client(backend, timeout=12)
         try:
             await jev.ask("warm up", {"q": {"type": "noul", "instructions": "This is a greeting."}})
         except (JevError, JevFatal):

@@ -16,7 +16,7 @@ import random
 import time
 from dataclasses import dataclass, field
 
-from .core import Backend, Cache, answer_key
+from jevkit_runtime import AnswerStore, Backend, answer_key
 from .spec import Spec, parse
 
 FLUSH_EVERY = 0.04  # seconds between batches sent to the browser
@@ -38,7 +38,7 @@ class Column:
 
 
 class Engine:
-    def __init__(self, texts: list[str], pool, *, backend: Backend, cache: Cache | None = None, budget: float = 2.0,
+    def __init__(self, texts: list[str], pool, *, backend: Backend, cache: AnswerStore | None = None, budget: float = 2.0,
                  max_chars: int | None = 4000, seed: int = 70, project=None):
         self.texts, self.pool, self.backend, self.cache = texts, pool, backend, cache
         self.model, self.endpoint, self.project = backend.model, backend.url, project

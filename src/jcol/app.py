@@ -28,7 +28,8 @@ from starlette.routing import Route, WebSocketRoute
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from . import __version__
-from .core import Cache, Jev, JevFatal, resolve_backend
+from jevkit_runtime import AnswerStore, Client, JevFatal, resolve
+from .core import PROVIDERS
 from .engine import Engine
 from .pool import LocalPool, ProcessPool
 from .project import Project
@@ -86,12 +87,12 @@ def build(df: pl.DataFrame, text, *, source: str, budget: float, api: str | None
         raise ValueError("max-chars must be positive, or 0 to send full rows")
     inputs = select_inputs(df, text)
     texts = row_texts(df, inputs)
-    backend = resolve_backend(api, model=model)
+    backend = resolve(PROVIDERS, api, model=model)
     model, endpoint = backend.model, backend.url
     store = Project(project, identity(df, inputs, model=model, endpoint=endpoint, max_chars=max_chars)) if project else None
     pool = (ProcessPool(backend, workers, per_worker) if workers > 0
-            else LocalPool(Jev(backend, timeout=12), per_worker))
-    engine = Engine(texts, pool, backend=backend, cache=Cache() if cache else None, budget=budget,
+            else LocalPool(Client(backend, timeout=12), per_worker))
+    engine = Engine(texts, pool, backend=backend, cache=AnswerStore() if cache else None, budget=budget,
                     max_chars=max_chars, project=store)
     fields = [c for c in df.columns if c not in inputs]
     table = {

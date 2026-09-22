@@ -10,7 +10,7 @@ import pytest
 
 from jcol import batch
 from jcol.cli import cli
-from jcol.core import Jev
+from jevkit_runtime import Client
 from jcol.project import Project
 from jcol.tables import identity, write_table
 from fakes import FakeAPI
@@ -31,7 +31,7 @@ def source(tmp_path):
 @pytest.fixture
 def api(monkeypatch):
     api = FakeAPI()
-    monkeypatch.setattr(batch, "Jev", lambda backend, **kw: Jev(backend, transport=api.transport, **kw))
+    monkeypatch.setattr(batch, "Client", lambda backend, **kw: Client(backend, transport=api.transport, **kw))
     return api
 
 

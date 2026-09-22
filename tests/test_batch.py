@@ -10,7 +10,7 @@ import pytest
 import jcol
 from jcol import batch
 from jcol.cli import cli
-from jcol.core import Jev
+from jevkit_runtime import Client
 from jcol.project import Project
 from jcol.tables import identity
 
@@ -35,7 +35,7 @@ def df():
 @pytest.fixture
 def api(monkeypatch):
     fake = FakeAPI()
-    monkeypatch.setattr(batch, "Jev", lambda backend, **kw: Jev(backend, transport=fake.transport, **kw))
+    monkeypatch.setattr(batch, "Client", lambda backend, **kw: Client(backend, transport=fake.transport, **kw))
     return fake
 
 
@@ -234,7 +234,7 @@ def test_malformed_answers_finish_with_missing_cells_instead_of_hanging(df, monk
         body = json.loads(request.content)
         return httpx.Response(200, json={"answers": {k: {"noul": 2} for k in body["questions"]}})
 
-    monkeypatch.setattr(batch, "Jev", lambda backend, **kw: Jev(backend, transport=httpx.MockTransport(malformed), **kw))
+    monkeypatch.setattr(batch, "Client", lambda backend, **kw: Client(backend, transport=httpx.MockTransport(malformed), **kw))
 
     async def go():
         return await asyncio.wait_for(jcol.annotate_async(df, BOOK, cache=False), timeout=5)
@@ -279,7 +279,7 @@ def test_invalid_usage_stops_batch_without_hanging_or_sending_more_rows(df, monk
         body = json.loads(request.content)
         return httpx.Response(200, json={"answers": {qid: {"noul": 0.5} for qid in body["questions"]}, "usage": usage})
 
-    monkeypatch.setattr(batch, "Jev", lambda backend, **kw: Jev(backend, transport=httpx.MockTransport(handler), **kw))
+    monkeypatch.setattr(batch, "Client", lambda backend, **kw: Client(backend, transport=httpx.MockTransport(handler), **kw))
 
     async def go():
         return await asyncio.wait_for(jcol.annotate_async(df, BOOK, cache=False, concurrency=1), timeout=2)

@@ -9,7 +9,7 @@ from starlette.websockets import WebSocketDisconnect
 
 import jcol
 from jcol import app as jcol_app
-from jcol.core import Jev
+from jevkit_runtime import Client
 
 from fakes import FakeAPI
 
@@ -29,7 +29,7 @@ def table(tmp_path):
 def api(monkeypatch):
     """Whatever `build` constructs talks to a fake; a real server or browser window is an error."""
     fake = FakeAPI()
-    monkeypatch.setattr(jcol_app, "Jev", lambda backend, **kw: Jev(backend, transport=fake.transport, **kw))
+    monkeypatch.setattr(jcol_app, "Client", lambda backend, **kw: Client(backend, transport=fake.transport, **kw))
 
     def refuse(*args, **kw):
         raise AssertionError("a test tried to start worker processes")

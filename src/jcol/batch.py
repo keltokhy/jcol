@@ -12,7 +12,8 @@ from pathlib import Path
 import polars as pl
 
 from .codebook import Codebook
-from .core import Cache, Jev, resolve_backend
+from jevkit_runtime import AnswerStore, Client, resolve
+from .core import PROVIDERS
 from .engine import Engine
 from .evaluation import evaluate
 from .pool import LocalPool
@@ -56,15 +57,15 @@ async def annotate_async(table: pl.DataFrame | str | Path, codebook: Codebook | 
     df, book, inputs, texts, truncated = prepare(table, codebook, max_chars=max_chars)
     if truncated:
         warnings.warn(f"{truncated} rows will be truncated to {max_chars} characters", stacklevel=2)
-    backend = resolve_backend(api, model=model)
+    backend = resolve(PROVIDERS, api, model=model)
     model, endpoint = backend.model, backend.url
     context = identity(df, inputs, model=model, endpoint=endpoint, max_chars=max_chars, codebook=book.to_dict())
     store = Project(project, context) if project is not None else None
     answer_cache = None
     engine = None
     try:
-        answer_cache = Cache() if cache else None
-        pool = LocalPool(Jev(backend, timeout=12), concurrency, warmup=False)
+        answer_cache = AnswerStore() if cache else None
+        pool = LocalPool(Client(backend, timeout=12), concurrency, warmup=False)
         engine = Engine(texts, pool, backend=backend, cache=answer_cache, budget=budget, max_chars=max_chars,
                         project=store)
         existing = {c.spec.name for c in engine.columns.values()}

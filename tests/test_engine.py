@@ -5,7 +5,8 @@ import random
 
 import pytest
 
-from jcol.core import PROVIDERS, Backend, Cache, Jev
+from jevkit_runtime import AnswerStore, Backend, Client
+from jcol.core import PROVIDERS
 from jcol.engine import Engine
 from jcol.pool import LocalPool, ProcessPool
 
@@ -209,7 +210,7 @@ def test_answers_come_back_from_the_cache(tmp_path):
         finally:
             await engine.close()
 
-    cache = Cache(tmp_path / "answers.sqlite")
+    cache = AnswerStore(tmp_path / "answers.sqlite")
     try:
         first, paid = run(fill(cache))
         again, free = run(fill(cache))
@@ -238,10 +239,10 @@ def test_removing_a_column_tells_the_page():
 
 
 def test_the_in_process_pool_over_a_fake_api(tmp_path):
-    api, cache = FakeAPI(), Cache(tmp_path / "answers.sqlite")
+    api, cache = FakeAPI(), AnswerStore(tmp_path / "answers.sqlite")
 
     async def go():
-        pool = LocalPool(Jev(BACKEND, transport=api.transport), per_worker=4)
+        pool = LocalPool(Client(BACKEND, transport=api.transport), per_worker=4)
         engine, queue = await started(TEXTS, pool, cache=cache)
         try:
             engine.visible = [0, 1]

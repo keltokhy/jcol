@@ -17,7 +17,8 @@ import polars as pl
 from . import __version__
 from .batch import annotate, prepare, validate_settings
 from .codebook import Codebook
-from .core import PROVIDERS, JevError, JevFatal, Settings
+from jevkit_runtime import JevError, JevFatal, Settings
+from .core import PROVIDERS
 from .evaluation import evaluate
 from .project import read_project
 from .tables import FORMATS, append_columns, atomic_path, identity, read_table, table_format, write_table

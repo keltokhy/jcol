@@ -7,8 +7,8 @@ import socket
 import httpx
 import pytest
 
-from jcol import core
-from jcol.core import PROVIDERS, Backend, Cache, Jev, JevError, JevFatal, Settings, answer_key, resolve_backend
+from jevkit_runtime import DEFAULT_PRICE_PER_MTOK, AnswerStore, Backend, Client, JevError, JevFatal, Settings, answer_key, resolve
+from jcol.core import PROVIDERS
 
 from fakes import FakeAPI
 
@@ -28,21 +28,21 @@ def test_the_tests_cannot_reach_the_network():
 # ---- keys ------------------------------------------------------------------------------------------------
 
 def test_the_key_comes_from_the_environment(monkeypatch):
-    backend = resolve_backend()
+    backend = resolve(PROVIDERS)
     assert (backend.name, backend.key, backend.key_source) == ("openrouter", "test-key", "env")
     monkeypatch.setenv("TYPESAFE_API_KEY", " ts-key\n")
-    backend = resolve_backend()
+    backend = resolve(PROVIDERS)
     assert (backend.name, backend.key) == ("typesafe", "ts-key")  # with both, TypeSafe's own API
-    assert resolve_backend("openrouter").name == "openrouter"
+    assert resolve(PROVIDERS, "openrouter").name == "openrouter"
     monkeypatch.setenv("JEV_API", "openrouter")
-    assert resolve_backend().name == "openrouter"
+    assert resolve(PROVIDERS).name == "openrouter"
 
 
 def test_the_key_comes_from_a_file(monkeypatch, tmp_path):
     monkeypatch.delenv("OPENROUTER_API_KEY")
     (tmp_path / "config" / "jev").mkdir(parents=True)
     (tmp_path / "config" / "jev" / "openrouter.key").write_text("file-key\n")
-    backend = resolve_backend()
+    backend = resolve(PROVIDERS)
     assert (backend.name, backend.key, backend.key_source) == ("openrouter", "file-key", "file")
     assert PROVIDERS["openrouter"].key_file(Settings.from_env()) == tmp_path / "config" / "jev" / "openrouter.key"
 
@@ -50,11 +50,11 @@ def test_the_key_comes_from_a_file(monkeypatch, tmp_path):
 def test_no_key_is_fatal_and_says_what_to_set(monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY")
     with pytest.raises(JevFatal, match="TYPESAFE_API_KEY or OPENROUTER_API_KEY"):
-        resolve_backend()
+        resolve(PROVIDERS)
     with pytest.raises(JevFatal, match="no key for typesafe"):
-        resolve_backend("typesafe")
+        resolve(PROVIDERS, "typesafe")
     with pytest.raises(JevFatal, match="unknown API"):
-        resolve_backend("gateway")
+        resolve(PROVIDERS, "gateway")
 
 
 # ---- the cache -------------------------------------------------------------------------------------------
@@ -72,8 +72,8 @@ def test_cache_keys_are_exact():
 
 
 def test_the_cache_lives_under_xdg_cache_home_and_round_trips(tmp_path):
-    assert Cache.default_path() == tmp_path / "cache" / "jev" / "answers.sqlite"
-    cache = Cache()
+    assert AnswerStore.default_path() == tmp_path / "cache" / "jev" / "answers.sqlite"
+    cache = AnswerStore()
     try:
         assert cache.get("k") is None
         cache.put("k", {"noul": 0.25})
@@ -81,7 +81,7 @@ def test_the_cache_lives_under_xdg_cache_home_and_round_trips(tmp_path):
         assert cache.get("k") == {"noul": 0.75}
     finally:
         cache.db.close()
-    again = Cache(tmp_path / "cache" / "jev" / "answers.sqlite")
+    again = AnswerStore(tmp_path / "cache" / "jev" / "answers.sqlite")
     try:
         assert again.get("k") == {"noul": 0.75}
     finally:
@@ -99,7 +99,7 @@ def test_a_call_sends_the_model_state_and_questions_and_is_metered():
                                          "usage": {"input_tokens": 300, "cost": 0.0001}})
 
     async def go():
-        jev = Jev(FIXTURE, transport=httpx.MockTransport(handler))
+        jev = Client(FIXTURE, transport=httpx.MockTransport(handler))
         try:
             assert await jev.ask("this is fraud", Q) == {"q": {"noul": 0.9}}
             return jev.meter
@@ -119,23 +119,23 @@ def test_tokens_are_priced_when_the_api_reports_no_cost():
     api = FakeAPI(report_cost=False)
 
     async def go():
-        jev = Jev(Backend("typesafe", PROVIDERS["typesafe"].url, "jev-latest", key="test-key"), transport=api.transport)
+        jev = Client(Backend("typesafe", PROVIDERS["typesafe"].url, "jev-latest", key="test-key"), transport=api.transport)
         try:
             await jev.ask("text", Q)
             return jev.meter.cost
         finally:
             await jev.close()
 
-    assert run(go()) == pytest.approx(300 * core.DEFAULT_PRICE_PER_MTOK / 1e6)
+    assert run(go()) == pytest.approx(300 * DEFAULT_PRICE_PER_MTOK / 1e6)
     assert api.bodies[0]["model"] == "jev-latest"
 
 
 def test_cached_answers_are_not_asked_again(tmp_path):
-    api, cache = FakeAPI(), Cache(tmp_path / "answers.sqlite")
+    api, cache = FakeAPI(), AnswerStore(tmp_path / "answers.sqlite")
     other = {"r": {"type": "noul", "instructions": 'The text fits this description: "asks for a refund"'}}
 
     async def go():
-        jev = Jev(FIXTURE, store=cache, transport=api.transport)
+        jev = Client(FIXTURE, store=cache, transport=api.transport)
         try:
             first = await jev.ask("this is fraud", Q)
             assert await jev.ask("this is fraud", Q) == first
@@ -156,7 +156,7 @@ def test_identical_requests_in_the_air_share_one_call():
     api = FakeAPI(delay=0.05)
 
     async def go():
-        jev = Jev(FIXTURE, transport=api.transport)
+        jev = Client(FIXTURE, transport=api.transport)
         try:
             return await asyncio.gather(*(jev.ask("this is fraud", Q) for _ in range(5))), jev.meter
         finally:
@@ -171,7 +171,7 @@ def test_a_retryable_status_is_retried():
     api = FakeAPI(script=[503])
 
     async def go():
-        jev = Jev(FIXTURE, transport=api.transport)
+        jev = Client(FIXTURE, transport=api.transport)
         try:
             return await jev.ask("this is fraud", Q), jev.meter.retries
         finally:
@@ -186,7 +186,7 @@ def test_other_statuses_are_not_retried(status, error):
     api = FakeAPI(script=[status])
 
     async def go():
-        jev = Jev(FIXTURE, transport=api.transport)
+        jev = Client(FIXTURE, transport=api.transport)
         try:
             await jev.ask("text", Q)
         finally:
@@ -201,7 +201,7 @@ def test_an_answer_that_is_missing_is_an_error():
     transport = httpx.MockTransport(lambda request: httpx.Response(200, json={"answers": {}}))
 
     async def go():
-        jev = Jev(FIXTURE, transport=transport)
+        jev = Client(FIXTURE, transport=transport)
         try:
             await jev.ask("text", Q)
         finally:
@@ -221,7 +221,7 @@ def test_a_slow_call_is_sent_again_and_the_first_answer_wins():
         return httpx.Response(200, json={"answers": {"q": {"noul": 0.9}}, "usage": {"cost": 0.0001}})
 
     async def go():
-        jev = Jev(FIXTURE, transport=httpx.MockTransport(handler))
+        jev = Client(FIXTURE, transport=httpx.MockTransport(handler))
         try:
             quick = await jev.ask("this is fraud", Q, hedge_after=0.05)
             hedges = jev.meter.hedges
