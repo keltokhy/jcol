@@ -43,6 +43,14 @@ Set `TYPESAFE_API_KEY` or `OPENROUTER_API_KEY`, or put a key in
 Choose explicitly with `--api` or `JEV_API`. The key stays in the Python process.
 Only `run` and `browse` need a key. `doctor` checks local configuration; `doctor --check`
 also sends an unauthenticated HEAD request to test reachability, without doing inference.
+
+`--api diffusiongemma` and `--api laya` send the same questions to a System One server on your own
+machine, an [OpenJev](https://github.com/razorback16/openjev) or
+[laya-mlx](https://github.com/mizorewww/laya-mlx) process that you run separately. They are never
+chosen automatically, need no key, and count as $0 against the budget unless `JEV_PRICE_PER_MTOK`
+is set; `doctor` lists them. The runtime's [DiffusionGemma](https://github.com/keltokhy/jevkit-core/blob/main/docs/diffusiongemma.md)
+and [Laya](https://github.com/keltokhy/jevkit-core/blob/main/docs/laya.md) guides explain the setup; keep
+`--concurrency` low while a local model warms up.
 Reachability does not verify authentication or model availability.
 
 ## Terminal workflow
@@ -274,9 +282,10 @@ the displayed margins cover sampling uncertainty only. They do not measure class
   threshold. Batch mode bounds them with `--concurrency`; browser previews can spend outside
   background budget checks. Budget and cost counters reset each invocation. A saved project
   preserves cells, not a cumulative spending limit.
-- Answers also cache in `~/.cache/jev/answers.sqlite`. Keys now include endpoint, requested model,
-  serialized input and question. Version 0.1 cache entries are not reused. `JEV_URL` overrides the
-  endpoint. No API keys are stored in projects or exports.
+- Answers also cache in `~/.cache/jev/answers.sqlite`, shared with the other JevKit tools. Keys
+  include provider, endpoint, requested model, serialized input and question; entries written by
+  versions before 0.4 are not reused. `JEV_URL` overrides the endpoint. No API keys are stored in
+  projects or exports.
 - Default model IDs are aliases. Pin a model for a study; a project cannot detect a server moving
   an alias to new model weights. Cached and saved answers remain frozen under the requested ID.
 - The full table and results are held in memory. The browser receives previews and source fields
