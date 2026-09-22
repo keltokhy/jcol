@@ -3,6 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>jcol</title>
+<link rel="icon" href="data:,">
 <style>
   :root { --bg:#F6F4EE; --ink:#182D2B; --muted:#5F6D67; --grid:#DADFD6; --teal:#087F72; --rust:#C45231; --base:#A4AFA5;
           --sans:"TeX Gyre Heros","Helvetica Neue",Helvetica,Arial,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace; --rowh:38px; }
@@ -298,17 +299,21 @@ document.addEventListener("change", e => { const id = e.target.dataset && e.targ
 async function openRow(r) {
   selected = r; dirty = true;
   const rec = await (await fetch(`/api/row/${r}`)).json(), d = $("drawer");
-  const meta = Object.entries(rec).filter(([k]) => k !== T.text).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v ?? "")}</dd>`).join("");
+  const meta = Object.entries(rec).filter(([k]) => !T.inputs.includes(k)).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v ?? "")}</dd>`).join("");
   const mine = cols.map(c => { const x = c.cells.get(r); return x ? `<dt>${esc(c.name)}</dt><dd>${esc(c.kind === "score" ? c.options[Math.round(x[0])] + " (" + x[0] + ")" : x[0])} <span style="color:var(--muted)">p ${x[1]}</span></dd>` : ""; }).join("");
-  d.innerHTML = `<h2>row ${r + 1} <span style="float:right;cursor:pointer" id="closedrawer">✕</span></h2><p>${esc(rec[T.text])}</p>${mine ? `<h2>your columns</h2><dl>${mine}</dl><br>` : ""}<h2>fields</h2><dl>${meta}</dl>`;
+  d.innerHTML = `<h2>row ${r + 1} <span style="float:right;cursor:pointer" id="closedrawer">✕</span></h2>${T.inputs.map(k => `<p>${T.inputs.length > 1 ? `<b>${esc(k)}</b><br>` : ""}${esc(rec[k] ?? "")}</p>`).join("")}${mine ? `<h2>your columns</h2><dl>${mine}</dl><br>` : ""}<h2>fields</h2><dl>${meta}</dl>`;
   d.classList.add("open"); $("closedrawer").onclick = () => { d.classList.remove("open"); selected = null; dirty = true; };
 }
 $("fieldsbtn").onclick = () => { const m = $("fieldmenu"); m.style.display = m.style.display === "block" ? "none" : "block"; };
-$("export").onclick = () => {
-  const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`, head = ["row", T.text, ...T.fields, ...cols.flatMap(c => [c.name, c.name + " (p)"])];
-  const lines = [head.map(q).join(",")];
-  for (const r of view) lines.push([r + 1, T.previews[r], ...T.fields.map(f => T.values[f][r]), ...cols.flatMap(c => { const x = c.cells.get(r); return x ? [c.kind === "score" ? c.options[Math.round(x[0])] : x[0], x[1]] : ["", ""]; })].map(q).join(","));
-  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" })); a.download = "jcol-export.csv"; a.click();
+$("export").onclick = async () => {
+  const button = $("export"); button.disabled = true;
+  try {
+    const response = await fetch("/api/export", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ rows: view }) });
+    if (!response.ok) throw new Error((await response.json()).error || "Export failed");
+    const url = URL.createObjectURL(await response.blob()), a = document.createElement("a");
+    a.href = url; a.download = "jcol-export.csv"; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (error) { alert(error.message); }
+  finally { button.disabled = false; }
 };
 $("scroller").addEventListener("scroll", () => { dirty = true; tellView(); });
 window.addEventListener("resize", () => { dirty = true; tellView(); });

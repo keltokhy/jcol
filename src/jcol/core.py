@@ -2,7 +2,7 @@
 
 Jev can be reached through TypeSafe's own API or through OpenRouter. Both take one state and any
 number of questions per call and return one typed answer per question. Answers are cached per
-(model, state, question), so packing questions into a call and rerunning a command are both cheap.
+(endpoint, model, state, question), so packing questions into a call and rerunning a command are both cheap.
 
 This began as the client shared by jgrep and jlink. jcol adds two things an interactive table needs:
 HTTP/2, so a screenful of parallel calls shares one connection, and hedged calls, which re-send a slow
@@ -88,7 +88,7 @@ def resolve_backend(name: str | None = None) -> tuple[Backend, str]:
 
 
 class Cache:
-    """Answers on disk, keyed on the exact model, state and question."""
+    """Answers on disk, keyed on the exact endpoint, model, state and question."""
 
     def __init__(self, path: Path | None = None):
         path = path or cache_path()
@@ -101,8 +101,8 @@ class Cache:
                         "(key TEXT PRIMARY KEY, answer TEXT NOT NULL, at REAL NOT NULL) WITHOUT ROWID")
 
     @staticmethod
-    def key(model: str, state, question: dict) -> str:
-        blob = json.dumps([model, state, question], sort_keys=True, ensure_ascii=False)
+    def key(model: str, state, question: dict, *, endpoint: str | None = None) -> str:
+        blob = json.dumps([endpoint, model, state, question], sort_keys=True, ensure_ascii=False)
         return hashlib.sha256(blob.encode()).hexdigest()
 
     def get(self, key: str) -> dict | None:
@@ -161,7 +161,7 @@ class Jev:
         With `hedge_after`, a call still unanswered after that many seconds is sent a second time and the
         first answer wins. It trims the slow tail of a screenful at the price of a few duplicate calls.
         """
-        keys = {qid: Cache.key(self.model, state, q) for qid, q in questions.items()}
+        keys = {qid: Cache.key(self.model, state, q, endpoint=self.url) for qid, q in questions.items()}
         answers = {}
         if self.cache:
             for qid, k in keys.items():
@@ -241,11 +241,13 @@ class Jev:
         self.meter.cost += tokens * PRICE_PER_MTOK / 1e6 if cost is None else cost
         self.meter.latencies.append(seconds)
         self.meter.model = data.get("model") or self.model
+        if not isinstance(data["answers"], dict):
+            raise JevError("answers must be an object")
         out = {}
         for qid, q in questions.items():
             if qid not in data["answers"]:
                 raise JevError(f"no answer returned for question {qid!r}")
-            k = Cache.key(self.model, state, q)
+            k = Cache.key(self.model, state, q, endpoint=self.url)
             out[k] = data["answers"][qid]
             if self.cache:
                 self.cache.put(k, out[k])

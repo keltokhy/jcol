@@ -64,6 +64,7 @@ def test_cache_keys_are_exact():
     assert key == Cache.key("jev-latest", "some text", dict(reversed(list(q.items()))))
     assert len({key, Cache.key("jev-1.13", "some text", q), Cache.key("jev-latest", "some text ", q),
                 Cache.key("jev-latest", "some text", q | {"instructions": "something else"})}) == 4
+    assert Cache.key("m", "t", q, endpoint="https://one.test") != Cache.key("m", "t", q, endpoint="https://two.test")
 
 
 def test_the_cache_lives_under_xdg_cache_home_and_round_trips(tmp_path):

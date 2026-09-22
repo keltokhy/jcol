@@ -1,267 +1,309 @@
 # jcol
 
-A table column, but the formula is a description.
+Apply a natural-language codebook to a table from your terminal. Validate the inputs,
+run with checkpoints, resume interrupted work, and pipe or export the results.
+Each definition becomes a column of judgments from
+[Jev](https://docs.typesafe.ai), TypeSafe's decision model.
 
-```console
-$ jcol data/complaints-5k.parquet --text narrative
-jcol: 5,000 rows of complaints-5k.parquet; reading column 'narrative'; budget $2.00
-jcol: http://127.0.0.1:8765
-jcol: ready (16 workers)
+```bash
+jcol run data/complaints-5k.parquet \
+  --codebook examples/complaints-codebook.json \
+  --output coded.parquet --report report.json
 ```
 
-A browser window opens on the table. The last header cell is a text box, and a header typed into
-it has one of three shapes:
+The output retains every source column and adds a value and confidence for each variable.
+The command checkpoints successful cells in `coded.parquet.jcol.sqlite`; rerunning the same
+command resumes missing cells. The browser also saves its committed columns across restarts.
 
-```
-alleges fraud?                                   yes/no      -> a probability
-product: mortgage, credit card, other            categories  -> a label and its probability
-tone: calm < upset < furious                     a scale     -> a position on it
-```
-
-While you type, the rows on screen are judged and shown as a preview. Press Enter and the column is
-kept: the rows on screen first, then every other row in the background, with a running estimate for
-the whole table in the column's header.
-
-Each cell is one question to [Jev](https://docs.typesafe.ai), TypeSafe's decision model. Jev does
-not generate text. It returns a probability in about 200 ms for about a thousandth of a cent; the
-measurements behind those two figures are in [jgrep](https://github.com/keltokhy/jgrep)'s README.
-jcol is a demonstration of what that speed and price allow, a column of judgments that fills while
-you watch. It is not a product. It comes from the same family as jgrep,
-[jsort](https://github.com/keltokhy/jsort), [jlink](https://github.com/keltokhy/jlink) and
-[jselect](https://github.com/keltokhy/jselect), but it has no releases, is not on PyPI, and has no
-accuracy or speed benchmarks of its own. This README describes what the code does and reports no
-results.
+Version 0.3.0 includes a Python API and an optional browser interface. It has **not been
+published to PyPI**; install from Git or a built wheel. Software tests use a local fake
+API and do not establish model accuracy. See [Validation](#validation).
 
 ## Install
 
-jcol is not on PyPI. Clone it, which also gets you the sample data:
+Python 3.10 or later:
 
 ```bash
-git clone https://github.com/keltokhy/jcol && cd jcol
-uv sync
-uv run jcol data/complaints-5k.parquet --text narrative
+uv tool install 'git+https://github.com/keltokhy/jcol.git'
+jcol --help
+jcol doctor
 ```
 
-Or install only the command, and point it at a table of your own:
+This installs `jcol` on PATH in its own environment. If your shell cannot find it, run
+`uv tool update-shell` and restart the shell. For local development, clone the repository
+and run `make install-local` (or `uv tool install --force .`). To build a package:
 
 ```bash
-uv tool install git+https://github.com/keltokhy/jcol
+uv build
+uv tool install --force dist/jcol-0.3.0-py3-none-any.whl
 ```
 
-It needs Python 3.10 or later and a key for one of two APIs. With keys for both, it uses TypeSafe's.
+Set `TYPESAFE_API_KEY` or `OPENROUTER_API_KEY`, or put a key in
+`~/.config/jev/typesafe.key` or `~/.config/jev/openrouter.key`. With both keys, TypeSafe wins.
+Choose explicitly with `--api` or `JEV_API`. The key stays in the Python process.
+Only `run` and `browse` need a key. `doctor` checks local configuration; `doctor --check`
+also sends an unauthenticated HEAD request to test reachability, without doing inference.
+Reachability does not verify authentication or model availability.
 
-| API | Key | Get one |
-|---|---|---|
-| TypeSafe | `TYPESAFE_API_KEY` | [console.typesafe.ai](https://console.typesafe.ai/settings/keys) |
-| OpenRouter | `OPENROUTER_API_KEY` | [openrouter.ai/keys](https://openrouter.ai/keys) |
-
-Set the environment variable, or put the key in `~/.config/jev/typesafe.key` or
-`~/.config/jev/openrouter.key`, which is where the sibling tools look too. Force a choice with
-`--api` or `JEV_API`. jcol does not have the gateway backend that jgrep and jsort have.
-
-## Use
+## Terminal workflow
 
 ```bash
-jcol data/complaints-5k.parquet --text narrative    # the sample in this repository
-jcol reviews.csv                                    # reads the column with the most text in it
-jcol tickets.tsv --text body --limit 2000           # the first 2,000 rows
-jcol notes.parquet --budget 0.25 --port 9000 --no-open
+jcol inspect reviews.csv
+jcol init --input review --name refund_request \
+  --definition 'The customer explicitly asks for a refund.' -o codebook.json
+jcol validate reviews.csv --codebook codebook.json
+jcol run reviews.csv --codebook codebook.json --dry-run
+jcol run reviews.csv --codebook codebook.json -o coded.parquet --budget 0.25
+jcol status coded.parquet.jcol.sqlite
+jcol export coded.parquet.jcol.sqlite --source reviews.csv -o recovered.csv
 ```
 
-The table is a `.parquet`, `.csv` or `.tsv` file. jcol reads one text column from it and shows the
-rest as fields.
+Repeat the same `run` command to resume. Successful cells are retained across interrupts;
+`export` recovers them without credentials or API calls. Export requires the original table,
+including its schema and row order. `status` and `export` can read an active project.
 
-| Option | Meaning |
+| Command | Purpose |
 |---|---|
-| `--text COLUMN` | The column Jev reads. Default: the string column whose values are longest on average. |
-| `--limit N` | Use only the first N rows. |
-| `--budget DOLLARS` | Stop filling in the background once this much is spent. Default 2.00. See [Cost](#cost-and-the-cache). |
-| `--port PORT` | Default 8765. The server listens on 127.0.0.1 only. |
-| `--api`, `--model ID` | Which API, and which model ID. Default: whichever API has a key, and its alias for the latest Jev. |
-| `--no-cache` | Do not read or write the answer cache. |
-| `--workers N` | Worker processes that make the calls. Default 16; 0 makes them in the server process. |
-| `--per-worker N` | Background calls in flight per worker. Default 64. |
-| `--no-open` | Do not open a browser window. |
+| `init` | Generate a valid, editable codebook from a definition |
+| `inspect` | Discover field names, types, null counts and row count |
+| `validate` | Check inputs, codebook, gold labels and output-name conflicts offline |
+| `run --dry-run` | Describe work and check an existing checkpoint without writes or calls |
+| `run` | Annotate, checkpoint, resume and write results |
+| `status` | Read completion per saved column |
+| `export` | Recover saved results, including partial results |
+| `evaluate` | Compare predictions with supplied reviewed labels |
+| `doctor` | Inspect configuration without revealing keys |
+| `browse` | Open the optional local browser interface |
 
-### Headers
+For a category, add `--kind category --option billing --option other` to `init`.
+For a scale, use `--kind scale` and repeat `--option` from lowest to highest.
+Edit the generated JSON to add more variables or detailed option definitions.
+Existing codebooks are protected unless `init --force` is given.
 
-| Shape | Example | Cell |
-|---|---|---|
-| yes/no | `alleges fraud?` | The probability, with a bar. |
-| categories | `product: mortgage, credit card, other` | The chosen label and its probability. |
-| scale | `tone: calm < upset < furious` | The nearest level's name and the position on the scale. |
-
-A header with no colon is a description, and needs at least three characters; a final `?` is
-dropped. `name: a, b, c` needs 2 to 255 distinct options and `name: low < mid < high` needs 2 to 10
-distinct levels. Nothing is asked while a header fits none of these.
-
-The header goes into one question per row. A description becomes `The text fits this description:
-"..."`, a list becomes `Choose the <name> that best describes the text.` with the options, and a
-scale becomes `Rate the text on this scale: <name>.` with the levels. Anything that completes those
-sentences sensibly will work.
-
-### In the page
-
-- **Typing.** The page waits for a pause of 160 ms, or 450 ms once the header has a colon and a list
-  is still being written, and then asks for a preview of the rows on screen, 80 at most. The hint
-  under the box says how long the screen took to fill, as timed by the browser. Enter keeps the
-  column and Escape clears the box.
-- **A kept column's header** shows the running estimate, how many rows are done, and, when the
-  column is complete, how long it took.
-- **Sort** by clicking a column's name: highest first, then lowest first, then off. Rows with no
-  value yet sort last.
-- **Filter** by clicking a cell. A yes/no cell keeps the rows at 0.5 or above, a category cell the
-  rows with that label, a scale cell the rows at that level or above. Each filter is a chip above
-  the table; click it to remove it.
-- **Compare.** A category column has a "compare with…" menu of the table's fields. Pick one and the
-  header adds the share of rows in the [running sample](#the-running-estimate) whose label equals
-  that field's value, ignoring case.
-- **show fields** adds the table's own columns to the view. Clicking a row's text opens the full
-  text with all of its fields and your columns' values. ✕ removes a column.
-- **export csv** downloads the rows in view, after filters and sorting: the row number, the first
-  320 characters of the text, the table's fields, and each added column's value and probability.
-- **The ticker** at the top right counts calls, answers that needed no call (from the cache, or
-  shared with an identical call in the air), calls that were sent a second time, dollars spent
-  against the budget, and the model that answered.
-
-### The running estimate
-
-The background does not fill the table from top to bottom. It follows one fixed random order (a
-shuffle with seed 70), so the rows finished so far, taken in that order, are a simple random sample
-of the table. The header's figure is computed from that sample: for a yes/no column, the share of
-rows at 0.5 or above; for categories, the two most common labels; for a scale, the mean position
-and the level nearest to it. Yes/no and scale columns carry a 95% margin of error with a
-finite-population correction, which shrinks to nothing as the column completes, and then the figure
-is exact.
-
-The margin covers sampling only. It says how far the partial figure may be from what Jev would say
-about the whole table, not how far Jev is from the truth.
-
-## How it works
-
-**One call per row, not per cell.** A call carries one row's text and one question for every column
-that still needs that row. Columns added together share their calls.
-
-**Two lanes.** Rows on screen go in the hot lane. They are sent at once, outside the concurrency
-limit, and a call still unanswered after 0.35 seconds is sent a second time; whichever answer lands
-first is used. Every other row goes in the background lane, in the random order above, with at most
-`--workers` × `--per-worker` calls in flight. The background sends nothing new while a hot call is
-pending.
-
-**Worker processes.** By default 16 processes make the calls, each with its own event loop and its
-own HTTP/2 connections, fed by one queue for hot jobs and one for background jobs. The comments at
-the top of `src/jcol/pool.py` and in `src/jcol/core.py` record the measurements that led to this
-design, and the scripts in `spike/` are what took them. They are not repeated here.
-
-**Repeats are free.** Answers are cached under the model ID, the text sent and the question. A text
-that appears twice, or a header typed a second time, is answered from the cache or joins the
-identical call that is already in the air.
-
-**Failures.** A call is retried inside a 12-second budget after a transport error or an HTTP 408,
-429, 500, 502, 503, 504 or 529. If it still fails its cell stays empty, and when the background
-pass ends it goes over the missing cells again, up to two more times. A 401, 402 or 403 is shown in
-a bar across the page. Rows on screen stop being judged and no new pass starts, though the pass
-under way still runs through its remaining rows.
-
-**The server and the page.** The server holds the key, the table and the scheduler. The page is one
-static HTML file with no dependencies and no build step, and talks to the server over a WebSocket.
-A page that is reloaded, or opened in a second tab, is sent the kept columns as they stand.
-
-## The data
-
-`data/complaints-5k.parquet` is 5,000 complaints from the CFPB Consumer Complaint Database: the
-consumer's `narrative` and ten fields (`complaint_id`, `date_received`, `product`, `sub_product`,
-`issue`, `company`, `state`, `company_response`, `timely` and `product_group`).
-`data/SAMPLE.json` records where it came from:
-
-- **Source.** The `has-text` configuration of
-  [BEE-spoke-data/consumer-finance-complaints](https://huggingface.co/datasets/BEE-spoke-data/consumer-finance-complaints),
-  a CC0 snapshot of the CFPB database, 1,689,573 complaints. A snapshot is used because, as of
-  2026-09-18, the CFPB's own bulk file and API no longer include the narratives.
-- **Sample.** A simple random sample of 5,000 without replacement, `DataFrame.sample(seed=70)` in
-  polars, drawn on 2026-09-18, with no filtering by length, date or topic. The complaints in it were
-  received between 2015-03-24 and 2024-02-03.
-- **`product_group`** is the one derived field. It folds the CFPB's product names, 19 of them in
-  the sample, into nine groups and `other`, by the first keyword in `SAMPLE.json` that the product
-  name contains. It is there so that a `product: ...` column has something to be compared with.
-
-The narratives are the consumers' own words as the CFPB published them, with personal details
-replaced by runs of X; 3,901 of the 5,000 contain `XXXX`. The median narrative is about 650
-characters and the mean about 1,000. 134 are longer than the 4,000 characters jcol sends, and 4,815
-are distinct.
-
-The snapshot's three full files, over 900 MB, are not in the repository, and neither is the script
-that drew the sample. `SAMPLE.json` is the record of the method.
-
-## Cost and the cache
-
-jgrep's README gives the rule of thumb for what Jev bills: about 270 tokens of overhead per call
-plus the text and the question, at $0.042 per million tokens. By that rule, with a token for every
-four characters, a first yes/no column over the sample is roughly 2.5 million tokens, or about ten
-cents. That is arithmetic, not a measurement. The ticker shows what a session actually spends.
-OpenRouter reports the cost of each call; TypeSafe's API reports tokens, which jcol prices at
-`JEV_PRICE_PER_MTOK`, 0.042 by default.
-
-Two things cost more than they might seem to. A preview asks a new question of every row on screen
-at each pause in typing, so a header typed in three bursts is three screens of calls. And a call
-that is sent a second time may be billed twice.
-
-`--budget` is a seat belt, not a cap. It is checked by the background lane before each call it
-sends, against the cost of the calls that have come back, so the calls in flight at that moment
-(up to 1,024 with the default workers) land on top of it. When it trips, filling stops, the page
-says so, and rows on screen stop being judged too. Previews and scrolling alone never trip it:
-until a column is kept, and again once every kept column is complete, nothing checks the budget.
-It counts one run of the server, and starts from zero at the next.
-
-Answers are kept in `~/.cache/jev/answers.sqlite`, so adding a column you have added before makes
-no calls. That is the file the sibling tools use, but the entries are not shared: jgrep and jsort
-now key their answers by endpoint as well, and jcol keys them by model ID, text and question only.
-If you point jcol at another endpoint with `JEV_URL`, use `--no-cache` or another `XDG_CACHE_HOME`.
-
-## Limits
-
-- It is a demonstration. There are offline tests, but nothing here measures how often Jev's answers
-  about this data are right. Read some rows before you believe a column. "compare with…" is a quick
-  check where the table already has a label.
-- What jgrep's README says under [Things to know](https://github.com/keltokhy/jgrep#how-well-does-it-work)
-  applies here. Jev answers the description you wrote, not the one you meant. It is close to
-  deterministic, not exactly so, and the cache is what makes a rerun exact. Text in a row can try to
-  steer its own answer, so do not use a column as a security boundary.
-- The default model ID is an alias for the latest Jev, and the cache is keyed on the ID you asked
-  for. When the alias moves, answers cached under it are still served. For results that must
-  reproduce, pin a model with `--model` (for example `typesafe/jev-1.13` on OpenRouter).
-- Only the first 4,000 characters of a text are sent, without a warning, and there is no option to
-  change that. A missing text is sent as an empty one.
-- The whole table is held in memory, and the page is sent a 320-character preview of every row and
-  every field up front, then sorts and filters in the browser. It is meant for thousands of rows,
-  not millions. `--limit` takes the first N.
-- Columns live in the server's memory and are gone when it stops. The answers stay in the cache, so
-  typing the header again refills the column without new calls. To keep a column, export it; the
-  export carries only the first 320 characters of each text, so join it back on a field such as
-  `complaint_id`.
-- A cell whose call failed on every pass stays blank, and the page does not show the error count.
-  The running estimate stops advancing at the first blank row in the random order.
-- One person at a time. Every tab shares the same columns and the same single preview. The server
-  has no authentication, which is why it listens on 127.0.0.1 only.
-
-## Development
+### Pipes and automation
 
 ```bash
-uv sync && uv run pytest        # offline: a fake API and a fake pool; no key, and no test can reach the network
+cat reviews.csv | jcol run - --input-format csv --codebook codebook.json \
+  --project study.sqlite -o - --output-format jsonl --report report.json \
+  > coded.jsonl
+jcol --json status study.sqlite
 ```
 
-The scripts in `spike/` are the experiments the design came from. They call the live API and spend
-money, and they were written to be run once. `latency.py` times a screenful of calls with and
-without re-sending, latency by text length, and throughput by calls in flight; it reads
-`spike/texts.json`, which is not in the repository, and uses `spike/core.py`, the client as it was
-before HTTP/2 and re-sending. `shard.py` measures throughput by the number of client processes on
-the sample. `drive.py` drives a running server over its WebSocket the way the page does, and times a
-preview, a kept column, and a preview typed during the background fill.
+Input/output formats are CSV, TSV, Parquet and JSONL (`.ndjson` is also recognized).
+Stdin requires `--input-format`; stdout defaults to JSONL. A streamed run requires
+`--project PATH` or an explicit `--no-project`. Tables are held in memory; pipe support
+does not make processing out-of-core. Named table outputs and reports are replaced
+atomically after successful serialization. These two files are written separately.
 
-`src/jcol/spec.py` is the header grammar. `engine.py` is the scheduler: the two lanes, the random
-order, shared calls and what is sent to the page. `pool.py` is where calls run, in worker processes
-or in-process. `core.py` began as the client shared by jgrep and jlink (backends, retries inside a
-time budget, the cache, in-flight deduplication and the cost meter) and adds HTTP/2 and re-sent
-calls. `app.py` is the server and the command line. `static/index.html` is the page.
+Metadata commands emit JSON objects. `--json`, before or after the subcommand, wraps
+reports in `{"schema_version":1,"command":"status","ok":true,"data":{...}}`.
+Errors use `{"schema_version":1,"command":"status","ok":false,"error":{"code":"command_error","message":"..."}}`.
+Argument errors use `usage_error`; interruptions use `interrupted`. For a partial run,
+the report is valid (`ok: true`), `data.run.complete` is false, and exit status is 2.
+Without `--json`, `run` and `evaluate` retain their original unwrapped report formats.
 
-MIT license.
+With `-o -`, stdout contains only the table (or the raw codebook for `init`). Run/export
+reports go to `--report` or stderr; errors also go to stderr. Use `--quiet` to suppress
+human summaries and terminal progress when parsing stderr as JSON. Help and version are
+always text. `browse` does not support JSON output.
+
+Exit codes: **0** success (including exporting partial results or discovering missing
+credentials with `doctor`), **1** invalid input or execution failure, **2** partial annotation,
+**130** interrupted, **141** closed output pipe. In scripts, check `doctor`'s `ready` field,
+`status`'s `complete` field, and the run exit code. No-argument `jcol` prints help.
+Use `python -m jcol` when invoking an installed package through a specific Python environment.
+
+## Codebooks
+
+A codebook is a versioned JSON file with explicit input fields and named output variables:
+
+```json
+{
+  "version": 1,
+  "inputs": ["narrative", "issue"],
+  "columns": [
+    {
+      "name": "unauthorized_activity",
+      "kind": "binary",
+      "definition": "The consumer alleges an account or transaction they did not authorize. Include identity theft. Exclude disputes about authorized fees or loan terms.",
+      "gold": "reviewer_label"
+    }
+  ]
+}
+```
+
+`definition` is the actual instruction sent to Jev. It can contain punctuation, inclusion
+rules and exclusions without the browser header grammar. Only `inputs` are sent. With
+multiple inputs each row is a JSON object with field names and values; a single input is
+sent as plain text. A missing single-field input becomes empty text. Source nulls remain
+null in the result. Multiple-field inputs retain JSON nulls.
+
+| Kind | Required options | Output |
+|---|---|---|
+| `binary` | None | Probability from 0 to 1 |
+| `category` | 2–255 distinct labels, as a list or an object mapping labels to definitions | Chosen label |
+| `scale` | 2–10 distinct levels, listed from lowest to highest | Numeric position from 0 to number of levels minus one |
+
+Every variable also adds `NAME__confidence`. For a binary variable this is
+`max(p, 1-p)`; for other kinds it is the API's confidence when supplied, otherwise zero.
+These are model scores, not guarantees of correctness or calibrated confidence intervals.
+Cell values retain the browser's rounding: binary probabilities and confidence to three
+decimals, scale values to two. Saved projects also retain the unrounded per-question answer.
+
+`gold` optionally names a reference-label column for evaluation. Declared gold fields
+cannot also be model inputs. Unknown codebook fields, invalid labels, duplicate names and
+output names that would overwrite source columns are rejected before a batch run makes calls.
+Check the remaining inputs yourself for indirect label leakage.
+
+Examples:
+
+- [Product codebook](examples/complaints-codebook.json): narrative-only product classification with proxy labels.
+- [Multiple-field codebook](examples/multifield-codebook.json): narrative and issue used together, with binary and category definitions.
+
+## Batch and Python
+
+```bash
+jcol run reviews.csv --codebook codebook.json --output coded.csv
+jcol run reviews.tsv --codebook codebook.json --output coded.parquet \
+  --project study.jcol.sqlite --model typesafe/jev-1.13 --api openrouter \
+  --budget 0.25 --concurrency 4 --report report.json
+jcol evaluate coded.parquet --codebook codebook.json --report validation.json
+```
+
+Tables can be CSV, TSV, Parquet or JSONL. Batch mode sends full serialized rows by default;
+`--max-chars N` explicitly truncates them and reports how many were affected. Export always
+preserves the full source values. Parquet preserves source types; CSV/TSV use their usual
+text representations.
+
+`--project` defaults to `OUTPUT.jcol.sqlite`. Successful cells are durable as they arrive,
+including if the process crashes. A project checks the full table contents, schema and order,
+selected inputs, codebook, model ID, endpoint and truncation setting before resuming.
+Changed inputs require a new project path. One process may own a project at a time.
+
+Partial output and the JSON report are still written after budget exhaustion or API failures.
+A report goes to stdout unless `--report` names a file or the table is streamed to stdout.
+All requested columns
+share each row's call; repeated identical rows share answers.
+
+```python
+import jcol
+
+result = jcol.annotate(
+    "reviews.parquet", "codebook.json",
+    project="study.jcol.sqlite",
+    budget=0.25,
+    concurrency=4,
+)
+result.write("coded.parquet")
+print(result.complete)
+print(result.evaluation)
+```
+
+`annotate` accepts a Polars DataFrame or a table path; the codebook can be a path, dictionary
+or `jcol.Codebook`. The result contains a Polars `table`, `metadata`, and `evaluation`.
+The Python API persists when `project` is provided; without it, results live in the returned
+object. In a notebook or another running event loop, use `await jcol.annotate_async(...)`.
+Call `jcol.evaluate(dataframe, codebook)` to evaluate existing predictions without model calls.
+
+## Validation
+
+Evaluation reports labeled rows, evaluated rows, missing predictions and coverage alongside
+metrics. Missing labels are excluded. Missing predictions reduce coverage and are excluded
+from the metric denominator, so always read the two together. Invalid nonmissing labels or
+predictions are errors.
+
+- **Binary:** accuracy at a configurable threshold (default 0.5), Brier score, per-class
+  precision/recall/F1, macro-F1 and a confusion matrix. Gold accepts true/false, yes/no or 1/0.
+- **Category:** exact-label accuracy, per-class metrics, macro-F1 and a confusion matrix.
+  Matching is case-sensitive. Macro-F1 averages every declared category, including absent
+  classes, whose F1 is zero.
+- **Scale:** mean absolute error in scale positions; gold may be a numeric position or an
+  exact level name.
+- **Disagreements:** zero-based row indices with the reference and predicted values.
+
+Freeze your definitions, reserve representative reviewed rows, and examine disagreements
+before using a derived variable.
+
+## Browser
+
+```bash
+jcol browse data/complaints-5k.parquet --text narrative
+jcol browse tickets.csv --text subject body --max-chars 0 --no-open
+```
+
+The legacy `jcol FILE --text ...` invocation also works. The browser opens on
+`http://127.0.0.1:8765`. Type a header, inspect the preview, and press Enter:
+
+```text
+alleges fraud?
+product: mortgage, credit card, other
+tone: calm < upset < furious
+```
+
+Headers without a colon are binary descriptions. A colon followed by comma-separated options
+creates a category column; levels separated by `<` create a scale. The typed description is
+inserted into a short question template. Use a JSON codebook and batch mode for detailed rules.
+
+- Click a column name to sort, or a cell to filter. Click a filter chip to remove it.
+- `show fields` reveals source fields. Click a row to read all selected inputs and fields.
+- Category columns offer `compare with…` for a quick comparison with a source field.
+- `export csv` downloads the filtered, sorted rows with **full source values**, numeric scale
+  positions, and committed values/confidences. A generated name that conflicts with a source
+  field is prefixed with `jcol_COLUMNID__` until it is unique.
+- Columns persist in `FILE.jcol.sqlite` by default. Use `--project PATH` to choose a location
+  or `--no-project` for a temporary session. Removing a column also removes it from the project.
+
+| Browser option | Default / meaning |
+|---|---|
+| `--text COLUMN [COLUMN ...]` | Selected inputs; default is the longest string column on average |
+| `--limit N` | First N rows |
+| `--max-chars N` | 4,000 characters per serialized row; warns on truncation; 0 sends full rows |
+| `--budget DOLLARS` | 2.00; a per-invocation spending threshold, not a hard cap |
+| `--workers N` / `--per-worker N` | 16 processes, 64 background calls each; workers 0 runs in-process |
+| `--api` / `--model` | Backend and model ID; `JEV_MODEL` is also accepted |
+| `--no-cache` | Disable the separate answer cache, while retaining project persistence |
+| `--port` / `--no-open` | Port 8765; optionally suppress opening the browser |
+
+The browser prioritizes visible rows and may resend a slow visible-row call. Background rows
+follow a fixed shuffle (seed 70). Its running estimates describe model judgments over the table;
+the displayed margins cover sampling uncertainty only. They do not measure classification error.
+
+## Costs, persistence and limits
+
+- Budget checks use cost already reported by completed requests. In-flight calls can exceed the
+  threshold. Batch mode bounds them with `--concurrency`; browser previews can spend outside
+  background budget checks. Budget and cost counters reset each invocation. A saved project
+  preserves cells, not a cumulative spending limit.
+- Answers also cache in `~/.cache/jev/answers.sqlite`. Keys now include endpoint, requested model,
+  serialized input and question. Version 0.1 cache entries are not reused. `JEV_URL` overrides the
+  endpoint. No API keys are stored in projects or exports.
+- Default model IDs are aliases. Pin a model for a study; a project cannot detect a server moving
+  an alias to new model weights. Cached and saved answers remain frozen under the requested ID.
+- The full table and results are held in memory. The browser receives previews and source fields
+  for every row and sorts locally. This is intended for thousands of rows, not out-of-core datasets.
+- Transient failures are retried; the scheduler makes up to two additional sweeps for missing cells.
+  Invalid answers remain missing. Fatal authentication or credit errors stop new background work.
+- Every browser tab shares the same columns and preview. The server has no authentication and binds
+  only to localhost. Data sent to the model goes to the selected API provider.
+- Jev follows the definition provided; text in a row can influence its answer. Review coded data,
+  and do not treat a judgment column as a security boundary.
+
+## Data and development
+
+`data/complaints-5k.parquet` contains 5,000 public CFPB complaints and their fields.
+[data/SAMPLE.json](data/SAMPLE.json) records the Hugging Face snapshot, original sampling method,
+seed, dates and exact mapping used to derive `product_group`. Original source files and the
+original 5,000-row sampling script are not bundled.
+
+```bash
+uv sync
+uv run pytest -q   # offline fake API; no credentials or external connections
+uv build          # source distribution and wheel
+```
+
+CI runs tests and installs the built wheel outside the checkout on Python 3.10 and 3.13,
+checking the CLI, public imports and packaged browser assets.
+
+`codebook.py`, `batch.py`, `evaluation.py` and `project.py` implement the reusable workflow.
+`engine.py` is the shared scheduler; `core.py` and `pool.py` implement API calls and caching.
+`app.py` and `static/index.html` implement the browser. MIT license.

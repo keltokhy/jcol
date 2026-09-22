@@ -1,7 +1,7 @@
 [project]
 name = "jcol"
-version = "0.1.0"
-description = "Type a column header in plain English; watch it fill. A demonstration of TypeSafe's Jev decision model."
+version = "0.3.0"
+description = "Apply natural-language codebooks to tables, with resumable annotation and label evaluation."
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Khaled Eltokhy" }]
@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-jcol = "jcol.app:cli"
+jcol = "jcol.cli:cli"
 
 [dependency-groups]
 dev = ["pytest>=8"]

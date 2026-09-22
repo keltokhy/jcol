@@ -5,6 +5,18 @@ import pytest
 from jcol.spec import Spec, parse
 
 
+@pytest.mark.parametrize("spec,answer", [
+    (Spec("noul", "flag"), {"noul": float("nan")}),
+    (Spec("noul", "flag"), []),
+    (Spec("choice", "product", ("a", "b")), {"choice": "c"}),
+    (Spec("choice", "product", ("a", "b")), {"choice": "a", "probabilities": [0.2, 0.8]}),
+    (Spec("score", "tone", ("low", "high")), {"score": 2}),
+])
+def test_invalid_typed_answers_are_rejected(spec, answer):
+    with pytest.raises(ValueError):
+        spec.cell(answer)
+
+
 def test_a_plain_header_is_a_yes_no_question():
     spec = parse("  alleges   fraud? ")
     assert spec == Spec("noul", "alleges fraud")

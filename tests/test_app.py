@@ -50,7 +50,7 @@ def no_server(monkeypatch):
 def test_the_text_column_defaults_to_the_one_with_the_most_text(table):
     df, text = jcol_app.load_table(table, None, None)
     assert text == "narrative" and df.height == 4
-    assert df["narrative"].to_list()[3] == ""  # a missing text is judged as an empty one
+    assert df["narrative"].to_list()[3] is None  # preserve source nulls; serialize missing inputs as empty text
     df, text = jcol_app.load_table(table, "product", 2)
     assert text == "product" and df.height == 2
 
@@ -67,7 +67,7 @@ def test_a_table_that_cannot_be_used_is_refused(table, tmp_path):
     (tmp_path / "notes.txt").write_text("hello")
     pl.DataFrame({"a": [1, 2]}).write_csv(tmp_path / "numbers.csv")
     for path, column, message in [(tmp_path / "missing.csv", None, "no such file"),
-                                  (tmp_path / "notes.txt", None, "expected a .parquet, .csv or .tsv file"),
+                                  (tmp_path / "notes.txt", None, "table format must be"),
                                   (tmp_path / "numbers.csv", None, "no text column"),
                                   (table, "story", "no column 'story'")]:
         with pytest.raises(SystemExit, match=message):
@@ -182,3 +182,55 @@ def test_a_missing_file_is_reported(monkeypatch, tmp_path, no_server):
     with pytest.raises(SystemExit, match="jcol: no such file"):
         jcol_app.cli()
     assert not no_server
+
+
+def test_restart_restores_saved_columns_and_removal_is_durable(table, api, tmp_path):
+    project = tmp_path / "table.jcol.sqlite"
+    with serve(table, project=project) as client, client.websocket_connect("/ws") as ws:
+        ws.receive_json()
+        ws.send_json({"type": "commit", "header": "alleges fraud?", "rows": []})
+        while ws.receive_json()["type"] != "done":
+            pass
+    rows = len(api.rows)
+    with serve(table, project=project) as client, client.websocket_connect("/ws") as ws:
+        snapshot = ws.receive_json()
+        assert snapshot["columns"][0]["header"] == "alleges fraud?"
+        assert len(snapshot["cells"]) == 4 and len(api.rows) == rows
+        ws.send_json({"type": "remove", "id": "c1"})
+        while ws.receive_json()["type"] != "removed":
+            pass
+    with serve(table, project=project) as client, client.websocket_connect("/ws") as ws:
+        assert ws.receive_json()["columns"] == []
+
+
+def test_export_preserves_long_text_types_nulls_and_requested_order(tmp_path, api):
+    import io
+
+    df = pl.DataFrame({"narrative": ["x" * 5000, None, "fraud"], "id": [1, 2, 3]})
+    path = tmp_path / "table.parquet"
+    df.write_parquet(path)
+    with serve(path) as client:
+        response = client.post("/api/export", json={"rows": [2, 0, 1]})
+        exported = pl.read_csv(io.StringIO(response.text))
+        assert response.status_code == 200 and exported.equals(df[[2, 0, 1]])
+        empty = pl.read_csv(io.StringIO(client.post("/api/export", json={"rows": []}).text))
+        assert empty.height == 0 and empty.columns == df.columns
+        assert client.post("/api/export", json={"rows": [-1]}).status_code == 400
+
+
+def test_multiple_browser_inputs_are_named_and_exports_resolve_source_name_collisions(table, api):
+    import io
+
+    df, inputs = jcol_app.load_table(table, ["narrative", "product"], None)
+    app = jcol_app.build(df, inputs, source=table.name, budget=2, api=None, model=None,
+                         cache=False, workers=0, per_worker=8)
+    with TestClient(app) as client, client.websocket_connect("/ws") as ws:
+        ws.receive_json()
+        assert client.get("/api/init").json()["inputs"] == ["narrative", "product"]
+        ws.send_json({"type": "commit", "header": "product: mortgage, credit card, other", "rows": []})
+        while ws.receive_json()["type"] != "done":
+            pass
+        output = pl.read_csv(io.StringIO(client.post("/api/export", json={}).text))
+        assert output.select(df.columns).equals(df)
+        assert "jcol_c1__product" in output.columns
+        assert output["jcol_c1__product"][0] == "mortgage"

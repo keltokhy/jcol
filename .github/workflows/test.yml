@@ -12,3 +12,14 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       - run: uv sync --python ${{ matrix.python }}
       - run: uv run pytest -q
+      - run: uv build
+      - name: Install and smoke-test the wheel outside the checkout
+        run: |
+          uv venv /tmp/jcol-wheel-smoke
+          uv pip install --python /tmp/jcol-wheel-smoke/bin/python dist/*.whl
+          /tmp/jcol-wheel-smoke/bin/python tests/test_process.py /tmp/jcol-wheel-smoke/bin/jcol
+          cd /tmp
+          /tmp/jcol-wheel-smoke/bin/jcol --version
+          /tmp/jcol-wheel-smoke/bin/jcol run --help
+          /tmp/jcol-wheel-smoke/bin/jcol evaluate --help
+          /tmp/jcol-wheel-smoke/bin/python -c 'import jcol; from importlib.resources import files; assert callable(jcol.annotate); assert files("jcol").joinpath("static/index.html").is_file()'

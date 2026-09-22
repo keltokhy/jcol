@@ -8,4 +8,21 @@ data/*.zip
 data/shards.txt
 spike/texts.json
 .env
+.env.*
 *.key
+*.jcol.sqlite*
+
+# Local development, agent notes and generated run artifacts.
+.DS_Store
+.codex/
+AGENTS.md
+work/
+outputs/
+internal/
+spike/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite.lock
+*.sqlite.lock-journal
+*.log

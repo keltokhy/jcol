@@ -39,8 +39,9 @@ class Column:
 
 class Engine:
     def __init__(self, texts: list[str], pool, *, model: str, cache: Cache | None = None, budget: float = 2.0,
-                 max_chars: int = 4000, seed: int = 70):
+                 max_chars: int | None = 4000, seed: int = 70, project=None, endpoint: str | None = None):
         self.texts, self.pool, self.model, self.cache = texts, pool, model, cache
+        self.project, self.endpoint = project, endpoint
         self.budget, self.max_chars, self.n = budget, max_chars, len(texts)
         self.order = list(range(self.n))
         random.Random(seed).shuffle(self.order)
@@ -49,6 +50,9 @@ class Engine:
         self.listeners: set[asyncio.Queue] = set()
         self.errors = self.cached = 0
         self.over_budget = False
+        self.fatal: str | None = None
+        self.idle = asyncio.Event()
+        self.idle.set()
         self._waiting: dict[str, list[tuple[int, str]]] = {}  # cache key -> the (row, column) cells awaiting it
         self._asked: set[tuple[int, str]] = set()
         self._jobs: dict[int, tuple[list[tuple[str, str]], bool]] = {}  # job id -> ([(column id, cache key)], hot)
@@ -60,6 +64,9 @@ class Engine:
         self._wake, self._restart = asyncio.Event(), False
         self._tasks: set[asyncio.Task] = set()
         pool.on_result = self._on_result
+        if project:
+            self.columns = {c.id: c for c in project.columns()}
+            self._col_ids = max((int(cid[1:]) for cid in self.columns), default=0)
 
     # ---- lifecycle -------------------------------------------------------------------------------------
 
@@ -68,10 +75,14 @@ class Engine:
         for coro in (self._background(), self._flusher()):
             task = asyncio.ensure_future(coro)
             self._tasks.add(task)
+        if any(c.committed and len(c.values) < self.n for c in self.columns.values()):
+            self.idle.clear()
+            self._wake.set()
 
     async def close(self) -> None:
         for task in self._tasks:
             task.cancel()
+        await asyncio.gather(*self._tasks, return_exceptions=True)
         await self.pool.close()
 
     # ---- what the browser asks for -------------------------------------------------------------------
@@ -97,14 +108,25 @@ class Engine:
         spec = parse(header)
         if spec is None:
             return None
+        return self.commit_spec(spec, header=header)
+
+    def commit_spec(self, spec: Spec, *, header: str | None = None) -> str:
+        """Commit an explicit codebook definition without the interactive header grammar."""
         if self._preview_id:
             self.columns.pop(self._preview_id, None)
             self._preview_id = None
             self._send({"type": "preview", "column": None})
-        col = self._new_column(header, spec, committed=True)
+        col = self._new_column(header or spec.name, spec, committed=True)
+        if self.project:
+            self.project.add(col)
+        if self.n == 0:
+            col.seconds = 0.0
+            if self.project:
+                self.project.done(col)
         self._send({"type": "column", "column": col.describe()})
         self._hot(self.visible)
         self._restart = True
+        self.idle.clear()
         self._wake.set()
         return col.id
 
@@ -114,6 +136,8 @@ class Engine:
 
     def remove(self, col_id: str) -> None:
         if self.columns.pop(col_id, None):
+            if self.project:
+                self.project.remove(col_id)
             self._send({"type": "removed", "id": col_id})
 
     def snapshot(self) -> dict:
@@ -153,6 +177,8 @@ class Engine:
             self._wake.clear()
             pos = 0
             while pos < self.n:
+                if self.over_budget:
+                    break
                 if self._restart:
                     self._restart, pos = False, 0
                 row = self.order[pos]
@@ -166,6 +192,11 @@ class Engine:
                 while self._hot_pending:  # someone is waiting on their screen; do not queue more behind it
                     await asyncio.sleep(0.01)
                 await self._slots.acquire()
+                if self.over_budget or self.pool.totals()["cost"] >= self.budget:
+                    self._slots.release()
+                    self.over_budget = True
+                    self._send({"type": "budget", "budget": self.budget})
+                    break
                 cols = self._needs(row, committed_only=True)  # the wait may have been long; ask only what is still missing
                 if not cols or not self._ask(row, cols, hot=False):
                     self._slots.release()
@@ -178,17 +209,19 @@ class Engine:
                 self._wake.set()
             else:
                 sweeps = 0
+                if not self._wake.is_set():
+                    self.idle.set()
 
     def _ask(self, row: int, cols: list[Column], *, hot: bool) -> bool:
         """Fill what the cache knows, join calls already in the air, and send the rest. True if a call went out."""
         state = self.texts[row][:self.max_chars]
         send: list[tuple[Column, str]] = []
         for c in cols:
-            key = Cache.key(self.model, state, c.spec.question)
+            key = Cache.key(self.model, state, c.spec.question, endpoint=self.endpoint)
             if self.cache and (hit := self.cache.get(key)) is not None:
-                self.cached += 1
-                self._fill(c, row, hit)
-                continue
+                if self._fill(c, row, hit):
+                    self.cached += 1
+                    continue
             self._asked.add((row, c.id))
             waiters = self._waiting.setdefault(key, [])
             waiters.append((row, c.id))
@@ -214,23 +247,34 @@ class Engine:
             self.errors += 1
             if error.startswith("fatal: "):
                 self.over_budget = True
+                self.fatal = error[7:]
                 self._send({"type": "fatal", "message": error[7:]})
         for col_id, key in asked:
             answer = None if answers is None else answers.get(col_id)
-            if answer is not None and self.cache:
-                self.cache.put(key, answer)
+            valid = False
             for row, cid in self._waiting.pop(key, []):
                 self._asked.discard((row, cid))
                 if answer is not None and (c := self.columns.get(cid)):
-                    self._fill(c, row, answer)
+                    valid = self._fill(c, row, answer) or valid
+            if valid and self.cache:
+                self.cache.put(key, answer)
 
-    def _fill(self, c: Column, row: int, answer: dict) -> None:
-        value, p = c.spec.cell(answer)
+    def _fill(self, c: Column, row: int, answer: dict) -> bool:
+        try:
+            value, p = c.spec.cell(answer)
+        except (KeyError, TypeError, ValueError, OverflowError):
+            self.errors += 1
+            return False
+        if self.project and c.committed:
+            self.project.fill(c, row, answer)
         c.values[row] = (value, p)
         self._outbox.append([c.id, row, value, p])
         if c.committed and c.seconds is None and len(c.values) == self.n:
             c.seconds = round(time.perf_counter() - c.started, 1)
+            if self.project:
+                self.project.done(c)
             self._send({"type": "done", "id": c.id, "seconds": c.seconds})
+        return True
 
     # ---- to the browser ------------------------------------------------------------------------------
 

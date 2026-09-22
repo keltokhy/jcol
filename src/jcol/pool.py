@@ -30,12 +30,15 @@ def _totals(jev: Jev) -> dict:
 class LocalPool:
     """Everything in this process. Fine for tests and small tables."""
 
-    def __init__(self, jev: Jev, per_worker: int = 128):
+    def __init__(self, jev: Jev, per_worker: int = 128, *, warmup: bool = True):
         self.jev, self.sem, self.on_result = jev, asyncio.Semaphore(per_worker), None
+        self.warmup = warmup
         self.capacity = per_worker
         self._tasks: set[asyncio.Task] = set()
 
     async def start(self) -> None:
+        if not self.warmup:
+            return
         try:
             await self.jev.ask("warm up", {"q": {"type": "noul", "instructions": "This is a greeting."}})
         except (JevError, JevFatal):
@@ -65,6 +68,9 @@ class LocalPool:
         return _totals(self.jev)
 
     async def close(self) -> None:
+        for task in self._tasks:
+            task.cancel()
+        await asyncio.gather(*self._tasks, return_exceptions=True)
         await self.jev.close()
 
 
