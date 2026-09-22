@@ -20,6 +20,7 @@ from jevkit_core import (
     JevError,
     JevFatal,
     Meter as _Meter,
+    backend_catalog,
     cache_path,
     config_dir,
     digest,
@@ -31,20 +32,7 @@ from jevkit_core import (
 Backend = _Backend
 
 
-BACKENDS = {
-    "typesafe": Backend(
-        "typesafe",
-        "https://api.typesafe.ai/v1/systemone",
-        "jev-latest",
-        "TYPESAFE_API_KEY",
-    ),
-    "openrouter": Backend(
-        "openrouter",
-        "https://openrouter.ai/api/alpha/decisions",
-        "~typesafe/jev-latest",
-        "OPENROUTER_API_KEY",
-    ),
-}
+BACKENDS = backend_catalog("typesafe", "openrouter")
 
 
 def resolve_backend(name: str | None = None):
@@ -116,15 +104,9 @@ class Jev(DecisionClient):
             self.meter.cached += 1
             return answers
 
-        # Identical requests already in the air share one call; logs repeat themselves a lot.
-        flight = "|".join(sorted(keys[qid] for qid in misses))
-        task = self._flights.get(flight)
-        if task is None:
-            task = asyncio.ensure_future(self._call(state, misses))
-            self._flights[flight] = task
-            task.add_done_callback(lambda _: self._flights.pop(flight, None))
-        else:
-            self.meter.cached += 1
+        task, _ = self.share_request(
+            (keys[qid] for qid in misses), lambda: self._call(state, misses)
+        )
         by_key = await (
             task
             if hedge_after is None
@@ -158,12 +140,7 @@ class Jev(DecisionClient):
         self, state, questions: dict, data: dict, seconds: float
     ) -> dict[str, dict]:
         usage = parse_usage(data.get("usage"), price_per_mtok=PRICE_PER_MTOK)
-        tokens, cost = usage.tokens, usage.cost
-        self.meter.calls += 1
-        self.meter.input_tokens += tokens
-        self.meter.cost += cost
-        self.meter.latencies.append(seconds)
-        self.meter.model = data.get("model") or self.model
+        self.meter.record(usage, seconds, model=data.get("model") or self.model)
         if not isinstance(data["answers"], dict):
             raise JevError("answers must be an object")
         out = {}
