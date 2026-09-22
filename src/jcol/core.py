@@ -14,6 +14,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import math
 import os
 import random
 import sqlite3
@@ -233,12 +234,26 @@ class Jev:
         raise JevError(f"gave up after {self.timeout:g}s ({last})")
 
     def _record(self, state, questions: dict, data: dict, seconds: float) -> dict[str, dict]:
-        usage = data.get("usage") or {}
-        tokens = usage.get("input_tokens") or 0
+        usage = data.get("usage")
+        usage = {} if usage is None else usage
+        if not isinstance(usage, dict):
+            raise JevFatal("invalid API usage metadata: expected an object; stopped to avoid unmetered calls")
+        tokens = usage.get("input_tokens")
+        tokens = 0 if tokens is None else tokens
         cost = usage.get("cost")
+        if isinstance(tokens, bool) or not isinstance(tokens, int) or tokens < 0:
+            raise JevFatal("invalid API usage metadata: input_tokens must be a nonnegative integer")
+        if cost is not None and (isinstance(cost, bool) or not isinstance(cost, (int, float))):
+            raise JevFatal("invalid API usage metadata: cost must be a finite nonnegative number")
+        try:
+            metered_cost = tokens * PRICE_PER_MTOK / 1e6 if cost is None else float(cost)
+        except OverflowError as exc:
+            raise JevFatal("invalid API usage metadata: cost exceeds numeric range") from exc
+        if not math.isfinite(metered_cost) or metered_cost < 0:
+            raise JevFatal("invalid API usage metadata: cost must be a finite nonnegative number")
         self.meter.calls += 1
         self.meter.input_tokens += tokens
-        self.meter.cost += tokens * PRICE_PER_MTOK / 1e6 if cost is None else cost
+        self.meter.cost += metered_cost
         self.meter.latencies.append(seconds)
         self.meter.model = data.get("model") or self.model
         if not isinstance(data["answers"], dict):

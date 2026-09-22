@@ -17,10 +17,13 @@ import sys
 import webbrowser
 from dataclasses import replace
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import polars as pl
 import uvicorn
 from starlette.applications import Starlette
+from starlette.datastructures import Headers
+from starlette.middleware import Middleware
 from starlette.responses import FileResponse, JSONResponse, Response
 from starlette.routing import Route, WebSocketRoute
 from starlette.websockets import WebSocket, WebSocketDisconnect
@@ -34,6 +37,34 @@ from .tables import append_columns, identity, read_table, row_texts, select_inpu
 
 STATIC = Path(__file__).parent / "static"
 PREVIEW_CHARS = 320
+
+
+class LocalRequestsOnly:
+    """Reject DNS rebinding and cross-origin browser access to the local server."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] not in ("http", "websocket"):
+            return await self.app(scope, receive, send)
+        headers = Headers(scope=scope)
+        host, origin = headers.get("host", ""), headers.get("origin")
+        try:
+            parsed = urlsplit("http://" + host)
+            local = parsed.hostname in {"localhost", "127.0.0.1", "::1"} and not parsed.username and not parsed.password
+            local = local and parsed.netloc == host and not parsed.path and not parsed.query and not parsed.fragment
+        except ValueError:
+            local = False
+        scheme = "https" if scope.get("scheme") in ("https", "wss") else "http"
+        same_origin = origin is None or origin == f"{scheme}://{host}"
+        if not local or not same_origin:
+            if scope["type"] == "websocket":
+                await send({"type": "websocket.close", "code": 1008})
+            else:
+                await Response("Local, same-origin requests only", status_code=403 if local else 400)(scope, receive, send)
+            return
+        await self.app(scope, receive, send)
 
 
 def load_table(path: Path, text: str | list[str] | None, limit: int | None):
@@ -151,7 +182,8 @@ def build(df: pl.DataFrame, text, *, source: str, budget: float, api: str | None
 
     return Starlette(routes=[Route("/", index), Route("/api/init", init), Route("/api/row/{i}", row),
                              Route("/api/export", export, methods=["POST"]),
-                             WebSocketRoute("/ws", ws)], lifespan=lifespan)
+                             WebSocketRoute("/ws", ws)], lifespan=lifespan,
+                     middleware=[Middleware(LocalRequestsOnly)])
 
 
 def cli(argv=None) -> None:

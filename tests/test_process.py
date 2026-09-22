@@ -4,8 +4,10 @@ Also usable without pytest: python tests/test_process.py /absolute/path/to/jcol
 """
 
 import json
+import http.client
 import os
 import signal
+import socket
 import subprocess
 import sys
 import tempfile
@@ -108,6 +110,52 @@ def smoke(command):
             run(*interrupted_args)
             assert first not in states
             assert json.loads(run("status", "interrupt.sqlite").stdout)["complete"]
+
+            # Verify browser origin protection through a real installed server and WebSocket client.
+            from websockets.sync.client import connect
+            from websockets.exceptions import InvalidHandshake
+
+            with socket.socket() as reservation:
+                reservation.bind(("127.0.0.1", 0))
+                port = reservation.getsockname()[1]
+            browser = subprocess.Popen([str(command), "browse", "source.csv", "--workers", "0", "--per-worker", "1",
+                                        "--budget", "0", "--no-cache", "--no-open", "--port", str(port)],
+                                       cwd=root, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            try:
+                deadline = time.monotonic() + 10
+                while True:
+                    connection = http.client.HTTPConnection("127.0.0.1", port, timeout=2)
+                    try:
+                        connection.request("GET", "/api/init")
+                        response = connection.getresponse()
+                        assert response.status == 200
+                        assert json.loads(response.read())["n"] == 3
+                        break
+                    except OSError:
+                        assert time.monotonic() < deadline and browser.poll() is None
+                        time.sleep(0.02)
+                    finally:
+                        connection.close()
+                with connect(f"ws://127.0.0.1:{port}/ws", origin=f"http://127.0.0.1:{port}") as websocket:
+                    assert json.loads(websocket.recv())["type"] == "snapshot"
+                try:
+                    with connect(f"ws://127.0.0.1:{port}/ws", origin="https://unrelated.example"):
+                        raise AssertionError("foreign browser origin accepted")
+                except InvalidHandshake:
+                    pass
+                connection = http.client.HTTPConnection("127.0.0.1", port, timeout=2)
+                try:
+                    connection.request("GET", "/api/init", headers={"Host": "unrelated.example"})
+                    assert connection.getresponse().status == 400
+                finally:
+                    connection.close()
+            finally:
+                browser.terminate()
+                try:
+                    browser.communicate(timeout=5)
+                except subprocess.TimeoutExpired:
+                    browser.kill()
+                    browser.communicate()
     finally:
         server.shutdown()
         server.server_close()

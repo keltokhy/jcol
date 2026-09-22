@@ -264,3 +264,26 @@ os._exit(0)
         assert reopened.columns()[0].values == {0: (0.9, 0.9)}
     finally:
         reopened.close()
+
+
+@pytest.mark.parametrize("usage", [[], "invalid", {"cost": "0.1"}, {"cost": -1},
+                                   {"input_tokens": "300"}, {"input_tokens": -1}, {"cost": True},
+                                   {"cost": 10 ** 400}, {"input_tokens": 10 ** 400}])
+def test_invalid_usage_stops_batch_without_hanging_or_sending_more_rows(df, monkeypatch, usage):
+    import httpx
+
+    calls = []
+
+    async def handler(request):
+        calls.append(request)
+        body = json.loads(request.content)
+        return httpx.Response(200, json={"answers": {qid: {"noul": 0.5} for qid in body["questions"]}, "usage": usage})
+
+    monkeypatch.setattr(batch, "Jev", lambda key, backend, **kw: Jev(key, backend, transport=httpx.MockTransport(handler), **kw))
+
+    async def go():
+        return await asyncio.wait_for(jcol.annotate_async(df, BOOK, cache=False, concurrency=1), timeout=2)
+
+    result = asyncio.run(go())
+    assert not result.complete and "usage metadata" in result.metadata["fatal"]
+    assert len(calls) == 1

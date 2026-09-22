@@ -1,6 +1,6 @@
 [project]
 name = "jcol"
-version = "0.3.0"
+version = "0.3.1"
 description = "Apply natural-language codebooks to tables, with resumable annotation and label evaluation."
 readme = "README.md"
 license = "MIT"
@@ -13,6 +13,10 @@ dependencies = [
     "websockets>=12",
     "polars>=1.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/keltokhy/jcol"
+Issues = "https://github.com/keltokhy/jcol/issues"
 
 [project.scripts]
 jcol = "jcol.cli:cli"

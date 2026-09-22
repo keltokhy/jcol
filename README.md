@@ -15,7 +15,7 @@ The output retains every source column and adds a value and confidence for each 
 The command checkpoints successful cells in `coded.parquet.jcol.sqlite`; rerunning the same
 command resumes missing cells. The browser also saves its committed columns across restarts.
 
-Version 0.3.0 includes a Python API and an optional browser interface. It has **not been
+Version 0.3.1 includes a Python API and an optional browser interface. It has **not been
 published to PyPI**; install from Git or a built wheel. Software tests use a local fake
 API and do not establish model accuracy. See [Validation](#validation).
 
@@ -35,7 +35,7 @@ and run `make install-local` (or `uv tool install --force .`). To build a packag
 
 ```bash
 uv build
-uv tool install --force dist/jcol-0.3.0-py3-none-any.whl
+uv tool install --force dist/jcol-0.3.1-py3-none-any.whl
 ```
 
 Set `TYPESAFE_API_KEY` or `OPENROUTER_API_KEY`, or put a key in
@@ -283,8 +283,9 @@ the displayed margins cover sampling uncertainty only. They do not measure class
   for every row and sorts locally. This is intended for thousands of rows, not out-of-core datasets.
 - Transient failures are retried; the scheduler makes up to two additional sweeps for missing cells.
   Invalid answers remain missing. Fatal authentication or credit errors stop new background work.
-- Every browser tab shares the same columns and preview. The server has no authentication and binds
-  only to localhost. Data sent to the model goes to the selected API provider.
+- Every browser tab shares the same columns and preview. The server binds only to localhost,
+  rejects nonlocal Host headers and cross-origin HTTP/WebSocket requests, and has no user
+  authentication. Other local programs can access it. Data sent to the model goes to the selected API provider.
 - Jev follows the definition provided; text in a row can influence its answer. Review coded data,
   and do not treat a judgment column as a security boundary.
 

@@ -5,6 +5,7 @@ import sys
 import polars as pl
 import pytest
 from starlette.testclient import TestClient
+from starlette.websockets import WebSocketDisconnect
 
 import jcol
 from jcol import app as jcol_app
@@ -79,7 +80,7 @@ def test_a_table_that_cannot_be_used_is_refused(table, tmp_path):
 def serve(table, **kw):
     df, text = jcol_app.load_table(table, None, None)
     options = dict(source=table.name, budget=2.0, api=None, model=None, cache=False, workers=0, per_worker=8)
-    return TestClient(jcol_app.build(df, text, **(options | kw)))
+    return TestClient(jcol_app.build(df, text, **(options | kw)), base_url="http://127.0.0.1")
 
 
 def test_the_page_and_the_table_are_served(table, api):
@@ -118,7 +119,7 @@ def test_a_column_is_previewed_committed_filled_and_removed_over_the_socket(tabl
             found += [c for c in until(ws, "cells")["cells"] if c[0] == column]
         return sorted(found)
 
-    with serve(table) as client, client.websocket_connect("/ws") as ws:
+    with serve(table) as client, client.websocket_connect("ws://127.0.0.1/ws") as ws:
         assert ws.receive_json() == {"type": "snapshot", "columns": [], "cells": [],
                                      "stats": client.get("/api/init").json()["stats"]}
         ws.send_json({"type": "preview", "header": "alleges fraud", "rows": [0, 1]})
@@ -131,7 +132,7 @@ def test_a_column_is_previewed_committed_filled_and_removed_over_the_socket(tabl
         assert (column["id"], column["name"], column["options"]) == ("c2", "product", ["mortgage", "credit card", "other"])
         assert until(ws, "done")["id"] == "c2"
 
-        with client.websocket_connect("/ws") as late:  # a page that connects later is caught up
+        with client.websocket_connect("ws://127.0.0.1/ws") as late:  # a page that connects later is caught up
             snapshot = late.receive_json()
         assert [c["id"] for c in snapshot["columns"]] == ["c2"]
         assert sorted(snapshot["cells"]) == [["c2", 0, "mortgage", 0.8], ["c2", 1, "credit card", 0.8],
@@ -186,20 +187,20 @@ def test_a_missing_file_is_reported(monkeypatch, tmp_path, no_server):
 
 def test_restart_restores_saved_columns_and_removal_is_durable(table, api, tmp_path):
     project = tmp_path / "table.jcol.sqlite"
-    with serve(table, project=project) as client, client.websocket_connect("/ws") as ws:
+    with serve(table, project=project) as client, client.websocket_connect("ws://127.0.0.1/ws") as ws:
         ws.receive_json()
         ws.send_json({"type": "commit", "header": "alleges fraud?", "rows": []})
         while ws.receive_json()["type"] != "done":
             pass
     rows = len(api.rows)
-    with serve(table, project=project) as client, client.websocket_connect("/ws") as ws:
+    with serve(table, project=project) as client, client.websocket_connect("ws://127.0.0.1/ws") as ws:
         snapshot = ws.receive_json()
         assert snapshot["columns"][0]["header"] == "alleges fraud?"
         assert len(snapshot["cells"]) == 4 and len(api.rows) == rows
         ws.send_json({"type": "remove", "id": "c1"})
         while ws.receive_json()["type"] != "removed":
             pass
-    with serve(table, project=project) as client, client.websocket_connect("/ws") as ws:
+    with serve(table, project=project) as client, client.websocket_connect("ws://127.0.0.1/ws") as ws:
         assert ws.receive_json()["columns"] == []
 
 
@@ -224,7 +225,7 @@ def test_multiple_browser_inputs_are_named_and_exports_resolve_source_name_colli
     df, inputs = jcol_app.load_table(table, ["narrative", "product"], None)
     app = jcol_app.build(df, inputs, source=table.name, budget=2, api=None, model=None,
                          cache=False, workers=0, per_worker=8)
-    with TestClient(app) as client, client.websocket_connect("/ws") as ws:
+    with TestClient(app, base_url="http://127.0.0.1") as client, client.websocket_connect("ws://127.0.0.1/ws") as ws:
         ws.receive_json()
         assert client.get("/api/init").json()["inputs"] == ["narrative", "product"]
         ws.send_json({"type": "commit", "header": "product: mortgage, credit card, other", "rows": []})
@@ -234,3 +235,25 @@ def test_multiple_browser_inputs_are_named_and_exports_resolve_source_name_colli
         assert output.select(df.columns).equals(df)
         assert "jcol_c1__product" in output.columns
         assert output["jcol_c1__product"][0] == "mortgage"
+
+
+@pytest.mark.parametrize("origin", ["https://unrelated.example", "null", "http://127.0.0.1:9999"])
+def test_other_websites_cannot_read_or_control_local_server(table, api, origin):
+    with serve(table) as client:
+        before = len(api.bodies)
+        assert client.get("/api/init", headers={"Origin": origin}).status_code == 403
+        assert client.post("/api/export", json={}, headers={"Origin": origin}).status_code == 403
+        with pytest.raises(WebSocketDisconnect) as stop:
+            with client.websocket_connect("ws://127.0.0.1/ws", headers={"Origin": origin}):
+                pytest.fail("foreign origin accepted")
+        assert stop.value.code == 1008 and len(api.bodies) == before
+
+
+def test_dns_rebinding_is_rejected_and_local_browser_still_connects(table, api):
+    with serve(table) as client:
+        assert client.get("/api/init", headers={"Host": "unrelated.example"}).status_code == 400
+        with pytest.raises(WebSocketDisconnect):
+            with client.websocket_connect("ws://127.0.0.1/ws", headers={"Host": "unrelated.example", "Origin": "http://unrelated.example"}):
+                pytest.fail("foreign host accepted")
+        with client.websocket_connect("ws://127.0.0.1/ws", headers={"Origin": "http://127.0.0.1"}) as ws:
+            assert ws.receive_json()["type"] == "snapshot"
