@@ -35,7 +35,7 @@ and run `make install-local` (or `uv tool install --force .`). To build a packag
 
 ```bash
 uv build
-uv tool install --force dist/jcol-0.4.0-py3-none-any.whl
+uv tool install --force dist/jcol-0.5.0-py3-none-any.whl
 ```
 
 Set `TYPESAFE_API_KEY` or `OPENROUTER_API_KEY`, or put a key in
@@ -324,7 +324,7 @@ unaffected by this source migration.
 
 From the core checkout, `python scripts/dev.py setup`, `check`, and `wheel-check`
 set up and validate all five consumers in separate environments.
-CI checks out core tag `v0.2.0`. Prompts, question construction, and budget policies
+CI checks out core tag `v0.3.0`. Prompts, question construction, and budget policies
 remain in this repository; answer identity, the answer store, transport, and metering
 are the runtime's. Runtime 0.2 keys and stores answers differently from 0.1, so a cache
 written by an earlier version is re-asked once after upgrading.

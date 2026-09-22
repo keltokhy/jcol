@@ -1,6 +1,6 @@
 """Apply natural-language codebooks to tables, with resumable annotation and evaluation."""
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 from .batch import AnnotationResult, annotate, annotate_async
 from .codebook import Codebook
