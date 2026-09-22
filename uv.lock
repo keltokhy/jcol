@@ -151,7 +151,7 @@ wheels = [
 ]
 
 [[package]]
-name = "jcol"
+name = "jev-col"
 version = "0.5.0"
 source = { editable = "." }
 dependencies = [

@@ -35,7 +35,7 @@ and run `make install-local` (or `uv tool install --force .`). To build a packag
 
 ```bash
 uv build
-uv tool install --force dist/jcol-0.5.0-py3-none-any.whl
+uv tool install --force dist/jev_col-0.5.0-py3-none-any.whl
 ```
 
 Set `TYPESAFE_API_KEY` or `OPENROUTER_API_KEY`, or put a key in
