@@ -156,6 +156,7 @@ version = "0.3.1"
 source = { editable = "." }
 dependencies = [
     { name = "httpx", extra = ["http2"] },
+    { name = "jevkit-core", extra = ["http2"] },
     { name = "polars" },
     { name = "starlette" },
     { name = "uvicorn" },
@@ -171,6 +172,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "httpx", extras = ["http2"], specifier = ">=0.27" },
+    { name = "jevkit-core", extras = ["http2"], editable = "../jevkit-core" },
     { name = "polars", specifier = ">=1.0" },
     { name = "starlette", specifier = ">=0.37" },
     { name = "uvicorn", specifier = ">=0.30" },
@@ -179,6 +181,32 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=8" }]
+
+[[package]]
+name = "jevkit-core"
+version = "0.1.0"
+source = { editable = "../jevkit-core" }
+dependencies = [
+    { name = "httpx" },
+]
+
+[package.optional-dependencies]
+http2 = [
+    { name = "httpx", extra = ["http2"] },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "httpx", extras = ["http2"], marker = "extra == 'http2'", specifier = ">=0.27" },
+]
+provides-extras = ["http2"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = ">=8" },
+    { name = "ruff", specifier = ">=0.11" },
+]
 
 [[package]]
 name = "packaging"

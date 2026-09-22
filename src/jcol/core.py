@@ -1,168 +1,111 @@
-"""Client for TypeSafe's Jev decision model: two backends, an answer cache and a cost meter.
+"""jcol compatibility adapter for the shared JevKit implementation.
 
-Jev can be reached through TypeSafe's own API or through OpenRouter. Both take one state and any
-number of questions per call and return one typed answer per question. Answers are cached per
-(endpoint, model, state, question), so packing questions into a call and rerunning a command are both cheap.
-
-This began as the client shared by jgrep and jlink. jcol adds two things an interactive table needs:
-HTTP/2, so a screenful of parallel calls shares one connection, and hedged calls, which re-send a slow
-request and take whichever answer lands first.
+Prompts, cache identity, answer reuse, and budget policy retain their existing contracts.
+Transport, configuration, storage, validation, and usage parsing come from jevkit_core.
 """
 
 from __future__ import annotations
 
 import asyncio
-import hashlib
-import json
-import math
-import os
-import random
-import sqlite3
-import time
-from dataclasses import dataclass, field
-from pathlib import Path
+from dataclasses import dataclass
 
-import httpx
-
-RETRYABLE = {408, 429, 500, 502, 503, 504, 529}
-FATAL = {401, 402, 403}
-# TypeSafe's API reports tokens but not cost; OpenRouter reports both.
-PRICE_PER_MTOK = float(os.environ.get("JEV_PRICE_PER_MTOK", 0.042))
-
-
-class JevError(Exception):
-    """One request failed; the rest of the run can continue."""
-
-
-class JevFatal(Exception):
-    """Nothing will work until the user fixes something, such as a bad key or no credits."""
+from jevkit_core import (
+    FATAL,
+    RETRYABLE,
+    PRICE_PER_MTOK,
+    AnswerCache,
+    Backend as _Backend,
+    DecisionClient,
+    JevBudgetExceeded,
+    JevError,
+    JevFatal,
+    Meter as _Meter,
+    cache_path,
+    config_dir,
+    digest,
+    parse_usage,
+    resolve_backend as _resolve_backend,
+)
 
 
-@dataclass(frozen=True)
-class Backend:
-    name: str
-    url: str
-    model: str
-    key_env: str
-
-    @property
-    def key_file(self) -> Path:
-        return config_dir() / f"{self.name}.key"
-
-    def key(self) -> str | None:
-        if os.environ.get(self.key_env):
-            return os.environ[self.key_env].strip()
-        return self.key_file.read_text().strip() if self.key_file.exists() else None
+Backend = _Backend
 
 
-# Order matters: with keys for both, TypeSafe's own API is used.
 BACKENDS = {
-    "typesafe": Backend("typesafe", "https://api.typesafe.ai/v1/systemone", "jev-latest", "TYPESAFE_API_KEY"),
-    "openrouter": Backend("openrouter", "https://openrouter.ai/api/alpha/decisions", "~typesafe/jev-latest",
-                          "OPENROUTER_API_KEY"),
+    "typesafe": Backend(
+        "typesafe",
+        "https://api.typesafe.ai/v1/systemone",
+        "jev-latest",
+        "TYPESAFE_API_KEY",
+    ),
+    "openrouter": Backend(
+        "openrouter",
+        "https://openrouter.ai/api/alpha/decisions",
+        "~typesafe/jev-latest",
+        "OPENROUTER_API_KEY",
+    ),
 }
 
 
-def config_dir() -> Path:
-    return Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "jev"
+def resolve_backend(name: str | None = None):
+    return _resolve_backend(BACKENDS, name)
 
 
-def cache_path() -> Path:
-    return Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache") / "jev" / "answers.sqlite"
+class Cache(AnswerCache):
+    """Keep the existing cache identity while sharing its storage implementation."""
 
-
-def resolve_backend(name: str | None = None) -> tuple[Backend, str]:
-    """The API to use and its key. A name (or JEV_API) wins; otherwise the first backend with a key."""
-    name = name or os.environ.get("JEV_API")
-    if name:
-        if name not in BACKENDS:
-            raise JevFatal(f"unknown API {name!r}; choose from {', '.join(BACKENDS)}")
-        backend = BACKENDS[name]
-        if not (key := backend.key()):
-            raise JevFatal(f"no key for {name}. Set {backend.key_env} or put the key in {backend.key_file}")
-        return backend, key
-    for backend in BACKENDS.values():
-        if key := backend.key():
-            return backend, key
-    options = " or ".join(b.key_env for b in BACKENDS.values())
-    raise JevFatal(f"no API key. Set {options}, or put a key in {config_dir()}/<api>.key")
-
-
-class Cache:
-    """Answers on disk, keyed on the exact endpoint, model, state and question."""
-
-    def __init__(self, path: Path | None = None):
-        path = path or cache_path()
-        path.parent.mkdir(parents=True, exist_ok=True)
-        self.db = sqlite3.connect(path, timeout=30, isolation_level=None, check_same_thread=False)
-        # WAL lets two tools in one pipeline share the file.
-        self.db.execute("PRAGMA journal_mode=WAL")
-        self.db.execute("PRAGMA synchronous=NORMAL")
-        self.db.execute("CREATE TABLE IF NOT EXISTS answers "
-                        "(key TEXT PRIMARY KEY, answer TEXT NOT NULL, at REAL NOT NULL) WITHOUT ROWID")
+    metadata = False
 
     @staticmethod
     def key(model: str, state, question: dict, *, endpoint: str | None = None) -> str:
-        blob = json.dumps([endpoint, model, state, question], sort_keys=True, ensure_ascii=False)
-        return hashlib.sha256(blob.encode()).hexdigest()
-
-    def get(self, key: str) -> dict | None:
-        row = self.db.execute("SELECT answer FROM answers WHERE key = ?", (key,)).fetchone()
-        return json.loads(row[0]) if row else None
-
-    def put(self, key: str, answer: dict) -> None:
-        self.db.execute("INSERT OR REPLACE INTO answers VALUES (?, ?, ?)", (key, json.dumps(answer), time.time()))
+        return digest([endpoint, model, state, question])
 
 
 @dataclass
-class Meter:
-    calls: int = 0
-    cached: int = 0
-    retries: int = 0
+class Meter(_Meter):
     hedges: int = 0
-    input_tokens: int = 0
-    cost: float = 0.0
-    model: str = ""  # the model the API says answered, which resolves aliases like jev-latest
-    latencies: list[float] = field(default_factory=list)
-
-    def summary(self) -> str:
-        parts = [f"{self.calls:,} calls, {self.cached:,} cached"]
-        if self.retries:
-            parts.append(f"{self.retries:,} retries")
-        if self.calls:
-            parts.append(f"{self.input_tokens:,} tokens")
-            parts.append(f"${self.cost:.4f}")
-        return "; ".join(parts)
 
 
-class Jev:
-    def __init__(self, key: str, backend: Backend | str = "openrouter", *, model: str | None = None,
-                 timeout: float = 15.0, attempts: int = 4, concurrency: int = 32, cache: Cache | None = None,
-                 transport=None):
-        self.backend = BACKENDS[backend] if isinstance(backend, str) else backend
-        self.model = model or os.environ.get("JEV_MODEL") or self.backend.model
-        self.url = os.environ.get("JEV_URL") or self.backend.url
-        self.timeout, self.attempts, self.cache = timeout, attempts, cache
-        self.meter = Meter()
-        self._flights: dict[str, asyncio.Task] = {}
-        # Measured on 2026-09-18: over HTTP/1.1 throughput fell from 178 to 56 rows a second as calls in flight
-        # rose from 64 to 512, because every call opened its own TLS connection. Over HTTP/2 it held near 290.
-        self.http = httpx.AsyncClient(
-            headers={"Authorization": f"Bearer {key}", "X-Title": "jev tools"}, http2=transport is None,
-            limits=httpx.Limits(max_connections=16, max_keepalive_connections=16, keepalive_expiry=120),
+class Jev(DecisionClient):
+    def __init__(
+        self,
+        key: str,
+        backend: Backend | str = "openrouter",
+        *,
+        model: str | None = None,
+        timeout: float = 15.0,
+        attempts: int = 4,
+        concurrency: int = 32,
+        cache: Cache | None = None,
+        transport=None,
+    ):
+        backend = BACKENDS[backend] if isinstance(backend, str) else backend
+        meter = Meter()
+        super().__init__(
+            key,
+            backend,
+            model=model,
+            timeout=timeout,
+            attempts=attempts,
+            concurrency=concurrency,
+            cache=cache,
             transport=transport,
+            meter=meter,
+            http2=True,
         )
 
-    async def close(self) -> None:
-        await self.http.aclose()
-
-    async def ask(self, state, questions: dict[str, dict], *, hedge_after: float | None = None) -> dict[str, dict]:
+    async def ask(
+        self, state, questions: dict[str, dict], *, hedge_after: float | None = None
+    ) -> dict[str, dict]:
         """Answer every question about one state. Only questions missing from the cache are sent.
 
         With `hedge_after`, a call still unanswered after that many seconds is sent a second time and the
         first answer wins. It trims the slow tail of a screenful at the price of a few duplicate calls.
         """
-        keys = {qid: Cache.key(self.model, state, q, endpoint=self.url) for qid, q in questions.items()}
+        keys = {
+            qid: Cache.key(self.model, state, q, endpoint=self.url)
+            for qid, q in questions.items()
+        }
         answers = {}
         if self.cache:
             for qid, k in keys.items():
@@ -182,10 +125,16 @@ class Jev:
             task.add_done_callback(lambda _: self._flights.pop(flight, None))
         else:
             self.meter.cached += 1
-        by_key = await (task if hedge_after is None else self._hedged(task, state, misses, hedge_after))
+        by_key = await (
+            task
+            if hedge_after is None
+            else self._hedged(task, state, misses, hedge_after)
+        )
         return answers | {qid: by_key[keys[qid]] for qid in misses}
 
-    async def _hedged(self, first: asyncio.Task, state, questions: dict[str, dict], after: float) -> dict[str, dict]:
+    async def _hedged(
+        self, first: asyncio.Task, state, questions: dict[str, dict], after: float
+    ) -> dict[str, dict]:
         done, _ = await asyncio.wait({first}, timeout=after)
         if done:
             return first.result()
@@ -194,7 +143,9 @@ class Jev:
         pending = {first, second}
         error: Exception | None = None
         while pending:
-            done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+            done, pending = await asyncio.wait(
+                pending, return_when=asyncio.FIRST_COMPLETED
+            )
             for t in done:
                 if t.exception() is None:
                     if second in pending:
@@ -203,57 +154,14 @@ class Jev:
                 error = t.exception()
         raise error
 
-    async def _call(self, state, questions: dict[str, dict]) -> dict[str, dict]:
-        """One request, retried inside a total time budget. Returns answers by cache key."""
-        body = {"model": self.model, "state": state, "questions": questions}
-        deadline = time.monotonic() + self.timeout
-        last = "no attempt made"
-        for attempt in range(self.attempts):
-            remaining = deadline - time.monotonic()
-            if remaining <= 0:
-                break
-            t0 = time.perf_counter()
-            try:
-                r = await self.http.post(self.url, json=body, timeout=remaining)
-            except httpx.TransportError as e:
-                last = type(e).__name__
-            else:
-                data = _json(r)
-                if r.status_code == 200 and "answers" in data:
-                    return self._record(state, questions, data, time.perf_counter() - t0)
-                detail = _detail(data) or r.text[:200]
-                if r.status_code in FATAL:
-                    raise JevFatal(f"{self.backend.name} said {r.status_code}: {detail}")
-                if r.status_code != 200 and r.status_code not in RETRYABLE:
-                    raise JevError(f"HTTP {r.status_code}: {detail}")
-                last = f"HTTP {r.status_code}"
-            if attempt + 1 < self.attempts:
-                self.meter.retries += 1
-                pause = 0.2 * 2 ** attempt + random.random() * 0.1
-                await asyncio.sleep(max(0.0, min(pause, deadline - time.monotonic())))
-        raise JevError(f"gave up after {self.timeout:g}s ({last})")
-
-    def _record(self, state, questions: dict, data: dict, seconds: float) -> dict[str, dict]:
-        usage = data.get("usage")
-        usage = {} if usage is None else usage
-        if not isinstance(usage, dict):
-            raise JevFatal("invalid API usage metadata: expected an object; stopped to avoid unmetered calls")
-        tokens = usage.get("input_tokens")
-        tokens = 0 if tokens is None else tokens
-        cost = usage.get("cost")
-        if isinstance(tokens, bool) or not isinstance(tokens, int) or tokens < 0:
-            raise JevFatal("invalid API usage metadata: input_tokens must be a nonnegative integer")
-        if cost is not None and (isinstance(cost, bool) or not isinstance(cost, (int, float))):
-            raise JevFatal("invalid API usage metadata: cost must be a finite nonnegative number")
-        try:
-            metered_cost = tokens * PRICE_PER_MTOK / 1e6 if cost is None else float(cost)
-        except OverflowError as exc:
-            raise JevFatal("invalid API usage metadata: cost exceeds numeric range") from exc
-        if not math.isfinite(metered_cost) or metered_cost < 0:
-            raise JevFatal("invalid API usage metadata: cost must be a finite nonnegative number")
+    def _record(
+        self, state, questions: dict, data: dict, seconds: float
+    ) -> dict[str, dict]:
+        usage = parse_usage(data.get("usage"), price_per_mtok=PRICE_PER_MTOK)
+        tokens, cost = usage.tokens, usage.cost
         self.meter.calls += 1
         self.meter.input_tokens += tokens
-        self.meter.cost += metered_cost
+        self.meter.cost += cost
         self.meter.latencies.append(seconds)
         self.meter.model = data.get("model") or self.model
         if not isinstance(data["answers"], dict):
@@ -269,20 +177,19 @@ class Jev:
         return out
 
 
-def _json(r: httpx.Response) -> dict:
-    try:
-        data = r.json()
-    except ValueError:
-        return {}
-    return data if isinstance(data, dict) else {}
-
-
-def _detail(data: dict) -> str:
-    """The human-readable part of an error body. OpenRouter nests it under `error`, TypeSafe under `detail`,
-    and `detail` may itself be a string, an object or a list of validation problems."""
-    found = data.get("error", data.get("detail"))
-    if isinstance(found, list):
-        found = "; ".join(_detail({"detail": item}) for item in found)
-    elif isinstance(found, dict):
-        found = found.get("message") or found.get("msg") or json.dumps(found)
-    return " ".join(str(found or "").split())[:200]
+__all__ = [
+    "BACKENDS",
+    "Backend",
+    "Cache",
+    "Meter",
+    "Jev",
+    "JevError",
+    "JevFatal",
+    "JevBudgetExceeded",
+    "PRICE_PER_MTOK",
+    "RETRYABLE",
+    "FATAL",
+    "cache_path",
+    "config_dir",
+    "resolve_backend",
+]
