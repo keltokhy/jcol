@@ -13,9 +13,8 @@ import asyncio
 import multiprocessing as mp
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from typing import Callable
 
-from .core import BACKENDS, Jev, JevError, JevFatal
+from .core import Backend, Jev, JevError, JevFatal
 
 HEDGE_AFTER = 0.35  # seconds; measured: trims a screenful's worst case from about 1.4 s to 0.7 s
 Job = tuple  # (job_id, state, questions, hot)
@@ -74,9 +73,9 @@ class LocalPool:
         await self.jev.close()
 
 
-def _worker(wid: int, backend_name: str, key: str, model: str | None, per_worker: int, hot_q, bg_q, out_q) -> None:
+def _worker(wid: int, backend: Backend, per_worker: int, hot_q, bg_q, out_q) -> None:
     async def main() -> None:
-        jev = Jev(key, BACKENDS[backend_name], model=model, timeout=12)
+        jev = Jev(backend, timeout=12)
         try:
             await jev.ask("warm up", {"q": {"type": "noul", "instructions": "This is a greeting."}})
         except (JevError, JevFatal):
@@ -119,13 +118,13 @@ def _worker(wid: int, backend_name: str, key: str, model: str | None, per_worker
 
 
 class ProcessPool:
-    def __init__(self, backend_name: str, key: str, model: str | None, workers: int = 16, per_worker: int = 64):
+    def __init__(self, backend: Backend, workers: int = 16, per_worker: int = 64):
         self.ctx = mp.get_context("spawn")
         self.hot_q, self.bg_q, self.out_q = self.ctx.Queue(), self.ctx.Queue(), self.ctx.Queue()
         self.workers, self.capacity, self.on_result = workers, workers * per_worker, None
         self._totals: dict[int, dict] = {}
         self._procs = [self.ctx.Process(target=_worker, daemon=True,
-                                        args=(w, backend_name, key, model, per_worker, self.hot_q, self.bg_q, self.out_q))
+                                        args=(w, backend, per_worker, self.hot_q, self.bg_q, self.out_q))
                        for w in range(workers)]
 
     async def start(self) -> None:

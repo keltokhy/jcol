@@ -17,7 +17,7 @@ import polars as pl
 from . import __version__
 from .batch import annotate, prepare, validate_settings
 from .codebook import Codebook
-from .core import BACKENDS, JevError, JevFatal
+from .core import PROVIDERS, JevError, JevFatal, Settings
 from .evaluation import evaluate
 from .project import read_project
 from .tables import FORMATS, append_columns, atomic_path, identity, read_table, table_format, write_table
@@ -50,7 +50,7 @@ def _output(parser, *, required=False):
 
 
 def _backend(parser):
-    parser.add_argument("--api", choices=tuple(BACKENDS), help="provider (or JEV_API; otherwise first configured key)")
+    parser.add_argument("--api", choices=tuple(PROVIDERS), help="provider (or JEV_API; otherwise first configured key)")
     parser.add_argument("--model", help="model ID (or JEV_MODEL; otherwise provider default)")
 
 
@@ -169,13 +169,14 @@ def _paths(inputs=(), outputs=(), project=None):
 
 
 def _redact(message):
-    if endpoint := os.environ.get("JEV_URL"):
+    settings = Settings.from_env()
+    if endpoint := settings.url:
         message = message.replace(endpoint, _endpoint(endpoint))
-    for backend in BACKENDS.values():
+    for provider in PROVIDERS.values():
         try:
-            key = backend.key()
+            key, _ = provider.credential(settings)
         except OSError:
-            key = None
+            key = ""
         if key:
             for form in sorted({key, repr(key)[1:-1], json.dumps(key)[1:-1]}, key=len, reverse=True):
                 message = message.replace(form, "[redacted]")
@@ -229,25 +230,25 @@ def _endpoint(url):
 
 
 def _doctor(a):
+    settings = Settings.from_env()
     configured = []
-    for backend in BACKENDS.values():
-        available = bool(backend.key())
-        configured.append({"api": backend.name, "available": available,
-                           "source": ("env" if os.environ.get(backend.key_env) else "config") if available else "missing",
-                           "environment_variable": backend.key_env})
-    requested = a.api or os.environ.get("JEV_API")
-    if requested and requested not in BACKENDS:
+    for provider in PROVIDERS.values():
+        key, source = provider.credential(settings)
+        configured.append({"api": provider.name, "available": bool(key), "source": source if key else "missing",
+                           "environment_variable": provider.key_env})
+    requested = a.api or settings.api
+    if requested and requested not in PROVIDERS:
         raise ValueError(f"unknown API {requested!r}")
     selected = requested or next((item["api"] for item in configured if item["available"]), "typesafe")
-    backend = BACKENDS[selected]
+    provider = PROVIDERS[selected]
     ready = next(item["available"] for item in configured if item["api"] == selected)
-    endpoint = os.environ.get("JEV_URL") or backend.url
+    endpoint = provider.endpoint(settings)
     result = {"version": __version__, "ready": ready, "api": selected,
-              "model": a.model or os.environ.get("JEV_MODEL") or backend.model,
+              "model": a.model or settings.model or provider.model,
               "endpoint": _endpoint(endpoint), "credentials": configured,
               "offline_commands": ["init", "inspect", "validate", "status", "export", "evaluate", "run --dry-run"],
               "reachability": {"checked": False},
-              "next_step": None if ready else f"Set {backend.key_env} or put a key in {backend.key_file}"}
+              "next_step": None if ready else f"Set {provider.key_env} or put a key in {provider.key_file(settings)}"}
     if a.check:
         try:
             response = httpx.head(endpoint, timeout=10, follow_redirects=False)
@@ -286,8 +287,8 @@ def _run(a):
                     concurrency=a.concurrency, resume=False)
         if a.project and a.project.exists():
             context, columns, counts = read_project(a.project)
-            backend = BACKENDS[config["api"]]
-            expected = identity(df, book.inputs, model=config["model"], endpoint=os.environ.get("JEV_URL") or backend.url,
+            expected = identity(df, book.inputs, model=config["model"],
+                                endpoint=PROVIDERS[config["api"]].endpoint(Settings.from_env()),
                                 max_chars=a.max_chars, codebook=book.to_dict())
             if context != expected:
                 raise ValueError("project does not match this table or inference settings; use a new project path")

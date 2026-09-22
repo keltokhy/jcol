@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import math
-import os
 import warnings
 from dataclasses import dataclass
 from collections.abc import Callable
@@ -57,18 +56,17 @@ async def annotate_async(table: pl.DataFrame | str | Path, codebook: Codebook | 
     df, book, inputs, texts, truncated = prepare(table, codebook, max_chars=max_chars)
     if truncated:
         warnings.warn(f"{truncated} rows will be truncated to {max_chars} characters", stacklevel=2)
-    backend, key = resolve_backend(api)
-    model = model or os.environ.get("JEV_MODEL") or backend.model
-    endpoint = os.environ.get("JEV_URL") or backend.url
+    backend = resolve_backend(api, model=model)
+    model, endpoint = backend.model, backend.url
     context = identity(df, inputs, model=model, endpoint=endpoint, max_chars=max_chars, codebook=book.to_dict())
     store = Project(project, context) if project is not None else None
     answer_cache = None
     engine = None
     try:
         answer_cache = Cache() if cache else None
-        pool = LocalPool(Jev(key, backend, model=model, timeout=12), concurrency, warmup=False)
-        engine = Engine(texts, pool, model=model, cache=answer_cache, budget=budget, max_chars=max_chars,
-                        endpoint=endpoint, project=store)
+        pool = LocalPool(Jev(backend, timeout=12), concurrency, warmup=False)
+        engine = Engine(texts, pool, backend=backend, cache=answer_cache, budget=budget, max_chars=max_chars,
+                        project=store)
         existing = {c.spec.name for c in engine.columns.values()}
         for variable in book.variables:
             if variable.spec.name not in existing:

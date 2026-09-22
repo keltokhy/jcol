@@ -5,11 +5,13 @@ import random
 
 import pytest
 
-from jcol.core import Cache, Jev
+from jcol.core import PROVIDERS, Backend, Cache, Jev
 from jcol.engine import Engine
 from jcol.pool import LocalPool, ProcessPool
 
 from fakes import FakeAPI, FakePool
+
+BACKEND = Backend("openrouter", PROVIDERS["openrouter"].url, "jev-test", key="test-key")
 
 TEXTS = ["this is fraud about my mortgage!!", "a late fee on my credit card", "fraud again, a credit card!",
          "nothing much", "a late fee on my credit card", "my mortgage servicer lost a payment!"]
@@ -26,7 +28,7 @@ async def until(queue: asyncio.Queue, kind: str) -> dict:
 
 
 async def started(texts, pool, **kw) -> tuple[Engine, asyncio.Queue]:
-    engine = Engine(texts, pool, model="jev-test", **kw)
+    engine = Engine(texts, pool, backend=BACKEND, **kw)
     queue: asyncio.Queue = asyncio.Queue()
     engine.listeners.add(queue)
     await engine.start()
@@ -34,11 +36,11 @@ async def started(texts, pool, **kw) -> tuple[Engine, asyncio.Queue]:
 
 
 def test_the_background_order_is_a_fixed_shuffle():
-    a, b = Engine(["x"] * 50, FakePool(), model="m"), Engine(["x"] * 50, FakePool(), model="m")
+    a, b = Engine(["x"] * 50, FakePool(), backend=BACKEND), Engine(["x"] * 50, FakePool(), backend=BACKEND)
     expected = list(range(50))
     random.Random(70).shuffle(expected)
     assert a.order == b.order == expected
-    assert Engine(["x"] * 50, FakePool(), model="m", seed=1).order != expected
+    assert Engine(["x"] * 50, FakePool(), backend=BACKEND, seed=1).order != expected
 
 
 def test_a_committed_column_fills_every_row_and_identical_texts_are_asked_once():
@@ -239,7 +241,7 @@ def test_the_in_process_pool_over_a_fake_api(tmp_path):
     api, cache = FakeAPI(), Cache(tmp_path / "answers.sqlite")
 
     async def go():
-        pool = LocalPool(Jev("test-key", model="jev-test", transport=api.transport), per_worker=4)
+        pool = LocalPool(Jev(BACKEND, transport=api.transport), per_worker=4)
         engine, queue = await started(TEXTS, pool, cache=cache)
         try:
             engine.visible = [0, 1]
@@ -263,7 +265,7 @@ def test_the_in_process_pool_over_a_fake_api(tmp_path):
 
 
 def test_worker_totals_add_up_without_starting_a_process():
-    pool = ProcessPool("openrouter", "test-key", None, workers=2, per_worker=8)
+    pool = ProcessPool(BACKEND, workers=2, per_worker=8)
     assert pool.capacity == 16 and not any(p.is_alive() for p in pool._procs)
     pool._totals = {0: {"calls": 3, "hedges": 1, "retries": 0, "tokens": 900, "cost": 0.01, "model": "typesafe/jev-test"},
                     1: {"calls": 2, "hedges": 0, "retries": 1, "tokens": 600, "cost": 0.02, "model": ""}}

@@ -31,7 +31,7 @@ def source(tmp_path):
 @pytest.fixture
 def api(monkeypatch):
     api = FakeAPI()
-    monkeypatch.setattr(batch, "Jev", lambda key, backend, **kw: Jev(key, backend, transport=api.transport, **kw))
+    monkeypatch.setattr(batch, "Jev", lambda backend, **kw: Jev(backend, transport=api.transport, **kw))
     return api
 
 

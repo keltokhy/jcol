@@ -16,7 +16,7 @@ import random
 import time
 from dataclasses import dataclass, field
 
-from .core import Cache
+from .core import Backend, Cache, answer_key
 from .spec import Spec, parse
 
 FLUSH_EVERY = 0.04  # seconds between batches sent to the browser
@@ -38,10 +38,10 @@ class Column:
 
 
 class Engine:
-    def __init__(self, texts: list[str], pool, *, model: str, cache: Cache | None = None, budget: float = 2.0,
-                 max_chars: int | None = 4000, seed: int = 70, project=None, endpoint: str | None = None):
-        self.texts, self.pool, self.model, self.cache = texts, pool, model, cache
-        self.project, self.endpoint = project, endpoint
+    def __init__(self, texts: list[str], pool, *, backend: Backend, cache: Cache | None = None, budget: float = 2.0,
+                 max_chars: int | None = 4000, seed: int = 70, project=None):
+        self.texts, self.pool, self.backend, self.cache = texts, pool, backend, cache
+        self.model, self.endpoint, self.project = backend.model, backend.url, project
         self.budget, self.max_chars, self.n = budget, max_chars, len(texts)
         self.order = list(range(self.n))
         random.Random(seed).shuffle(self.order)
@@ -217,7 +217,7 @@ class Engine:
         state = self.texts[row][:self.max_chars]
         send: list[tuple[Column, str]] = []
         for c in cols:
-            key = Cache.key(self.model, state, c.spec.question, endpoint=self.endpoint)
+            key = answer_key(self.backend, state, c.spec.question)
             if self.cache and (hit := self.cache.get(key)) is not None:
                 if self._fill(c, row, hit):
                     self.cached += 1

@@ -35,7 +35,7 @@ def df():
 @pytest.fixture
 def api(monkeypatch):
     fake = FakeAPI()
-    monkeypatch.setattr(batch, "Jev", lambda key, backend, **kw: Jev(key, backend, transport=fake.transport, **kw))
+    monkeypatch.setattr(batch, "Jev", lambda backend, **kw: Jev(backend, transport=fake.transport, **kw))
     return fake
 
 
@@ -234,7 +234,7 @@ def test_malformed_answers_finish_with_missing_cells_instead_of_hanging(df, monk
         body = json.loads(request.content)
         return httpx.Response(200, json={"answers": {k: {"noul": 2} for k in body["questions"]}})
 
-    monkeypatch.setattr(batch, "Jev", lambda key, backend, **kw: Jev(key, backend, transport=httpx.MockTransport(malformed), **kw))
+    monkeypatch.setattr(batch, "Jev", lambda backend, **kw: Jev(backend, transport=httpx.MockTransport(malformed), **kw))
 
     async def go():
         return await asyncio.wait_for(jcol.annotate_async(df, BOOK, cache=False), timeout=5)
@@ -279,7 +279,7 @@ def test_invalid_usage_stops_batch_without_hanging_or_sending_more_rows(df, monk
         body = json.loads(request.content)
         return httpx.Response(200, json={"answers": {qid: {"noul": 0.5} for qid in body["questions"]}, "usage": usage})
 
-    monkeypatch.setattr(batch, "Jev", lambda key, backend, **kw: Jev(key, backend, transport=httpx.MockTransport(handler), **kw))
+    monkeypatch.setattr(batch, "Jev", lambda backend, **kw: Jev(backend, transport=httpx.MockTransport(handler), **kw))
 
     async def go():
         return await asyncio.wait_for(jcol.annotate_async(df, BOOK, cache=False, concurrency=1), timeout=2)
