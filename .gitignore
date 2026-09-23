@@ -26,3 +26,5 @@ spike/
 *.sqlite.lock
 *.sqlite.lock-journal
 *.log
+bench/
+benchmarks/results/**/*.parquet

@@ -1,0 +1,2102 @@
+[
+  {
+    "row_index": 0,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 4.3787060034293135e-05,
+        "credit card": 8.787669132445983e-05,
+        "credit reporting": 0.9997941445574378,
+        "debt collection": 4.2427655125996175e-05,
+        "money transfer": 9.189695047247268e-06,
+        "mortgage": 3.718342098860286e-06,
+        "personal loan": 4.716413928223892e-06,
+        "student loan": 6.8598417778673314e-06,
+        "vehicle loan": 4.010904957198884e-06,
+        "other": 3.2688382681484297e-06
+      },
+      "confidence": 0.999011211120533
+    }
+  },
+  {
+    "row_index": 1,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 7.1771541135115465e-06,
+        "credit card": 2.2399632971972352e-05,
+        "credit reporting": 0.9999358425920223,
+        "debt collection": 8.588192223020494e-06,
+        "money transfer": 8.588192223020494e-06,
+        "mortgage": 4.5505965484714914e-06,
+        "personal loan": 6.5572161259786835e-06,
+        "student loan": 4.937226098086672e-07,
+        "vehicle loan": 8.139915613146322e-07,
+        "other": 4.9887096005408164e-06
+      },
+      "confidence": 0.9996512304766091
+    }
+  },
+  {
+    "row_index": 2,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 4.949117922167938e-05,
+        "credit card": 0.0007181864138443661,
+        "credit reporting": 8.469169697874713e-06,
+        "debt collection": 0.0009730162779790464,
+        "money transfer": 7.082359534235055e-05,
+        "mortgage": 0.9979332262403678,
+        "personal loan": 0.00013217589471129277,
+        "student loan": 1.1129661266224942e-05,
+        "vehicle loan": 8.779220430192432e-06,
+        "other": 9.470234713923198e-05
+      },
+      "confidence": 0.992371716916095
+    }
+  },
+  {
+    "row_index": 3,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 8.22175670756765e-06,
+        "credit card": 8.58343030819063e-05,
+        "credit reporting": 0.9997981953561337,
+        "debt collection": 4.000629658980016e-05,
+        "money transfer": 1.268511281090108e-05,
+        "mortgage": 2.8753246402961005e-06,
+        "personal loan": 8.551001696573058e-06,
+        "student loan": 1.3344585896611439e-06,
+        "vehicle loan": 6.124293690659657e-06,
+        "other": 3.617209605889299e-05
+      },
+      "confidence": 0.9990237715950308
+    }
+  },
+  {
+    "row_index": 4,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 1.572913998654134e-05,
+        "credit card": 3.832845665936466e-05,
+        "credit reporting": 3.005884889972255e-06,
+        "debt collection": 0.9997954726014093,
+        "money transfer": 3.60766470949268e-05,
+        "mortgage": 3.694870006289189e-06,
+        "personal loan": 4.768825772456619e-06,
+        "student loan": 3.244208508124886e-06,
+        "vehicle loan": 1.2736756417755057e-05,
+        "other": 8.694260925534266e-05
+      },
+      "confidence": 0.9990108202578071
+    }
+  },
+  {
+    "row_index": 5,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.1310390955145758e-05,
+        "credit card": 0.00022025706161588174,
+        "credit reporting": 0.9995186190496089,
+        "debt collection": 4.853847866810149e-05,
+        "money transfer": 1.1153099990465804e-05,
+        "mortgage": 6.742137141636114e-06,
+        "personal loan": 9.808793798835452e-06,
+        "student loan": 3.155935000960763e-06,
+        "vehicle loan": 0.00014511924922530985,
+        "other": 2.529580399482517e-05
+      },
+      "confidence": 0.9978902761728435
+    }
+  },
+  {
+    "row_index": 6,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 9.048031600396707e-05,
+        "credit card": 0.0017806589326875423,
+        "credit reporting": 0.011392286346426802,
+        "debt collection": 4.5265829000182304e-05,
+        "money transfer": 4.852973277583137e-05,
+        "mortgage": 0.9864553576727638,
+        "personal loan": 6.015629365498875e-05,
+        "student loan": 6.242304971622632e-06,
+        "vehicle loan": 1.7028772601656246e-05,
+        "other": 0.00010399379911359288
+      },
+      "confidence": 0.965568571995215
+    }
+  },
+  {
+    "row_index": 7,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0006425482186039081,
+        "credit card": 0.006674266729884274,
+        "credit reporting": 0.9843424323337684,
+        "debt collection": 0.007343307372482333,
+        "money transfer": 0.00042053323559318706,
+        "mortgage": 0.00014211366731451823,
+        "personal loan": 7.514915881630735e-05,
+        "student loan": 3.0319489485510988e-05,
+        "vehicle loan": 9.12599613630884e-05,
+        "other": 0.00023806983268843073
+      },
+      "confidence": 0.9573657799288149
+    }
+  },
+  {
+    "row_index": 8,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 3.329012880186035e-06,
+        "credit card": 1.8521636675642475e-05,
+        "credit reporting": 4.6979277212278867e-07,
+        "debt collection": 2.3893680300885922e-06,
+        "money transfer": 2.277920981158931e-06,
+        "mortgage": 0.9999630075125717,
+        "personal loan": 4.015031425090154e-06,
+        "student loan": 1.338428661392099e-06,
+        "vehicle loan": 6.362645774727036e-07,
+        "other": 4.015031425090154e-06
+      },
+      "confidence": 0.9997936543576391
+    }
+  },
+  {
+    "row_index": 9,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 2.5906281628654678e-05,
+        "credit card": 8.651073394280017e-05,
+        "credit reporting": 0.9998187515812776,
+        "debt collection": 2.020604175155582e-05,
+        "money transfer": 1.0899125088117102e-05,
+        "mortgage": 4.900836050498265e-06,
+        "personal loan": 6.294914759947256e-06,
+        "student loan": 1.5496742838295152e-06,
+        "vehicle loan": 4.098771650037821e-06,
+        "other": 2.088203956690279e-05
+      },
+      "confidence": 0.9991144580830953
+    }
+  },
+  {
+    "row_index": 10,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 3.9963067995705085e-05,
+        "credit card": 0.00034495575114221254,
+        "credit reporting": 0.9991890292153118,
+        "debt collection": 7.512729356599797e-05,
+        "money transfer": 1.8858049536354278e-05,
+        "mortgage": 1.9428873469659924e-05,
+        "personal loan": 1.1412048809169375e-05,
+        "student loan": 3.890556872229396e-06,
+        "vehicle loan": 0.00020730552941190634,
+        "other": 9.002961388486303e-05
+      },
+      "confidence": 0.9965821123249929
+    }
+  },
+  {
+    "row_index": 11,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 7.973630521813834e-06,
+        "credit card": 2.0625921880230065e-05,
+        "credit reporting": 0.9998485238267433,
+        "debt collection": 9.908583921753754e-05,
+        "money transfer": 4.209850982433195e-06,
+        "mortgage": 4.442982880257598e-07,
+        "personal loan": 2.823183206308473e-06,
+        "student loan": 8.465567809893786e-07,
+        "vehicle loan": 5.967814905929021e-06,
+        "other": 9.499077473404587e-06
+      },
+      "confidence": 0.9992750394228527
+    }
+  },
+  {
+    "row_index": 12,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 8.700631082523688e-06,
+        "credit card": 7.920432385437543e-05,
+        "credit reporting": 0.9998472952206073,
+        "debt collection": 3.215728144062556e-05,
+        "money transfer": 8.700631082523688e-06,
+        "mortgage": 3.463457225208265e-06,
+        "personal loan": 7.259589802035798e-06,
+        "student loan": 8.501646640927768e-07,
+        "vehicle loan": 9.86775561354216e-07,
+        "other": 1.1381924680037931e-05
+      },
+      "confidence": 0.9992527406072715
+    }
+  },
+  {
+    "row_index": 13,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 3.456704485777438e-05,
+        "credit card": 0.000348702847126698,
+        "credit reporting": 4.902380792458467e-05,
+        "debt collection": 0.999355444133372,
+        "money transfer": 9.672883421100625e-05,
+        "mortgage": 2.8956697937501804e-05,
+        "personal loan": 2.4218396650461172e-05,
+        "student loan": 3.3734836207784168e-06,
+        "vehicle loan": 1.4034603386586267e-05,
+        "other": 4.4950150912649905e-05
+      },
+      "confidence": 0.9972355288426017
+    }
+  },
+  {
+    "row_index": 14,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.00012185993413565869,
+        "credit card": 0.04836957319684831,
+        "credit reporting": 0.9507345147902241,
+        "debt collection": 0.00039683743870575953,
+        "money transfer": 0.00012071954501172937,
+        "mortgage": 5.580202639473915e-05,
+        "personal loan": 4.702399044752557e-05,
+        "student loan": 1.79205458809628e-05,
+        "vehicle loan": 1.44633143674787e-05,
+        "other": 0.00012128521798380236
+      },
+      "confidence": 0.9121428348253832
+    }
+  },
+  {
+    "row_index": 15,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.00015419482463364302,
+        "credit card": 0.9994970853150656,
+        "credit reporting": 1.4821920764377352e-05,
+        "debt collection": 1.4821920764377352e-05,
+        "money transfer": 0.00014212030669188334,
+        "mortgage": 2.926817890228399e-06,
+        "personal loan": 1.3514921953390896e-05,
+        "student loan": 2.926817890228399e-06,
+        "vehicle loan": 3.3923297125205194e-06,
+        "other": 0.00015419482463364302
+      },
+      "confidence": 0.9977993906749908
+    }
+  },
+  {
+    "row_index": 16,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0003511175804810684,
+        "credit card": 0.0904051143078969,
+        "credit reporting": 0.002002958078679394,
+        "debt collection": 0.9054152694254016,
+        "money transfer": 0.0008857079010102444,
+        "mortgage": 0.00013701905122055026,
+        "personal loan": 0.00010393804850174104,
+        "student loan": 1.4037755130332788e-05,
+        "vehicle loan": 5.515037049060991e-05,
+        "other": 0.0006296874811875854
+      },
+      "confidence": 0.8539805912869467
+    }
+  },
+  {
+    "row_index": 17,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "vehicle loan",
+      "probabilities": {
+        "bank account": 0.0034425455066607333,
+        "credit card": 0.012460662564072307,
+        "credit reporting": 0.003868123175488779,
+        "debt collection": 0.0047291190368875646,
+        "money transfer": 0.002315800268455123,
+        "mortgage": 0.000671057840286555,
+        "personal loan": 0.0009404056307672345,
+        "student loan": 8.446730929295234e-05,
+        "vehicle loan": 0.9598124396226373,
+        "other": 0.01167537904545144
+      },
+      "confidence": 0.8963759800301403
+    }
+  },
+  {
+    "row_index": 18,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0003585842708451393,
+        "credit card": 0.008573245952729933,
+        "credit reporting": 0.9542347987100513,
+        "debt collection": 0.03565304332632289,
+        "money transfer": 0.0004196796677873203,
+        "mortgage": 0.0001562991124379812,
+        "personal loan": 9.444837188455967e-05,
+        "student loan": 2.02339772991996e-05,
+        "vehicle loan": 4.706166374539238e-05,
+        "other": 0.0004426049468962656
+      },
+      "confidence": 0.9058336180071906
+    }
+  },
+  {
+    "row_index": 19,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 2.8798565173387495e-05,
+        "credit card": 0.0001380614529653554,
+        "credit reporting": 0.9996811148702412,
+        "debt collection": 6.0957186395404393e-05,
+        "money transfer": 2.1883491831209616e-05,
+        "mortgage": 1.1378011141848949e-05,
+        "personal loan": 8.734908228641245e-06,
+        "student loan": 3.924284448913354e-06,
+        "vehicle loan": 8.467608184549748e-06,
+        "other": 3.6679621389452946e-05
+      },
+      "confidence": 0.998511653327855
+    }
+  },
+  {
+    "row_index": 20,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 1.615552455022869e-06,
+        "credit card": 2.5897670612604896e-05,
+        "credit reporting": 7.587385470609776e-08,
+        "debt collection": 1.8714428545499965e-06,
+        "money transfer": 1.5379893768428411e-06,
+        "mortgage": 0.9999370266062844,
+        "personal loan": 3.036223738229278e-06,
+        "student loan": 4.59190985076323e-07,
+        "vehicle loan": 2.460313552002433e-07,
+        "other": 2.823341848337805e-05
+      },
+      "confidence": 0.9996745795788892
+    }
+  },
+  {
+    "row_index": 21,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "student loan",
+      "probabilities": {
+        "bank account": 0.0011608941171321395,
+        "credit card": 0.004462112650608166,
+        "credit reporting": 0.18544027120617515,
+        "debt collection": 0.0013425919535292891,
+        "money transfer": 0.0008468214873531541,
+        "mortgage": 0.000965188713769141,
+        "personal loan": 0.0007362773962555145,
+        "student loan": 0.7993251891433546,
+        "vehicle loan": 0.002312234869868906,
+        "other": 0.0034084184619539706
+      },
+      "confidence": 0.7464646985294257
+    }
+  },
+  {
+    "row_index": 22,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 7.493658234323982e-06,
+        "credit card": 3.341989540357474e-05,
+        "credit reporting": 0.999892367114423,
+        "debt collection": 1.2869878919786711e-05,
+        "money transfer": 8.208632932124424e-06,
+        "mortgage": 5.68767305932519e-06,
+        "personal loan": 4.301698991106495e-06,
+        "student loan": 1.1157763166282874e-06,
+        "vehicle loan": 1.1157763166282874e-06,
+        "other": 3.341989540357474e-05
+      },
+      "confidence": 0.9994447903956317
+    }
+  },
+  {
+    "row_index": 23,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.7531051124708025e-05,
+        "credit card": 0.00016729371124920788,
+        "credit reporting": 0.9996960570054602,
+        "debt collection": 4.95303703736469e-05,
+        "money transfer": 1.4662374513629433e-05,
+        "mortgage": 8.496871777862359e-06,
+        "personal loan": 4.015801266023106e-06,
+        "student loan": 1.5198846681047946e-06,
+        "vehicle loan": 2.4823613046152203e-06,
+        "other": 3.841056826199031e-05
+      },
+      "confidence": 0.998611624294789
+    }
+  },
+  {
+    "row_index": 24,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 2.701049000801746e-05,
+        "credit card": 4.4966873961984125e-05,
+        "credit reporting": 0.9998206787364873,
+        "debt collection": 2.4775914886981043e-05,
+        "money transfer": 1.5992444990772206e-05,
+        "mortgage": 1.0220542951103674e-05,
+        "personal loan": 1.0220542951103674e-05,
+        "student loan": 1.039932411041679e-06,
+        "vehicle loan": 7.0928831051539155e-06,
+        "other": 3.800163824651665e-05
+      },
+      "confidence": 0.9990997071722396
+    }
+  },
+  {
+    "row_index": 25,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.00010216771849505089,
+        "credit card": 0.001255808706551647,
+        "credit reporting": 0.9977653052942789,
+        "debt collection": 0.0005456545788111748,
+        "money transfer": 6.855630392620615e-05,
+        "mortgage": 3.378207108975839e-05,
+        "personal loan": 1.9468576876018794e-05,
+        "student loan": 9.173280655011477e-06,
+        "vehicle loan": 2.693311703092499e-05,
+        "other": 0.0001731503522853205
+      },
+      "confidence": 0.9918503069210631
+    }
+  },
+  {
+    "row_index": 26,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0005153636239424753,
+        "credit card": 0.005402765382796043,
+        "credit reporting": 0.03432278474068111,
+        "debt collection": 0.9560522981673072,
+        "money transfer": 0.0015729336478467265,
+        "mortgage": 0.0006003439405427481,
+        "personal loan": 0.00019161728460523407,
+        "student loan": 3.7444250303891386e-05,
+        "vehicle loan": 0.00027542666671268924,
+        "other": 0.001029022295261872
+      },
+      "confidence": 0.9058555938791008
+    }
+  },
+  {
+    "row_index": 27,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 1.2699408451092669e-05,
+        "credit card": 0.00018713966170123814,
+        "credit reporting": 1.4625726107815414e-06,
+        "debt collection": 2.3097080171156852e-05,
+        "money transfer": 2.785614850291647e-05,
+        "mortgage": 0.9996554149916006,
+        "personal loan": 4.0340413520695886e-05,
+        "student loan": 7.1720591109402816e-06,
+        "vehicle loan": 6.454884479732587e-06,
+        "other": 3.836277985084016e-05
+      },
+      "confidence": 0.9984309836198126
+    }
+  },
+  {
+    "row_index": 28,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "money transfer",
+      "probabilities": {
+        "bank account": 1.4690263319311114e-05,
+        "credit card": 3.09794898783197e-05,
+        "credit reporting": 1.5358854642324544e-06,
+        "debt collection": 1.304634142493854e-05,
+        "money transfer": 0.9997796581939214,
+        "mortgage": 1.3243368497961027e-05,
+        "personal loan": 1.6945411048836204e-06,
+        "student loan": 2.7571420434121548e-06,
+        "vehicle loan": 6.994040456274389e-06,
+        "other": 0.00013540073388921254
+      },
+      "confidence": 0.9989714351397978
+    }
+  },
+  {
+    "row_index": 29,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 4.217818240192405e-06,
+        "credit card": 2.5991260173198926e-05,
+        "credit reporting": 0.9999394449440004,
+        "debt collection": 1.674346035707166e-05,
+        "money transfer": 2.4887454207789667e-06,
+        "mortgage": 1.023944063747227e-06,
+        "personal loan": 1.6024612642792411e-06,
+        "student loan": 7.190021590460678e-07,
+        "vehicle loan": 1.023944063747227e-06,
+        "other": 6.744420257512423e-06
+      },
+      "confidence": 0.999677095232769
+    }
+  },
+  {
+    "row_index": 30,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "student loan",
+      "probabilities": {
+        "bank account": 1.6815953344910835e-05,
+        "credit card": 3.4556611945735905e-05,
+        "credit reporting": 3.419242328398936e-06,
+        "debt collection": 2.7247082336217432e-05,
+        "money transfer": 2.3129447979292173e-05,
+        "mortgage": 6.689884869922014e-05,
+        "personal loan": 4.972814982325602e-05,
+        "student loan": 0.9997515693191878,
+        "vehicle loan": 6.0993408942544e-06,
+        "other": 2.0536003460782423e-05
+      },
+      "confidence": 0.9987860324903307
+    }
+  },
+  {
+    "row_index": 31,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "bank account",
+      "probabilities": {
+        "bank account": 0.9990239078608352,
+        "credit card": 0.0007538866020138227,
+        "credit reporting": 1.6384000597261343e-05,
+        "debt collection": 6.649878530514848e-05,
+        "money transfer": 1.8725414548232148e-05,
+        "mortgage": 1.1896537846947028e-05,
+        "personal loan": 9.585744374313901e-06,
+        "student loan": 3.577780076035224e-06,
+        "vehicle loan": 2.2250480393036777e-05,
+        "other": 7.328679401004676e-05
+      },
+      "confidence": 0.9962446887230137
+    }
+  },
+  {
+    "row_index": 32,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 8.570165185565378e-05,
+        "credit card": 0.9996190595299805,
+        "credit reporting": 1.3077422392060707e-05,
+        "debt collection": 6.355042598189032e-05,
+        "money transfer": 5.649329454490897e-05,
+        "mortgage": 2.252164465401499e-05,
+        "personal loan": 1.4175851651754255e-05,
+        "student loan": 1.4583305380975367e-05,
+        "vehicle loan": 2.0782858328470052e-05,
+        "other": 9.00540152298221e-05
+      },
+      "confidence": 0.9982099313418709
+    }
+  },
+  {
+    "row_index": 33,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 1.2899065210836303e-05,
+        "credit card": 5.713805898365269e-05,
+        "credit reporting": 0.00011989044499598312,
+        "debt collection": 0.9997143193813453,
+        "money transfer": 1.545955222944274e-05,
+        "mortgage": 1.2899065210836303e-05,
+        "personal loan": 4.210941073030345e-06,
+        "student loan": 4.4508754189566354e-07,
+        "vehicle loan": 5.600344425403511e-06,
+        "other": 5.713805898365269e-05
+      },
+      "confidence": 0.9986655633163579
+    }
+  },
+  {
+    "row_index": 34,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.9075027760180577e-05,
+        "credit card": 5.770446808927459e-05,
+        "credit reporting": 0.9997842469461952,
+        "debt collection": 8.002247786315088e-05,
+        "money transfer": 1.1186414716660957e-05,
+        "mortgage": 1.1186414716660957e-05,
+        "personal loan": 2.7685888934226914e-06,
+        "student loan": 1.471317864140973e-06,
+        "vehicle loan": 2.904604084298631e-06,
+        "other": 2.9433739817090267e-05
+      },
+      "confidence": 0.9989596577912666
+    }
+  },
+  {
+    "row_index": 35,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 4.05302087288888e-06,
+        "credit card": 2.477901126429093e-05,
+        "credit reporting": 0.9999456316222926,
+        "debt collection": 1.1188220422163171e-05,
+        "money transfer": 1.545768076206062e-06,
+        "mortgage": 2.902446226346882e-07,
+        "personal loan": 1.4007746991654887e-06,
+        "student loan": 3.057777734591574e-07,
+        "vehicle loan": 2.283484269755924e-06,
+        "other": 8.522075706726447e-06
+      },
+      "confidence": 0.9997078527736228
+    }
+  },
+  {
+    "row_index": 36,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 6.61837837618451e-05,
+        "credit card": 0.0012149175669852717,
+        "credit reporting": 0.9972594893124209,
+        "debt collection": 0.00024166301840598348,
+        "money transfer": 0.00010886561496543408,
+        "mortgage": 5.588710979525678e-05,
+        "personal loan": 0.0003825533623233479,
+        "student loan": 1.6360261707963635e-05,
+        "vehicle loan": 0.00041241695122798595,
+        "other": 0.00024166301840598348
+      },
+      "confidence": 0.9897941055480556
+    }
+  },
+  {
+    "row_index": 37,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0014742664242710524,
+        "credit card": 0.03592806304113556,
+        "credit reporting": 0.9542948283311342,
+        "debt collection": 0.003929626130888875,
+        "money transfer": 0.0017799002719107464,
+        "mortgage": 0.000325937343666911,
+        "personal loan": 0.00024460079025573074,
+        "student loan": 2.754786149659994e-05,
+        "vehicle loan": 0.00010586593471409225,
+        "other": 0.001889363870526221
+      },
+      "confidence": 0.9024767458941056
+    }
+  },
+  {
+    "row_index": 38,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "money transfer",
+      "probabilities": {
+        "bank account": 0.00010075242489113932,
+        "credit card": 0.00019390327187380338,
+        "credit reporting": 2.2315887241558715e-06,
+        "debt collection": 5.680554250462414e-05,
+        "money transfer": 0.999467834528751,
+        "mortgage": 1.674086173112297e-05,
+        "personal loan": 2.8657083305225735e-06,
+        "student loan": 1.5316446389064317e-05,
+        "vehicle loan": 9.734580770223874e-06,
+        "other": 0.000133815046034328
+      },
+      "confidence": 0.9976559213337756
+    }
+  },
+  {
+    "row_index": 39,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "money transfer",
+      "probabilities": {
+        "bank account": 0.11222248291280232,
+        "credit card": 0.04053808589207743,
+        "credit reporting": 0.000139301073213891,
+        "debt collection": 0.00012193393958505544,
+        "money transfer": 0.8367958547497671,
+        "mortgage": 5.3715890976296556e-05,
+        "personal loan": 0.0017318310922177335,
+        "student loan": 2.292770252081765e-06,
+        "vehicle loan": 6.706128298433837e-05,
+        "other": 0.00832744039612373
+      },
+      "confidence": 0.7485755627658042
+    }
+  },
+  {
+    "row_index": 40,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "student loan",
+      "probabilities": {
+        "bank account": 4.856384875819525e-06,
+        "credit card": 1.630024779739906e-05,
+        "credit reporting": 9.97754414080079e-07,
+        "debt collection": 5.103216706870445e-06,
+        "money transfer": 5.362092909169031e-06,
+        "mortgage": 1.3483591579218163e-05,
+        "personal loan": 1.3483591579218163e-05,
+        "student loan": 0.9999092962412421,
+        "vehicle loan": 5.103216706870445e-06,
+        "other": 2.6013662189278075e-05
+      },
+      "confidence": 0.9995178957535829
+    }
+  },
+  {
+    "row_index": 41,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "bank account",
+      "probabilities": {
+        "bank account": 0.9142339570205188,
+        "credit card": 0.08353984295063939,
+        "credit reporting": 0.00010027243850789955,
+        "debt collection": 0.00041225544311719207,
+        "money transfer": 0.000273274224269455,
+        "mortgage": 0.0001013240967101172,
+        "personal loan": 0.0001184661903078444,
+        "student loan": 5.212278009159471e-06,
+        "vehicle loan": 3.301431973160766e-05,
+        "other": 0.0011823810381885347
+      },
+      "confidence": 0.8670558341106487
+    }
+  },
+  {
+    "row_index": 42,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 4.788078235679515e-05,
+        "credit card": 0.00020035923654416162,
+        "credit reporting": 0.9996690438506666,
+        "debt collection": 3.089359865909221e-05,
+        "money transfer": 1.082756218405705e-05,
+        "mortgage": 4.152473996715312e-06,
+        "personal loan": 9.549281732265382e-06,
+        "student loan": 1.5074868855293483e-06,
+        "vehicle loan": 3.1343441846582924e-06,
+        "other": 2.2651382790178692e-05
+      },
+      "confidence": 0.9985138636072037
+    }
+  },
+  {
+    "row_index": 43,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 5.616306718430703e-05,
+        "credit card": 0.0003016093318088174,
+        "credit reporting": 2.9539263987132328e-05,
+        "debt collection": 0.9992000928545863,
+        "money transfer": 0.00018599336926808773,
+        "mortgage": 0.00011099541443009445,
+        "personal loan": 3.3533504176893186e-05,
+        "student loan": 4.816803732133575e-06,
+        "vehicle loan": 9.190673040567213e-06,
+        "other": 6.80657177856401e-05
+      },
+      "confidence": 0.9965800013060419
+    }
+  },
+  {
+    "row_index": 44,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 2.401832834834208e-06,
+        "credit card": 2.558819757823274e-05,
+        "credit reporting": 0.9999343703404356,
+        "debt collection": 7.707011123844434e-06,
+        "money transfer": 1.0177898045445828e-06,
+        "mortgage": 7.469951633769095e-07,
+        "personal loan": 1.529586304418837e-06,
+        "student loan": 2.2162231171836154e-07,
+        "vehicle loan": 8.284268650280503e-07,
+        "other": 2.558819757823274e-05
+      },
+      "confidence": 0.9996575107531761
+    }
+  },
+  {
+    "row_index": 45,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "money transfer",
+      "probabilities": {
+        "bank account": 0.0003689603224106284,
+        "credit card": 0.0009335859112955517,
+        "credit reporting": 1.2471148729341488e-05,
+        "debt collection": 0.00028198869790126824,
+        "money transfer": 0.9979148453900868,
+        "mortgage": 7.321481372773055e-05,
+        "personal loan": 1.4874170365569273e-05,
+        "student loan": 1.8950553193322195e-05,
+        "vehicle loan": 0.00014950577203033953,
+        "other": 0.0002316032202594039
+      },
+      "confidence": 0.9920600319395937
+    }
+  },
+  {
+    "row_index": 46,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.00011408154353494818,
+        "credit card": 0.0010569454605046868,
+        "credit reporting": 0.9984648079731033,
+        "debt collection": 0.00017150805577613058,
+        "money transfer": 3.16158590524308e-05,
+        "mortgage": 1.684539645464007e-05,
+        "personal loan": 2.211550508574811e-05,
+        "student loan": 3.902107369468026e-06,
+        "vehicle loan": 4.096555583682419e-06,
+        "other": 0.00011408154353494818
+      },
+      "confidence": 0.9942741076220919
+    }
+  },
+  {
+    "row_index": 47,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 0.0003945132071320506,
+        "credit card": 0.0023818583647980916,
+        "credit reporting": 2.7441942607448947e-05,
+        "debt collection": 0.00021446254891798703,
+        "money transfer": 0.0003088386076468136,
+        "mortgage": 0.9956896275515585,
+        "personal loan": 0.00022606703668424558,
+        "student loan": 6.45301763341825e-05,
+        "vehicle loan": 9.531950545118494e-05,
+        "other": 0.0005973410588693925
+      },
+      "confidence": 0.9851417423254917
+    }
+  },
+  {
+    "row_index": 48,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 3.880277539787048e-06,
+        "credit card": 7.662421575093158e-05,
+        "credit reporting": 0.999890720716341,
+        "debt collection": 1.4012315795463609e-05,
+        "money transfer": 3.880277539787048e-06,
+        "mortgage": 1.2148218489963747e-06,
+        "personal loan": 1.800055301555076e-06,
+        "student loan": 4.4282537755190826e-07,
+        "vehicle loan": 6.330676943808421e-07,
+        "other": 6.791426810521756e-06
+      },
+      "confidence": 0.9994678207788285
+    }
+  },
+  {
+    "row_index": 49,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0004992890283899432,
+        "credit card": 0.005180007602909249,
+        "credit reporting": 0.990974507984236,
+        "debt collection": 0.0008458861143656375,
+        "money transfer": 0.00014739781280544856,
+        "mortgage": 4.612238900679679e-05,
+        "personal loan": 0.00015553412859883783,
+        "student loan": 1.6031535306349414e-05,
+        "vehicle loan": 0.000572228209548022,
+        "other": 0.0015629951948336412
+      },
+      "confidence": 0.9723354535288771
+    }
+  },
+  {
+    "row_index": 50,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.4394747765553045e-05,
+        "credit card": 4.972493405122919e-05,
+        "credit reporting": 0.9998189701985181,
+        "debt collection": 2.0676688744582942e-05,
+        "money transfer": 1.1982177435870348e-05,
+        "mortgage": 8.263236726847885e-06,
+        "personal loan": 4.248206626213588e-06,
+        "student loan": 2.143321477762986e-06,
+        "vehicle loan": 5.399410318721141e-06,
+        "other": 6.41970783351347e-05
+      },
+      "confidence": 0.9991073135983103
+    }
+  },
+  {
+    "row_index": 51,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 5.6031797920376696e-05,
+        "credit card": 0.00047282069185580213,
+        "credit reporting": 0.9992184984374017,
+        "debt collection": 8.842202047446198e-05,
+        "money transfer": 3.6953760038833204e-05,
+        "mortgage": 8.167526858609433e-06,
+        "personal loan": 2.227972521867936e-05,
+        "student loan": 3.82349557991196e-06,
+        "vehicle loan": 1.627156476486235e-05,
+        "other": 7.673097988668838e-05
+      },
+      "confidence": 0.9967684460443682
+    }
+  },
+  {
+    "row_index": 52,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 9.375650667328935e-06,
+        "credit card": 4.124963848655872e-05,
+        "credit reporting": 0.9998845135493261,
+        "debt collection": 4.484417737402483e-05,
+        "money transfer": 5.932794519793866e-06,
+        "mortgage": 1.6423776163927578e-06,
+        "personal loan": 6.506542219554131e-06,
+        "student loan": 1.0538979945177467e-06,
+        "vehicle loan": 1.163862892181337e-06,
+        "other": 3.7175089035925912e-06
+      },
+      "confidence": 0.9994192013257249
+    }
+  },
+  {
+    "row_index": 53,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 3.414194558732291e-05,
+        "credit card": 0.00016408304580262025,
+        "credit reporting": 1.9721620443757463e-05,
+        "debt collection": 0.9993765886762795,
+        "money transfer": 9.968515087431726e-05,
+        "mortgage": 1.0711402085108435e-05,
+        "personal loan": 1.933194840264963e-05,
+        "student loan": 4.445712038031091e-06,
+        "vehicle loan": 2.117664058319894e-05,
+        "other": 0.0002501138579035475
+      },
+      "confidence": 0.9972961109177054
+    }
+  },
+  {
+    "row_index": 54,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.00035044554019623373,
+        "credit card": 0.003012279923393741,
+        "credit reporting": 0.9960090205843821,
+        "debt collection": 0.0002967201208177658,
+        "money transfer": 9.239795444218303e-05,
+        "mortgage": 6.293300000160699e-05,
+        "personal loan": 3.20050572197693e-05,
+        "student loan": 9.136062652800645e-06,
+        "vehicle loan": 1.4679095102774456e-05,
+        "other": 0.00012038266179091275
+      },
+      "confidence": 0.9870484531259931
+    }
+  },
+  {
+    "row_index": 55,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.8715155535666589e-06,
+        "credit card": 9.75699183725121e-06,
+        "credit reporting": 0.9999758706663003,
+        "debt collection": 8.128128598664702e-06,
+        "money transfer": 1.3935179546782326e-06,
+        "mortgage": 4.834395224461322e-07,
+        "personal loan": 6.56907988705588e-07,
+        "student loan": 1.9927337698194584e-07,
+        "vehicle loan": 2.4604091265883607e-07,
+        "other": 1.3935179546782326e-06
+      },
+      "confidence": 0.9998621432944058
+    }
+  },
+  {
+    "row_index": 56,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0003656127844292898,
+        "credit card": 0.005636694621812727,
+        "credit reporting": 0.006888214400607393,
+        "debt collection": 0.983152534778434,
+        "money transfer": 0.0007724562998131441,
+        "mortgage": 0.00018455944942612825,
+        "personal loan": 0.0009644984933118115,
+        "student loan": 4.621362104216759e-05,
+        "vehicle loan": 0.00014096423394608485,
+        "other": 0.0018482513171773174
+      },
+      "confidence": 0.9521236111202901
+    }
+  },
+  {
+    "row_index": 57,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "bank account",
+      "probabilities": {
+        "bank account": 0.629070432539003,
+        "credit card": 0.002696559628275404,
+        "credit reporting": 1.985829307047792e-05,
+        "debt collection": 7.213574101933803e-05,
+        "money transfer": 6.949239783684114e-05,
+        "mortgage": 3.030319372168805e-05,
+        "personal loan": 2.783627528762855e-05,
+        "student loan": 2.5101981034547073e-06,
+        "vehicle loan": 0.0006642949037290976,
+        "other": 0.3673465768299531
+      },
+      "confidence": 0.7036020653787778
+    }
+  },
+  {
+    "row_index": 58,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.8715078042024082e-05,
+        "credit card": 0.00015037004262105535,
+        "credit reporting": 0.9997477092560341,
+        "debt collection": 2.5252344658770306e-05,
+        "money transfer": 1.5915300752532568e-05,
+        "mortgage": 1.0180030313473771e-05,
+        "personal loan": 1.4090474561075172e-05,
+        "student loan": 2.706645734611016e-06,
+        "vehicle loan": 3.1690265857550154e-06,
+        "other": 1.1891800696659454e-05
+      },
+      "confidence": 0.9988244208784228
+    }
+  },
+  {
+    "row_index": 59,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "bank account",
+      "probabilities": {
+        "bank account": 0.9998469545709537,
+        "credit card": 0.0001137484404902696,
+        "credit reporting": 3.1383217237637127e-06,
+        "debt collection": 7.638083084242711e-06,
+        "money transfer": 1.6655302617369364e-05,
+        "mortgage": 4.4635641539210696e-07,
+        "personal loan": 7.013112378486576e-07,
+        "student loan": 8.242402639256785e-07,
+        "vehicle loan": 6.21105779500585e-06,
+        "other": 3.682315418439953e-06
+      },
+      "confidence": 0.9992844521573271
+    }
+  },
+  {
+    "row_index": 60,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.18818079849094468,
+        "credit card": 0.7780271584574758,
+        "credit reporting": 0.00022181980452036195,
+        "debt collection": 0.000730853908928031,
+        "money transfer": 0.0005987386314880637,
+        "mortgage": 0.0008251717608875693,
+        "personal loan": 0.004116269551070124,
+        "student loan": 2.2719810686591937e-05,
+        "vehicle loan": 0.0001169792250497777,
+        "other": 0.027159490358948955
+      },
+      "confidence": 0.7181846910824073
+    }
+  },
+  {
+    "row_index": 61,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.1062131824869956e-05,
+        "credit card": 3.674616765555552e-05,
+        "credit reporting": 0.9999167405648989,
+        "debt collection": 9.25934337324733e-06,
+        "money transfer": 5.378567919917495e-06,
+        "mortgage": 3.7150379322796182e-06,
+        "personal loan": 5.378567919917495e-06,
+        "student loan": 7.193314985004322e-07,
+        "vehicle loan": 8.776034785219436e-07,
+        "other": 1.012268349833041e-05
+      },
+      "confidence": 0.9995622992349548
+    }
+  },
+  {
+    "row_index": 62,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0019614552549631088,
+        "credit card": 0.02126020602197054,
+        "credit reporting": 0.9424583702508808,
+        "debt collection": 0.0013306841158306397,
+        "money transfer": 0.000531998951533071,
+        "mortgage": 0.00998095919391697,
+        "personal loan": 0.00819274430849199,
+        "student loan": 0.0006311971083548169,
+        "vehicle loan": 0.0015436869575799178,
+        "other": 0.012108697836478102
+      },
+      "confidence": 0.8626718418335713
+    }
+  },
+  {
+    "row_index": 63,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 2.4287282149742443e-05,
+        "credit card": 7.831379444147964e-05,
+        "credit reporting": 0.9997722527497215,
+        "debt collection": 5.030535391030055e-05,
+        "money transfer": 3.1104527976391074e-05,
+        "mortgage": 4.067259953159173e-06,
+        "personal loan": 8.316762190658435e-06,
+        "student loan": 5.148961008624116e-06,
+        "vehicle loan": 4.276803246533139e-06,
+        "other": 2.192650540156193e-05
+      },
+      "confidence": 0.9988945088095926
+    }
+  },
+  {
+    "row_index": 64,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.584420554386852e-05,
+        "credit card": 0.00014752077568170582,
+        "credit reporting": 0.999638749842581,
+        "debt collection": 5.841376536188121e-05,
+        "money transfer": 6.830021143850645e-05,
+        "mortgage": 1.0997711464990374e-05,
+        "personal loan": 3.218420643833228e-06,
+        "student loan": 2.0902017708743326e-06,
+        "vehicle loan": 8.361554863285913e-06,
+        "other": 4.650331065004058e-05
+      },
+      "confidence": 0.9983420908468894
+    }
+  },
+  {
+    "row_index": 65,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 7.873821833283402e-06,
+        "credit card": 8.590578138177226e-05,
+        "credit reporting": 0.999812580922574,
+        "debt collection": 3.4878100775781004e-05,
+        "money transfer": 1.6091573700009356e-05,
+        "mortgage": 1.9163345394131267e-05,
+        "personal loan": 6.559340982489907e-06,
+        "student loan": 1.2411945159203631e-06,
+        "vehicle loan": 9.691447403602849e-07,
+        "other": 1.4736774102298747e-05
+      },
+      "confidence": 0.9990877718551032
+    }
+  },
+  {
+    "row_index": 66,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0017238293374318711,
+        "credit card": 0.01085249513894155,
+        "credit reporting": 0.0002915506446542813,
+        "debt collection": 0.8569702472763674,
+        "money transfer": 0.0018224683156229955,
+        "mortgage": 0.0013217155480674027,
+        "personal loan": 0.052941695701019545,
+        "student loan": 5.277514033011721e-05,
+        "vehicle loan": 0.0013244483516069402,
+        "other": 0.07269877454595794
+      },
+      "confidence": 0.7522749507287432
+    }
+  },
+  {
+    "row_index": 67,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.00012180220165917848,
+        "credit card": 0.0018661207628928196,
+        "credit reporting": 0.9943261135402095,
+        "debt collection": 0.00031543063278600047,
+        "money transfer": 0.0001303712646875861,
+        "mortgage": 0.0030240182188988433,
+        "personal loan": 7.110683515185217e-05,
+        "student loan": 3.214788235103042e-05,
+        "vehicle loan": 4.9578096011941465e-05,
+        "other": 6.331056535117338e-05
+      },
+      "confidence": 0.9818251309419538
+    }
+  },
+  {
+    "row_index": 68,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.020634113774724787,
+        "credit card": 0.3051028089576616,
+        "credit reporting": 0.24351867598892774,
+        "debt collection": 0.2923060499494183,
+        "money transfer": 0.001885688713669821,
+        "mortgage": 0.013882969647451886,
+        "personal loan": 0.10453563497779295,
+        "student loan": 0.00020539942542600857,
+        "vehicle loan": 0.0005143502992123007,
+        "other": 0.017414308265714586
+      },
+      "confidence": 0.3358667163074974
+    }
+  },
+  {
+    "row_index": 69,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 5.692130896186012e-05,
+        "credit card": 0.0010229297693796213,
+        "credit reporting": 0.9982765802926126,
+        "debt collection": 0.00042817181160313634,
+        "money transfer": 4.220978512449206e-05,
+        "mortgage": 2.7037106239616587e-05,
+        "personal loan": 3.891648883020631e-05,
+        "student loan": 4.923608112518946e-06,
+        "vehicle loan": 9.180488226449468e-06,
+        "other": 9.312934090954232e-05
+      },
+      "confidence": 0.9935820481916116
+    }
+  },
+  {
+    "row_index": 70,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 3.827683533582818e-05,
+        "credit card": 0.0004554012136335649,
+        "credit reporting": 0.9991779301216148,
+        "debt collection": 0.00010833299814610308,
+        "money transfer": 5.441421974183017e-05,
+        "mortgage": 2.3275974179090657e-05,
+        "personal loan": 1.449373228351091e-05,
+        "student loan": 9.003628388320059e-06,
+        "vehicle loan": 2.369580474118896e-05,
+        "other": 9.51754719356694e-05
+      },
+      "confidence": 0.9965749321647458
+    }
+  },
+  {
+    "row_index": 71,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 5.6490452398425846e-05,
+        "credit card": 0.0010214920605663737,
+        "credit reporting": 0.9984616544311289,
+        "debt collection": 0.00019923326140572004,
+        "money transfer": 3.952040470475802e-05,
+        "mortgage": 3.580536554976745e-05,
+        "personal loan": 3.86137413776603e-05,
+        "student loan": 8.6560842008399e-06,
+        "vehicle loan": 1.7997872544587087e-05,
+        "other": 0.00012053632612288466
+      },
+      "confidence": 0.994194906522561
+    }
+  },
+  {
+    "row_index": 72,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 7.949642416792773e-06,
+        "credit card": 4.132013336721931e-05,
+        "credit reporting": 0.9999154741381344,
+        "debt collection": 7.949642416792773e-06,
+        "money transfer": 7.260084828603114e-06,
+        "mortgage": 6.627728990638669e-06,
+        "personal loan": 7.260084828603114e-06,
+        "student loan": 1.6919229300600762e-06,
+        "vehicle loan": 6.620056738865617e-07,
+        "other": 3.804616413084873e-06
+      },
+      "confidence": 0.9995576526397831
+    }
+  },
+  {
+    "row_index": 73,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 2.5057522447741743e-05,
+        "credit card": 0.999897388233334,
+        "credit reporting": 4.268240050044272e-06,
+        "debt collection": 6.362593943842689e-06,
+        "money transfer": 4.3954623599242426e-06,
+        "mortgage": 7.603162264451321e-07,
+        "personal loan": 3.7109284219332804e-06,
+        "student loan": 1.98778381808454e-06,
+        "vehicle loan": 1.18545161107827e-06,
+        "other": 5.488346778704699e-05
+      },
+      "confidence": 0.9994836215299282
+    }
+  },
+  {
+    "row_index": 74,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 5.1457068570221264e-05,
+        "credit card": 0.0004430441319367592,
+        "credit reporting": 2.0240211100079987e-06,
+        "debt collection": 9.217383339098738e-06,
+        "money transfer": 1.7925234460244624e-05,
+        "mortgage": 0.9989399365695832,
+        "personal loan": 6.602221329705397e-05,
+        "student loan": 7.099297367384649e-06,
+        "vehicle loan": 2.923602158659506e-05,
+        "other": 0.00043403805874935345
+      },
+      "confidence": 0.9957858502378977
+    }
+  },
+  {
+    "row_index": 75,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 7.420546066264728e-06,
+        "credit card": 7.830301988861604e-05,
+        "credit reporting": 0.9998226837903708,
+        "debt collection": 3.0455729246365174e-05,
+        "money transfer": 1.1274985752457438e-05,
+        "mortgage": 6.680970693694055e-06,
+        "personal loan": 1.3144089960422814e-05,
+        "student loan": 1.5828022274710262e-06,
+        "vehicle loan": 3.223091792435586e-06,
+        "other": 2.523097400163919e-05
+      },
+      "confidence": 0.999128440065597
+    }
+  },
+  {
+    "row_index": 76,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.00024175975814147628,
+        "credit card": 0.001999753272672659,
+        "credit reporting": 0.9884481911157782,
+        "debt collection": 0.00868212214710465,
+        "money transfer": 0.0003124108403722314,
+        "mortgage": 8.920565471120571e-05,
+        "personal loan": 2.292847662633951e-05,
+        "student loan": 1.2702385595465625e-05,
+        "vehicle loan": 5.4203021303653465e-05,
+        "other": 0.00013672332769415255
+      },
+      "confidence": 0.968458912579412
+    }
+  },
+  {
+    "row_index": 77,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 5.626210865128621e-05,
+        "credit card": 0.00022575744394714227,
+        "credit reporting": 1.083825787248203e-06,
+        "debt collection": 3.088776841145224e-05,
+        "money transfer": 3.1859363823600845e-05,
+        "mortgage": 0.9995188130472508,
+        "personal loan": 2.5098144998157896e-05,
+        "student loan": 1.1143623995111797e-05,
+        "vehicle loan": 3.778105723921389e-05,
+        "other": 6.131361589598757e-05
+      },
+      "confidence": 0.9978437097833017
+    }
+  },
+  {
+    "row_index": 78,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.0001128114693593705,
+        "credit card": 0.9995745207817646,
+        "credit reporting": 1.3682504073959572e-05,
+        "debt collection": 4.990227918247591e-05,
+        "money transfer": 0.00011785218438199929,
+        "mortgage": 1.1562839533444434e-05,
+        "personal loan": 1.4520014613351068e-05,
+        "student loan": 1.2492314810661204e-05,
+        "vehicle loan": 1.0894981086970097e-05,
+        "other": 8.176063119315612e-05
+      },
+      "confidence": 0.9980488418675479
+    }
+  },
+  {
+    "row_index": 79,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 0.00012767427992644336,
+        "credit card": 0.0010344927008186229,
+        "credit reporting": 1.6220405187683875e-05,
+        "debt collection": 5.6660358356528604e-05,
+        "money transfer": 0.00011554432721767437,
+        "mortgage": 0.9983048165485755,
+        "personal loan": 0.00013896391195330137,
+        "student loan": 2.2334309683725153e-05,
+        "vehicle loan": 1.4714460583130986e-05,
+        "other": 0.00016857869769738902
+      },
+      "confidence": 0.9935587202632199
+    }
+  },
+  {
+    "row_index": 80,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "bank account",
+      "probabilities": {
+        "bank account": 0.9998069120151715,
+        "credit card": 0.00015716603155353334,
+        "credit reporting": 5.864137381819242e-06,
+        "debt collection": 1.2291542573398456e-05,
+        "money transfer": 3.474903349400913e-06,
+        "mortgage": 9.159355607780023e-07,
+        "personal loan": 6.748045510898674e-07,
+        "student loan": 6.090214659320781e-07,
+        "vehicle loan": 8.70663324214897e-07,
+        "other": 1.1220945068359036e-05
+      },
+      "confidence": 0.9991340422298324
+    }
+  },
+  {
+    "row_index": 81,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0016873396202675614,
+        "credit card": 0.37883311244484985,
+        "credit reporting": 0.6172302670038061,
+        "debt collection": 0.0009466528384807614,
+        "money transfer": 0.00036681569146983857,
+        "mortgage": 0.00022452294807557484,
+        "personal loan": 8.881951236811985e-05,
+        "student loan": 4.9010892140166457e-05,
+        "vehicle loan": 5.685678220481189e-05,
+        "other": 0.0005166022663372315
+      },
+      "confidence": 0.6988287729759846
+    }
+  },
+  {
+    "row_index": 82,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 3.7566106519279944e-06,
+        "credit card": 4.123908136588693e-05,
+        "credit reporting": 9.437068592968944e-06,
+        "debt collection": 0.999842177185076,
+        "money transfer": 3.2057724320139276e-05,
+        "mortgage": 3.7566106519279944e-06,
+        "personal loan": 7.188222073238561e-06,
+        "student loan": 9.691734287991838e-07,
+        "vehicle loan": 6.559535150858321e-06,
+        "other": 5.285878868838226e-05
+      },
+      "confidence": 0.9992155203530763
+    }
+  },
+  {
+    "row_index": 83,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 6.4323243556206005e-06,
+        "credit card": 5.854735227853205e-05,
+        "credit reporting": 0.9994483712607943,
+        "debt collection": 0.0004151551873683303,
+        "money transfer": 1.2240597433246993e-05,
+        "mortgage": 4.014806306885242e-06,
+        "personal loan": 1.1178839381558977e-05,
+        "student loan": 1.5965897738267693e-06,
+        "vehicle loan": 1.7526707613075497e-05,
+        "other": 2.4936334694657595e-05
+      },
+      "confidence": 0.997730783631947
+    }
+  },
+  {
+    "row_index": 84,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "student loan",
+      "probabilities": {
+        "bank account": 2.7156982913222225e-05,
+        "credit card": 3.618105057541341e-05,
+        "credit reporting": 2.852321406947784e-06,
+        "debt collection": 2.5819339290825414e-05,
+        "money transfer": 4.2275787926139764e-05,
+        "mortgage": 1.4721718425238703e-05,
+        "personal loan": 7.028902451816642e-05,
+        "student loan": 0.9995842663341454,
+        "vehicle loan": 0.0001489601691141549,
+        "other": 4.7477271684399214e-05
+      },
+      "confidence": 0.9980772164023269
+    }
+  },
+  {
+    "row_index": 85,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 3.0804378797854335e-05,
+        "credit card": 0.00024251045275458605,
+        "credit reporting": 0.9995415355715889,
+        "debt collection": 7.916415103893749e-05,
+        "money transfer": 2.088941802813387e-05,
+        "mortgage": 2.6766575005619468e-06,
+        "personal loan": 1.9244193133781436e-05,
+        "student loan": 6.96273222790342e-06,
+        "vehicle loan": 1.707646389263123e-05,
+        "other": 3.913598103682369e-05
+      },
+      "confidence": 0.9979672961603195
+    }
+  },
+  {
+    "row_index": 86,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 5.624732447287175e-06,
+        "credit card": 6.860886417153029e-05,
+        "credit reporting": 0.9998500530238122,
+        "debt collection": 2.0424139039367757e-05,
+        "money transfer": 7.463194899274259e-06,
+        "mortgage": 1.6678099848120729e-06,
+        "personal loan": 4.6491817782294604e-06,
+        "student loan": 5.451721641368034e-07,
+        "vehicle loan": 3.1616679969958474e-06,
+        "other": 3.780221370610201e-05
+      },
+      "confidence": 0.9992632301626364
+    }
+  },
+  {
+    "row_index": 87,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "bank account",
+      "probabilities": {
+        "bank account": 0.607117803893834,
+        "credit card": 0.007005145112510366,
+        "credit reporting": 0.3849499656317228,
+        "debt collection": 0.00037111107296637977,
+        "money transfer": 0.00011560395087118795,
+        "mortgage": 7.108705774170982e-05,
+        "personal loan": 4.090108504054531e-05,
+        "student loan": 9.894583951618994e-06,
+        "vehicle loan": 4.0883855164896695e-05,
+        "other": 0.0002776037561965433
+      },
+      "confidence": 0.6903105355940753
+    }
+  },
+  {
+    "row_index": 88,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.038019285734097234,
+        "credit card": 0.624355875219903,
+        "credit reporting": 0.002620929314421744,
+        "debt collection": 0.0008209015150249665,
+        "money transfer": 0.08934304797759506,
+        "mortgage": 0.002256893018603184,
+        "personal loan": 0.00252808417665173,
+        "student loan": 1.87522487747593e-05,
+        "vehicle loan": 0.00040049066311461696,
+        "other": 0.2396357401318137
+      },
+      "confidence": 0.5526054318600452
+    }
+  },
+  {
+    "row_index": 89,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0008230161115707677,
+        "credit card": 0.006516643106715667,
+        "credit reporting": 0.9871153416752623,
+        "debt collection": 0.003599232171611488,
+        "money transfer": 8.511208070780823e-05,
+        "mortgage": 7.063462245223289e-05,
+        "personal loan": 0.0009220994819681203,
+        "student loan": 2.6003832248248007e-05,
+        "vehicle loan": 1.0352842822761804e-05,
+        "other": 0.0008315640746406876
+      },
+      "confidence": 0.9626902810332127
+    }
+  },
+  {
+    "row_index": 90,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.6036377530529727e-05,
+        "credit card": 0.00021111942670380246,
+        "credit reporting": 0.999727786839292,
+        "debt collection": 2.7214719263476507e-05,
+        "money transfer": 4.015928725470385e-06,
+        "mortgage": 2.0424494204219468e-06,
+        "personal loan": 3.1612180630842284e-06,
+        "student loan": 1.2458196023795391e-06,
+        "vehicle loan": 2.0424494204219468e-06,
+        "other": 5.334771978337308e-06
+      },
+      "confidence": 0.998806912602492
+    }
+  },
+  {
+    "row_index": 91,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.0006904487587549941,
+        "credit card": 0.9869825332487709,
+        "credit reporting": 0.011124332123332428,
+        "debt collection": 0.0004103603665125614,
+        "money transfer": 0.0003003498524838317,
+        "mortgage": 6.743585511116114e-05,
+        "personal loan": 4.06743099765881e-05,
+        "student loan": 3.3671735732711926e-05,
+        "vehicle loan": 5.9036909924596115e-05,
+        "other": 0.0002911568394001091
+      },
+      "confidence": 0.9661298329506715
+    }
+  },
+  {
+    "row_index": 92,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.4850203690092066e-05,
+        "credit card": 6.348882469709809e-05,
+        "credit reporting": 0.9998177553154787,
+        "debt collection": 2.143665269222927e-05,
+        "money transfer": 1.2392608582232363e-05,
+        "mortgage": 7.544959205583837e-06,
+        "personal loan": 1.4157244307858119e-05,
+        "student loan": 1.4173128742475164e-06,
+        "vehicle loan": 5.024387952795016e-06,
+        "other": 4.193249051924713e-05
+      },
+      "confidence": 0.9990960168798942
+    }
+  },
+  {
+    "row_index": 93,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 6.355390450099772e-06,
+        "credit card": 2.51190128509763e-05,
+        "credit reporting": 0.9999115909268813,
+        "debt collection": 1.5168704809061389e-05,
+        "money transfer": 6.295515066042124e-06,
+        "mortgage": 3.3956043252925364e-06,
+        "personal loan": 6.569057579968983e-06,
+        "student loan": 6.828382777105752e-07,
+        "vehicle loan": 2.0082358867777436e-06,
+        "other": 2.2814713872775196e-05
+      },
+      "confidence": 0.9995330217091162
+    }
+  },
+  {
+    "row_index": 94,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.5838487788374322e-05,
+        "credit card": 9.706700193438445e-05,
+        "credit reporting": 0.9997564594559172,
+        "debt collection": 7.660635049701156e-05,
+        "money transfer": 1.5971019404597937e-05,
+        "mortgage": 3.5074562653373473e-06,
+        "personal loan": 6.2008284061349975e-06,
+        "student loan": 9.801965702460156e-07,
+        "vehicle loan": 2.2484736759486956e-06,
+        "other": 2.512072954070838e-05
+      },
+      "confidence": 0.9988512250418659
+    }
+  },
+  {
+    "row_index": 95,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0005160868734046721,
+        "credit card": 0.0073049954617106175,
+        "credit reporting": 0.38610954624056043,
+        "debt collection": 0.5978607262773564,
+        "money transfer": 0.005174908863277236,
+        "mortgage": 0.001406701222436265,
+        "personal loan": 0.000340259297771644,
+        "student loan": 2.7320435377370172e-05,
+        "vehicle loan": 9.583364352852019e-05,
+        "other": 0.0011636216845767903
+      },
+      "confidence": 0.6686140307275026
+    }
+  },
+  {
+    "row_index": 96,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.7689094319681137e-05,
+        "credit card": 0.00015110622425710393,
+        "credit reporting": 0.9995885004853057,
+        "debt collection": 8.611294978696223e-05,
+        "money transfer": 2.1616206783940486e-05,
+        "mortgage": 4.7510626194394874e-06,
+        "personal loan": 1.3990113486509283e-05,
+        "student loan": 9.347883978471076e-06,
+        "vehicle loan": 3.704558882546117e-05,
+        "other": 6.984039063681045e-05
+      },
+      "confidence": 0.9981144166081776
+    }
+  },
+  {
+    "row_index": 97,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 2.0111011076858338e-05,
+        "credit card": 0.00010399515840808096,
+        "credit reporting": 0.999729818002995,
+        "debt collection": 5.4447056781569215e-05,
+        "money transfer": 2.4983850001876974e-05,
+        "mortgage": 1.4521887966514819e-05,
+        "personal loan": 6.576764899593608e-06,
+        "student loan": 4.243069448118885e-06,
+        "vehicle loan": 2.337846961857125e-06,
+        "other": 3.896535146057454e-05
+      },
+      "confidence": 0.998714757422468
+    }
+  },
+  {
+    "row_index": 98,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 1.927187709314128e-05,
+        "credit card": 9.717184208315059e-05,
+        "credit reporting": 0.9998391473482356,
+        "debt collection": 1.0239883515755375e-05,
+        "money transfer": 4.0127427388557374e-06,
+        "mortgage": 6.411191805257509e-07,
+        "personal loan": 2.7288587331702925e-06,
+        "student loan": 2.864568902873961e-06,
+        "vehicle loan": 9.159650919679873e-07,
+        "other": 2.30057944248322e-05
+      },
+      "confidence": 0.999229365373282
+    }
+  },
+  {
+    "row_index": 99,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 8.629939552065161e-05,
+        "credit card": 0.0006131632910032863,
+        "credit reporting": 1.0645214450050644e-05,
+        "debt collection": 4.1561128964160054e-05,
+        "money transfer": 3.243504826566753e-05,
+        "mortgage": 0.9867343124381043,
+        "personal loan": 0.011439010418455313,
+        "student loan": 2.123336762798697e-05,
+        "vehicle loan": 8.53700051985374e-05,
+        "other": 0.0009359696924099523
+      },
+      "confidence": 0.9660845887387719
+    }
+  }
+]

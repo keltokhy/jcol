@@ -4,6 +4,8 @@
 
 - The PyPI distribution is named `jev-col`, matching `jev-grep`, `jev-sort` and `jev-select`. The
   import (`jcol`) and the command (`jcol`) are unchanged.
+- Restore the recorded product check in `benchmarks/`, with runs on the local DiffusionGemma and Laya
+  servers beside Jev. It measures proxy agreement with an administrative label, not accuracy.
 
 ## 0.5.0
 

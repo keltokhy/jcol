@@ -1,0 +1,1754 @@
+[
+  {
+    "row_index": 1,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.9685,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0002,
+        "credit card": 0.0007,
+        "credit reporting": 0.9902,
+        "debt collection": 0.0019,
+        "money transfer": 0.0013,
+        "mortgage": 0.0004,
+        "personal loan": 0.004,
+        "student loan": 0.0005,
+        "vehicle loan": 0.0003,
+        "other": 0.0004
+      }
+    }
+  },
+  {
+    "row_index": 3,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2975,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0399,
+        "credit card": 0.0729,
+        "credit reporting": 0.5191,
+        "debt collection": 0.0329,
+        "money transfer": 0.0501,
+        "mortgage": 0.0245,
+        "personal loan": 0.0523,
+        "student loan": 0.0272,
+        "vehicle loan": 0.0115,
+        "other": 0.1696
+      }
+    }
+  },
+  {
+    "row_index": 4,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.3464,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0124,
+        "credit card": 0.0342,
+        "credit reporting": 0.0489,
+        "debt collection": 0.5797,
+        "money transfer": 0.0682,
+        "mortgage": 0.0266,
+        "personal loan": 0.1172,
+        "student loan": 0.0225,
+        "vehicle loan": 0.0135,
+        "other": 0.0768
+      }
+    }
+  },
+  {
+    "row_index": 6,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.8182,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 0.0051,
+        "credit card": 0.0045,
+        "credit reporting": 0.041,
+        "debt collection": 0.0136,
+        "money transfer": 0.0058,
+        "mortgage": 0.9178,
+        "personal loan": 0.0036,
+        "student loan": 0.0024,
+        "vehicle loan": 0.0012,
+        "other": 0.005
+      }
+    }
+  },
+  {
+    "row_index": 7,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.6342,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0037,
+        "credit card": 0.0041,
+        "credit reporting": 0.3354,
+        "debt collection": 0.6303,
+        "money transfer": 0.0041,
+        "mortgage": 0.0028,
+        "personal loan": 0.0065,
+        "student loan": 0.0039,
+        "vehicle loan": 0.0022,
+        "other": 0.007
+      }
+    }
+  },
+  {
+    "row_index": 9,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.8611,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0023,
+        "credit card": 0.0025,
+        "credit reporting": 0.9458,
+        "debt collection": 0.0104,
+        "money transfer": 0.0115,
+        "mortgage": 0.0101,
+        "personal loan": 0.0057,
+        "student loan": 0.0032,
+        "vehicle loan": 0.0019,
+        "other": 0.0067
+      }
+    }
+  },
+  {
+    "row_index": 10,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.3082,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0197,
+        "credit card": 0.0579,
+        "credit reporting": 0.1797,
+        "debt collection": 0.5278,
+        "money transfer": 0.0336,
+        "mortgage": 0.027,
+        "personal loan": 0.0373,
+        "student loan": 0.0449,
+        "vehicle loan": 0.0529,
+        "other": 0.0192
+      }
+    }
+  },
+  {
+    "row_index": 11,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.8838,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.002,
+        "credit card": 0.0038,
+        "credit reporting": 0.957,
+        "debt collection": 0.0066,
+        "money transfer": 0.0074,
+        "mortgage": 0.0039,
+        "personal loan": 0.0072,
+        "student loan": 0.004,
+        "vehicle loan": 0.0017,
+        "other": 0.0064
+      }
+    }
+  },
+  {
+    "row_index": 12,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.1279,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0758,
+        "credit card": 0.0695,
+        "credit reporting": 0.3415,
+        "debt collection": 0.0764,
+        "money transfer": 0.1496,
+        "mortgage": 0.0597,
+        "personal loan": 0.114,
+        "student loan": 0.0348,
+        "vehicle loan": 0.0221,
+        "other": 0.0566
+      }
+    }
+  },
+  {
+    "row_index": 13,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.8479,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.002,
+        "credit card": 0.0379,
+        "credit reporting": 0.0041,
+        "debt collection": 0.9317,
+        "money transfer": 0.0064,
+        "mortgage": 0.0012,
+        "personal loan": 0.0028,
+        "student loan": 0.0014,
+        "vehicle loan": 0.0012,
+        "other": 0.0112
+      }
+    }
+  },
+  {
+    "row_index": 14,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.258,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "bank account",
+      "probabilities": {
+        "bank account": 0.4756,
+        "credit card": 0.0436,
+        "credit reporting": 0.0674,
+        "debt collection": 0.0566,
+        "money transfer": 0.069,
+        "mortgage": 0.0564,
+        "personal loan": 0.0289,
+        "student loan": 0.0169,
+        "vehicle loan": 0.0116,
+        "other": 0.1739
+      }
+    }
+  },
+  {
+    "row_index": 17,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.1042,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "other",
+      "probabilities": {
+        "bank account": 0.04,
+        "credit card": 0.1188,
+        "credit reporting": 0.0581,
+        "debt collection": 0.0358,
+        "money transfer": 0.0517,
+        "mortgage": 0.1148,
+        "personal loan": 0.0948,
+        "student loan": 0.0272,
+        "vehicle loan": 0.2057,
+        "other": 0.2531
+      }
+    }
+  },
+  {
+    "row_index": 18,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.4954,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0055,
+        "credit card": 0.0133,
+        "credit reporting": 0.5331,
+        "debt collection": 0.3565,
+        "money transfer": 0.0167,
+        "mortgage": 0.0129,
+        "personal loan": 0.0199,
+        "student loan": 0.0084,
+        "vehicle loan": 0.0062,
+        "other": 0.0277
+      }
+    }
+  },
+  {
+    "row_index": 19,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.3301,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0137,
+        "credit card": 0.0267,
+        "credit reporting": 0.4849,
+        "debt collection": 0.2151,
+        "money transfer": 0.0543,
+        "mortgage": 0.0165,
+        "personal loan": 0.1372,
+        "student loan": 0.0168,
+        "vehicle loan": 0.0108,
+        "other": 0.0239
+      }
+    }
+  },
+  {
+    "row_index": 21,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.3401,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "student loan",
+      "probabilities": {
+        "bank account": 0.016,
+        "credit card": 0.0188,
+        "credit reporting": 0.0645,
+        "debt collection": 0.0587,
+        "money transfer": 0.0214,
+        "mortgage": 0.2804,
+        "personal loan": 0.0195,
+        "student loan": 0.4705,
+        "vehicle loan": 0.0044,
+        "other": 0.0456
+      }
+    }
+  },
+  {
+    "row_index": 22,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.667,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0091,
+        "credit card": 0.0174,
+        "credit reporting": 0.8373,
+        "debt collection": 0.0143,
+        "money transfer": 0.0267,
+        "mortgage": 0.01,
+        "personal loan": 0.0176,
+        "student loan": 0.0108,
+        "vehicle loan": 0.0057,
+        "other": 0.0511
+      }
+    }
+  },
+  {
+    "row_index": 23,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.1811,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0352,
+        "credit card": 0.0582,
+        "credit reporting": 0.3761,
+        "debt collection": 0.1778,
+        "money transfer": 0.1226,
+        "mortgage": 0.0343,
+        "personal loan": 0.0928,
+        "student loan": 0.0259,
+        "vehicle loan": 0.0179,
+        "other": 0.0593
+      }
+    }
+  },
+  {
+    "row_index": 24,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.8155,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0054,
+        "credit card": 0.0086,
+        "credit reporting": 0.9251,
+        "debt collection": 0.0107,
+        "money transfer": 0.0125,
+        "mortgage": 0.006,
+        "personal loan": 0.01,
+        "student loan": 0.0061,
+        "vehicle loan": 0.0029,
+        "other": 0.0128
+      }
+    }
+  },
+  {
+    "row_index": 25,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.1023,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0269,
+        "credit card": 0.0993,
+        "credit reporting": 0.2137,
+        "debt collection": 0.1662,
+        "money transfer": 0.0494,
+        "mortgage": 0.0748,
+        "personal loan": 0.0853,
+        "student loan": 0.0545,
+        "vehicle loan": 0.0181,
+        "other": 0.2117
+      }
+    }
+  },
+  {
+    "row_index": 26,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.1682,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0307,
+        "credit card": 0.0642,
+        "credit reporting": 0.2449,
+        "debt collection": 0.2808,
+        "money transfer": 0.0466,
+        "mortgage": 0.0432,
+        "personal loan": 0.0496,
+        "student loan": 0.0395,
+        "vehicle loan": 0.0151,
+        "other": 0.1855
+      }
+    }
+  },
+  {
+    "row_index": 30,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.4924,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "student loan",
+      "probabilities": {
+        "bank account": 0.043,
+        "credit card": 0.0288,
+        "credit reporting": 0.0417,
+        "debt collection": 0.0394,
+        "money transfer": 0.0259,
+        "mortgage": 0.0073,
+        "personal loan": 0.0721,
+        "student loan": 0.7147,
+        "vehicle loan": 0.0054,
+        "other": 0.0216
+      }
+    }
+  },
+  {
+    "row_index": 31,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2112,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "bank account",
+      "probabilities": {
+        "bank account": 0.4322,
+        "credit card": 0.084,
+        "credit reporting": 0.0462,
+        "debt collection": 0.0313,
+        "money transfer": 0.0544,
+        "mortgage": 0.0928,
+        "personal loan": 0.0923,
+        "student loan": 0.0192,
+        "vehicle loan": 0.0105,
+        "other": 0.1371
+      }
+    }
+  },
+  {
+    "row_index": 32,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.7952,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.0076,
+        "credit card": 0.9108,
+        "credit reporting": 0.0077,
+        "debt collection": 0.0228,
+        "money transfer": 0.0104,
+        "mortgage": 0.0024,
+        "personal loan": 0.0098,
+        "student loan": 0.0037,
+        "vehicle loan": 0.0017,
+        "other": 0.0231
+      }
+    }
+  },
+  {
+    "row_index": 33,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2307,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0243,
+        "credit card": 0.0421,
+        "credit reporting": 0.4324,
+        "debt collection": 0.1828,
+        "money transfer": 0.0677,
+        "mortgage": 0.043,
+        "personal loan": 0.0421,
+        "student loan": 0.0314,
+        "vehicle loan": 0.0143,
+        "other": 0.12
+      }
+    }
+  },
+  {
+    "row_index": 34,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.3737,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "other",
+      "probabilities": {
+        "bank account": 0.0633,
+        "credit card": 0.125,
+        "credit reporting": 0.0433,
+        "debt collection": 0.0288,
+        "money transfer": 0.0348,
+        "mortgage": 0.0384,
+        "personal loan": 0.0271,
+        "student loan": 0.0216,
+        "vehicle loan": 0.0095,
+        "other": 0.6082
+      }
+    }
+  },
+  {
+    "row_index": 36,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2307,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0517,
+        "credit card": 0.1,
+        "credit reporting": 0.455,
+        "debt collection": 0.1348,
+        "money transfer": 0.0885,
+        "mortgage": 0.0218,
+        "personal loan": 0.0506,
+        "student loan": 0.0228,
+        "vehicle loan": 0.0105,
+        "other": 0.0643
+      }
+    }
+  },
+  {
+    "row_index": 37,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2263,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0248,
+        "credit card": 0.0467,
+        "credit reporting": 0.4283,
+        "debt collection": 0.0803,
+        "money transfer": 0.0782,
+        "mortgage": 0.0339,
+        "personal loan": 0.2012,
+        "student loan": 0.0291,
+        "vehicle loan": 0.019,
+        "other": 0.0584
+      }
+    }
+  },
+  {
+    "row_index": 38,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2002,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "money transfer",
+      "probabilities": {
+        "bank account": 0.0454,
+        "credit card": 0.1213,
+        "credit reporting": 0.0622,
+        "debt collection": 0.0634,
+        "money transfer": 0.4177,
+        "mortgage": 0.0315,
+        "personal loan": 0.0552,
+        "student loan": 0.0324,
+        "vehicle loan": 0.0152,
+        "other": 0.1558
+      }
+    }
+  },
+  {
+    "row_index": 42,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2118,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.1359,
+        "credit card": 0.0679,
+        "credit reporting": 0.4456,
+        "debt collection": 0.0819,
+        "money transfer": 0.0599,
+        "mortgage": 0.0399,
+        "personal loan": 0.0889,
+        "student loan": 0.0287,
+        "vehicle loan": 0.0132,
+        "other": 0.0382
+      }
+    }
+  },
+  {
+    "row_index": 43,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.5689,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0083,
+        "credit card": 0.0134,
+        "credit reporting": 0.0261,
+        "debt collection": 0.7684,
+        "money transfer": 0.0268,
+        "mortgage": 0.0164,
+        "personal loan": 0.0592,
+        "student loan": 0.0146,
+        "vehicle loan": 0.0073,
+        "other": 0.0595
+      }
+    }
+  },
+  {
+    "row_index": 44,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.5943,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0068,
+        "credit card": 0.0293,
+        "credit reporting": 0.7885,
+        "debt collection": 0.057,
+        "money transfer": 0.0382,
+        "mortgage": 0.0092,
+        "personal loan": 0.0278,
+        "student loan": 0.0158,
+        "vehicle loan": 0.0062,
+        "other": 0.0214
+      }
+    }
+  },
+  {
+    "row_index": 45,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2407,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.0433,
+        "credit card": 0.4706,
+        "credit reporting": 0.051,
+        "debt collection": 0.0818,
+        "money transfer": 0.1641,
+        "mortgage": 0.045,
+        "personal loan": 0.0577,
+        "student loan": 0.0286,
+        "vehicle loan": 0.0156,
+        "other": 0.0424
+      }
+    }
+  },
+  {
+    "row_index": 46,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0919,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.1211,
+        "credit card": 0.0673,
+        "credit reporting": 0.2348,
+        "debt collection": 0.1654,
+        "money transfer": 0.1004,
+        "mortgage": 0.0372,
+        "personal loan": 0.0702,
+        "student loan": 0.0375,
+        "vehicle loan": 0.017,
+        "other": 0.1491
+      }
+    }
+  },
+  {
+    "row_index": 47,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.38,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 0.0218,
+        "credit card": 0.0393,
+        "credit reporting": 0.0478,
+        "debt collection": 0.066,
+        "money transfer": 0.0428,
+        "mortgage": 0.6193,
+        "personal loan": 0.0338,
+        "student loan": 0.0132,
+        "vehicle loan": 0.0122,
+        "other": 0.1037
+      }
+    }
+  },
+  {
+    "row_index": 49,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2235,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "bank account",
+      "probabilities": {
+        "bank account": 0.3927,
+        "credit card": 0.0911,
+        "credit reporting": 0.1914,
+        "debt collection": 0.0556,
+        "money transfer": 0.0393,
+        "mortgage": 0.0235,
+        "personal loan": 0.0307,
+        "student loan": 0.024,
+        "vehicle loan": 0.0068,
+        "other": 0.145
+      }
+    }
+  },
+  {
+    "row_index": 50,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.6258,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0151,
+        "credit card": 0.0185,
+        "credit reporting": 0.8154,
+        "debt collection": 0.0316,
+        "money transfer": 0.0253,
+        "mortgage": 0.0104,
+        "personal loan": 0.0334,
+        "student loan": 0.0123,
+        "vehicle loan": 0.006,
+        "other": 0.0321
+      }
+    }
+  },
+  {
+    "row_index": 51,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2597,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.023,
+        "credit card": 0.0545,
+        "credit reporting": 0.4393,
+        "debt collection": 0.1338,
+        "money transfer": 0.0733,
+        "mortgage": 0.0218,
+        "personal loan": 0.1919,
+        "student loan": 0.0201,
+        "vehicle loan": 0.0117,
+        "other": 0.0305
+      }
+    }
+  },
+  {
+    "row_index": 52,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.982,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0003,
+        "credit card": 0.0003,
+        "credit reporting": 0.995,
+        "debt collection": 0.0007,
+        "money transfer": 0.0013,
+        "mortgage": 0.0003,
+        "personal loan": 0.001,
+        "student loan": 0.0004,
+        "vehicle loan": 0.0002,
+        "other": 0.0005
+      }
+    }
+  },
+  {
+    "row_index": 53,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.1045,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "personal loan",
+      "probabilities": {
+        "bank account": 0.0394,
+        "credit card": 0.0833,
+        "credit reporting": 0.0533,
+        "debt collection": 0.0847,
+        "money transfer": 0.0566,
+        "mortgage": 0.1227,
+        "personal loan": 0.2843,
+        "student loan": 0.05,
+        "vehicle loan": 0.0358,
+        "other": 0.1899
+      }
+    }
+  },
+  {
+    "row_index": 54,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.1617,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0434,
+        "credit card": 0.2101,
+        "credit reporting": 0.1086,
+        "debt collection": 0.3119,
+        "money transfer": 0.038,
+        "mortgage": 0.0729,
+        "personal loan": 0.039,
+        "student loan": 0.0265,
+        "vehicle loan": 0.0111,
+        "other": 0.1383
+      }
+    }
+  },
+  {
+    "row_index": 56,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.155,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0348,
+        "credit card": 0.0522,
+        "credit reporting": 0.243,
+        "debt collection": 0.2878,
+        "money transfer": 0.0671,
+        "mortgage": 0.0347,
+        "personal loan": 0.1141,
+        "student loan": 0.031,
+        "vehicle loan": 0.0157,
+        "other": 0.1196
+      }
+    }
+  },
+  {
+    "row_index": 57,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0848,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "other",
+      "probabilities": {
+        "bank account": 0.1851,
+        "credit card": 0.1538,
+        "credit reporting": 0.0542,
+        "debt collection": 0.043,
+        "money transfer": 0.0634,
+        "mortgage": 0.1686,
+        "personal loan": 0.0694,
+        "student loan": 0.0443,
+        "vehicle loan": 0.0279,
+        "other": 0.1903
+      }
+    }
+  },
+  {
+    "row_index": 58,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.799,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.002,
+        "credit card": 0.0039,
+        "credit reporting": 0.8981,
+        "debt collection": 0.0121,
+        "money transfer": 0.0074,
+        "mortgage": 0.0018,
+        "personal loan": 0.0656,
+        "student loan": 0.0024,
+        "vehicle loan": 0.0023,
+        "other": 0.0044
+      }
+    }
+  },
+  {
+    "row_index": 60,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0752,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.0715,
+        "credit card": 0.2698,
+        "credit reporting": 0.0791,
+        "debt collection": 0.1207,
+        "money transfer": 0.0973,
+        "mortgage": 0.0672,
+        "personal loan": 0.1329,
+        "student loan": 0.0451,
+        "vehicle loan": 0.0286,
+        "other": 0.0879
+      }
+    }
+  },
+  {
+    "row_index": 61,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.4733,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0199,
+        "credit card": 0.034,
+        "credit reporting": 0.6965,
+        "debt collection": 0.0383,
+        "money transfer": 0.0274,
+        "mortgage": 0.0227,
+        "personal loan": 0.0258,
+        "student loan": 0.0227,
+        "vehicle loan": 0.0094,
+        "other": 0.1034
+      }
+    }
+  },
+  {
+    "row_index": 62,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0655,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0395,
+        "credit card": 0.0962,
+        "credit reporting": 0.2111,
+        "debt collection": 0.1573,
+        "money transfer": 0.1019,
+        "mortgage": 0.0735,
+        "personal loan": 0.0929,
+        "student loan": 0.0495,
+        "vehicle loan": 0.0284,
+        "other": 0.1496
+      }
+    }
+  },
+  {
+    "row_index": 63,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.7072,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.004,
+        "credit card": 0.0103,
+        "credit reporting": 0.8597,
+        "debt collection": 0.051,
+        "money transfer": 0.0133,
+        "mortgage": 0.009,
+        "personal loan": 0.0174,
+        "student loan": 0.0111,
+        "vehicle loan": 0.0054,
+        "other": 0.0187
+      }
+    }
+  },
+  {
+    "row_index": 64,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.8995,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0016,
+        "credit card": 0.0039,
+        "credit reporting": 0.9637,
+        "debt collection": 0.0046,
+        "money transfer": 0.0048,
+        "mortgage": 0.0027,
+        "personal loan": 0.005,
+        "student loan": 0.0033,
+        "vehicle loan": 0.0016,
+        "other": 0.0089
+      }
+    }
+  },
+  {
+    "row_index": 65,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0992,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.1427,
+        "credit card": 0.1856,
+        "credit reporting": 0.2007,
+        "debt collection": 0.1183,
+        "money transfer": 0.1116,
+        "mortgage": 0.0301,
+        "personal loan": 0.0625,
+        "student loan": 0.0238,
+        "vehicle loan": 0.0109,
+        "other": 0.1138
+      }
+    }
+  },
+  {
+    "row_index": 68,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0626,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.0409,
+        "credit card": 0.1955,
+        "credit reporting": 0.1098,
+        "debt collection": 0.1083,
+        "money transfer": 0.1158,
+        "mortgage": 0.0865,
+        "personal loan": 0.096,
+        "student loan": 0.0446,
+        "vehicle loan": 0.0256,
+        "other": 0.177
+      }
+    }
+  },
+  {
+    "row_index": 69,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.4892,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0134,
+        "credit card": 0.018,
+        "credit reporting": 0.2056,
+        "debt collection": 0.6449,
+        "money transfer": 0.0183,
+        "mortgage": 0.0086,
+        "personal loan": 0.0474,
+        "student loan": 0.0119,
+        "vehicle loan": 0.007,
+        "other": 0.0247
+      }
+    }
+  },
+  {
+    "row_index": 70,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.1212,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0254,
+        "credit card": 0.14,
+        "credit reporting": 0.268,
+        "debt collection": 0.1334,
+        "money transfer": 0.0635,
+        "mortgage": 0.0504,
+        "personal loan": 0.1144,
+        "student loan": 0.0308,
+        "vehicle loan": 0.0138,
+        "other": 0.1603
+      }
+    }
+  },
+  {
+    "row_index": 71,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0894,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.104,
+        "credit card": 0.1488,
+        "credit reporting": 0.0875,
+        "debt collection": 0.2237,
+        "money transfer": 0.0516,
+        "mortgage": 0.0424,
+        "personal loan": 0.1182,
+        "student loan": 0.0318,
+        "vehicle loan": 0.0198,
+        "other": 0.1721
+      }
+    }
+  },
+  {
+    "row_index": 72,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.5542,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.011,
+        "credit card": 0.0218,
+        "credit reporting": 0.7651,
+        "debt collection": 0.0473,
+        "money transfer": 0.0389,
+        "mortgage": 0.0179,
+        "personal loan": 0.0468,
+        "student loan": 0.015,
+        "vehicle loan": 0.0082,
+        "other": 0.0281
+      }
+    }
+  },
+  {
+    "row_index": 75,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.5666,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0128,
+        "credit card": 0.0475,
+        "credit reporting": 0.7756,
+        "debt collection": 0.0256,
+        "money transfer": 0.0305,
+        "mortgage": 0.0154,
+        "personal loan": 0.0284,
+        "student loan": 0.0149,
+        "vehicle loan": 0.0092,
+        "other": 0.0399
+      }
+    }
+  },
+  {
+    "row_index": 76,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2887,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0183,
+        "credit card": 0.0452,
+        "credit reporting": 0.2509,
+        "debt collection": 0.4573,
+        "money transfer": 0.0407,
+        "mortgage": 0.025,
+        "personal loan": 0.0507,
+        "student loan": 0.0259,
+        "vehicle loan": 0.0155,
+        "other": 0.0706
+      }
+    }
+  },
+  {
+    "row_index": 77,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.956,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 0.0006,
+        "credit card": 0.0008,
+        "credit reporting": 0.0019,
+        "debt collection": 0.0053,
+        "money transfer": 0.0018,
+        "mortgage": 0.9858,
+        "personal loan": 0.0012,
+        "student loan": 0.0006,
+        "vehicle loan": 0.0004,
+        "other": 0.0014
+      }
+    }
+  },
+  {
+    "row_index": 78,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.1299,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.0281,
+        "credit card": 0.3286,
+        "credit reporting": 0.1327,
+        "debt collection": 0.1349,
+        "money transfer": 0.1108,
+        "mortgage": 0.0464,
+        "personal loan": 0.065,
+        "student loan": 0.0434,
+        "vehicle loan": 0.0227,
+        "other": 0.0874
+      }
+    }
+  },
+  {
+    "row_index": 79,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.9369,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "mortgage",
+      "probabilities": {
+        "bank account": 0.0041,
+        "credit card": 0.0019,
+        "credit reporting": 0.0014,
+        "debt collection": 0.0027,
+        "money transfer": 0.0029,
+        "mortgage": 0.9792,
+        "personal loan": 0.0018,
+        "student loan": 0.0017,
+        "vehicle loan": 0.0011,
+        "other": 0.0033
+      }
+    }
+  },
+  {
+    "row_index": 81,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.3626,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0227,
+        "credit card": 0.0874,
+        "credit reporting": 0.611,
+        "debt collection": 0.0459,
+        "money transfer": 0.04,
+        "mortgage": 0.0355,
+        "personal loan": 0.0451,
+        "student loan": 0.0253,
+        "vehicle loan": 0.0113,
+        "other": 0.0757
+      }
+    }
+  },
+  {
+    "row_index": 82,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.985,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0003,
+        "credit card": 0.0004,
+        "credit reporting": 0.0011,
+        "debt collection": 0.996,
+        "money transfer": 0.0003,
+        "mortgage": 0.0002,
+        "personal loan": 0.0004,
+        "student loan": 0.0003,
+        "vehicle loan": 0.0002,
+        "other": 0.0008
+      }
+    }
+  },
+  {
+    "row_index": 84,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0795,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "student loan",
+      "probabilities": {
+        "bank account": 0.0443,
+        "credit card": 0.0817,
+        "credit reporting": 0.125,
+        "debt collection": 0.1078,
+        "money transfer": 0.1379,
+        "mortgage": 0.1002,
+        "personal loan": 0.061,
+        "student loan": 0.2622,
+        "vehicle loan": 0.0247,
+        "other": 0.0552
+      }
+    }
+  },
+  {
+    "row_index": 85,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2175,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0803,
+        "credit card": 0.0711,
+        "credit reporting": 0.4694,
+        "debt collection": 0.0915,
+        "money transfer": 0.0719,
+        "mortgage": 0.0412,
+        "personal loan": 0.0837,
+        "student loan": 0.0289,
+        "vehicle loan": 0.015,
+        "other": 0.0471
+      }
+    }
+  },
+  {
+    "row_index": 86,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.3003,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0202,
+        "credit card": 0.0494,
+        "credit reporting": 0.5312,
+        "debt collection": 0.109,
+        "money transfer": 0.094,
+        "mortgage": 0.0191,
+        "personal loan": 0.083,
+        "student loan": 0.0225,
+        "vehicle loan": 0.0093,
+        "other": 0.0624
+      }
+    }
+  },
+  {
+    "row_index": 87,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.4755,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.028,
+        "credit card": 0.0383,
+        "credit reporting": 0.6583,
+        "debt collection": 0.0171,
+        "money transfer": 0.0253,
+        "mortgage": 0.0175,
+        "personal loan": 0.0161,
+        "student loan": 0.0174,
+        "vehicle loan": 0.0062,
+        "other": 0.1758
+      }
+    }
+  },
+  {
+    "row_index": 88,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.2502,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "personal loan",
+      "probabilities": {
+        "bank account": 0.0239,
+        "credit card": 0.3106,
+        "credit reporting": 0.0628,
+        "debt collection": 0.1186,
+        "money transfer": 0.0562,
+        "mortgage": 0.0181,
+        "personal loan": 0.3428,
+        "student loan": 0.0208,
+        "vehicle loan": 0.0096,
+        "other": 0.0366
+      }
+    }
+  },
+  {
+    "row_index": 91,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.4006,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit card",
+      "probabilities": {
+        "bank account": 0.0179,
+        "credit card": 0.631,
+        "credit reporting": 0.0995,
+        "debt collection": 0.0705,
+        "money transfer": 0.0323,
+        "mortgage": 0.0203,
+        "personal loan": 0.0489,
+        "student loan": 0.0171,
+        "vehicle loan": 0.0064,
+        "other": 0.056
+      }
+    }
+  },
+  {
+    "row_index": 92,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.6971,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0073,
+        "credit card": 0.009,
+        "credit reporting": 0.8594,
+        "debt collection": 0.0232,
+        "money transfer": 0.0255,
+        "mortgage": 0.0134,
+        "personal loan": 0.0141,
+        "student loan": 0.0117,
+        "vehicle loan": 0.0068,
+        "other": 0.0297
+      }
+    }
+  },
+  {
+    "row_index": 93,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.8854,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0014,
+        "credit card": 0.0046,
+        "credit reporting": 0.9564,
+        "debt collection": 0.0156,
+        "money transfer": 0.0042,
+        "mortgage": 0.004,
+        "personal loan": 0.0039,
+        "student loan": 0.0034,
+        "vehicle loan": 0.0014,
+        "other": 0.0052
+      }
+    }
+  },
+  {
+    "row_index": 95,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0948,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "other",
+      "probabilities": {
+        "bank account": 0.0272,
+        "credit card": 0.1064,
+        "credit reporting": 0.1232,
+        "debt collection": 0.1328,
+        "money transfer": 0.059,
+        "mortgage": 0.1071,
+        "personal loan": 0.1375,
+        "student loan": 0.036,
+        "vehicle loan": 0.0192,
+        "other": 0.2517
+      }
+    }
+  },
+  {
+    "row_index": 96,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.7588,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "credit reporting",
+      "probabilities": {
+        "bank account": 0.0062,
+        "credit card": 0.0189,
+        "credit reporting": 0.8951,
+        "debt collection": 0.0099,
+        "money transfer": 0.0139,
+        "mortgage": 0.0105,
+        "personal loan": 0.0116,
+        "student loan": 0.0088,
+        "vehicle loan": 0.0038,
+        "other": 0.0213
+      }
+    }
+  },
+  {
+    "row_index": 97,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.17,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "other",
+      "probabilities": {
+        "bank account": 0.0288,
+        "credit card": 0.1355,
+        "credit reporting": 0.2574,
+        "debt collection": 0.0772,
+        "money transfer": 0.0508,
+        "mortgage": 0.0622,
+        "personal loan": 0.0452,
+        "student loan": 0.0305,
+        "vehicle loan": 0.014,
+        "other": 0.2984
+      }
+    }
+  },
+  {
+    "row_index": 99,
+    "column_id": "c1",
+    "answer": {
+      "type": "choice",
+      "confidence": 0.0592,
+      "action": {
+        "act_probability": 1.0
+      },
+      "choice": "debt collection",
+      "probabilities": {
+        "bank account": 0.0492,
+        "credit card": 0.0696,
+        "credit reporting": 0.1571,
+        "debt collection": 0.1953,
+        "money transfer": 0.1541,
+        "mortgage": 0.1114,
+        "personal loan": 0.086,
+        "student loan": 0.0546,
+        "vehicle loan": 0.0257,
+        "other": 0.0969
+      }
+    }
+  }
+]

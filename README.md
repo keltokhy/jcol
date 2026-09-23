@@ -43,6 +43,9 @@ Set `TYPESAFE_API_KEY` or `OPENROUTER_API_KEY`, or put a key in
 Choose explicitly with `--api` or `JEV_API`. The key stays in the Python process.
 Only `run` and `browse` need a key. `doctor` checks local configuration; `doctor --check`
 also sends an unauthenticated HEAD request to test reachability, without doing inference.
+Reachability does not verify authentication or model availability.
+
+### Local servers (experimental)
 
 `--api diffusiongemma` and `--api laya` send the same questions to a System One server on your own
 machine, an [OpenJev](https://github.com/razorback16/openjev) or
@@ -51,7 +54,7 @@ chosen automatically, need no key, and count as $0 against the budget unless `JE
 is set; `doctor` lists them. The runtime's [DiffusionGemma](https://github.com/keltokhy/jevkit-core/blob/main/docs/diffusiongemma.md)
 and [Laya](https://github.com/keltokhy/jevkit-core/blob/main/docs/laya.md) guides explain the setup; keep
 `--concurrency` low while a local model warms up.
-Reachability does not verify authentication or model availability.
+See [How well does it work](#how-well-does-it-work) for a comparison with Jev.
 
 ## Terminal workflow
 
@@ -190,8 +193,7 @@ Changed inputs require a new project path. One process may own a project at a ti
 
 Partial output and the JSON report are still written after budget exhaustion or API failures.
 A report goes to stdout unless `--report` names a file or the table is streamed to stdout.
-All requested columns
-share each row's call; repeated identical rows share answers.
+All requested columns share each row's call; repeated identical rows share answers.
 
 ```python
 import jcol
@@ -231,6 +233,28 @@ predictions are errors.
 
 Freeze your definitions, reserve representative reviewed rows, and examine disagreements
 before using a derived variable.
+
+## How well does it work
+
+One recorded check codes 100 public complaints with the
+[product codebook](examples/complaints-codebook.json), which picks the financial product at the
+center of each narrative from ten labels, and compares the answers with `product_group`, a grouping
+of each complaint's administrative product label. This is proxy agreement, not accuracy: a narrative
+can discuss several products, and the codebook draws some boundaries differently from the reference.
+[benchmarks/README.md](benchmarks/README.md) has the full record and its caveats.
+
+| 100 complaints | Jev 1.13 (OpenRouter) | DiffusionGemma (`openjev-0.1`, local) | Laya (`laya-421m`, local) |
+|---|---:|---:|---:|
+| Rows answered | 100 | 100 | 73 |
+| Agreement with `product_group` (majority-label baseline: 55) | 75 | 78 | 50 |
+| Wall time | 6.63 s | 134.6 s | 71.4 s |
+
+DiffusionGemma answered every row and agreed with `product_group` as often as Jev; 100 rows are too
+few to separate the two. On 1,000 rows it agreed on 830, against 596 for the majority label, at about
+1.4 rows a second on an Apple M3 Ultra. Laya took under a minute on the same 1,000 rows, but it reads
+at most 512 tokens, question included, and refused the narratives that did not fit: 27 of 100 and 202
+of 1,000. Jev remains the default; DiffusionGemma is a reasonable substitute when the text must stay
+on your machine, and Laya is not one for narratives like these.
 
 ## Browser
 

@@ -1,0 +1,101 @@
+complaint_id,product_group,coded_product,coded_product__confidence
+3591699,credit reporting,credit reporting,1.0
+4990701,credit reporting,credit reporting,1.0
+4543462,mortgage,mortgage,0.98
+3287213,credit reporting,credit reporting,1.0
+4017303,debt collection,debt collection,1.0
+5880434,credit reporting,credit reporting,1.0
+7254635,credit reporting,mortgage,0.97
+5371874,debt collection,credit reporting,0.75
+5859835,mortgage,mortgage,1.0
+6186760,credit reporting,credit reporting,1.0
+2470392,debt collection,credit reporting,0.67
+6396101,credit reporting,credit reporting,1.0
+2958360,credit reporting,credit reporting,0.91
+3674318,debt collection,debt collection,0.96
+2832087,debt collection,credit card,0.57
+4908749,bank account,credit card,1.0
+3471546,debt collection,credit card,0.52
+4783377,credit reporting,vehicle loan,0.97
+5884356,debt collection,debt collection,0.85
+7422588,credit reporting,credit reporting,1.0
+4662391,mortgage,mortgage,0.99
+3000964,credit reporting,student loan,1.0
+6085686,credit reporting,credit reporting,1.0
+3753910,credit reporting,credit reporting,1.0
+6314428,credit reporting,credit reporting,0.99
+5536501,vehicle loan,credit reporting,0.88
+7886005,credit reporting,credit reporting,0.55
+3775421,mortgage,mortgage,1.0
+2790201,money transfer,money transfer,1.0
+6295503,credit reporting,credit reporting,1.0
+1417798,student loan,student loan,1.0
+3986965,credit card,bank account,0.96
+2501227,credit card,credit card,1.0
+5872851,credit reporting,credit reporting,0.6
+2730466,credit reporting,credit reporting,0.93
+7959026,credit reporting,credit reporting,1.0
+3190925,credit reporting,vehicle loan,0.59
+5238316,credit reporting,credit reporting,0.58
+6223655,money transfer,money transfer,1.0
+4695099,credit card,money transfer,0.4
+7734202,student loan,student loan,1.0
+4015323,bank account,credit card,0.51
+5469778,credit reporting,credit reporting,1.0
+3861132,debt collection,debt collection,1.0
+7853527,credit reporting,credit reporting,1.0
+6402441,credit card,money transfer,1.0
+7935039,credit reporting,debt collection,0.55
+4909150,mortgage,mortgage,1.0
+5617537,credit reporting,credit reporting,1.0
+6806775,credit reporting,other,0.9
+5766038,debt collection,credit reporting,0.79
+5910208,credit reporting,credit reporting,0.99
+6892596,credit reporting,credit reporting,1.0
+2290578,debt collection,debt collection,0.78
+5982508,credit reporting,credit reporting,0.72
+6053644,credit reporting,credit reporting,1.0
+1963920,debt collection,debt collection,0.82
+6992994,credit card,other,0.93
+7511004,credit reporting,credit reporting,1.0
+4724906,bank account,bank account,1.0
+3892377,credit card,credit card,0.92
+6189317,credit reporting,credit reporting,1.0
+5122760,student loan,student loan,0.39
+3533051,personal loan,credit reporting,0.98
+3415543,credit reporting,credit reporting,1.0
+1754887,credit reporting,credit reporting,0.99
+7343533,debt collection,debt collection,0.91
+2911528,credit reporting,mortgage,0.98
+4686293,credit card,credit reporting,0.7
+5926077,debt collection,credit reporting,0.91
+3459106,credit reporting,credit reporting,0.8
+6901279,credit reporting,credit reporting,0.98
+5610311,credit reporting,credit reporting,1.0
+2476481,credit card,credit card,1.0
+4445214,mortgage,mortgage,1.0
+7319122,credit reporting,credit reporting,1.0
+2772170,credit reporting,credit reporting,0.97
+2146782,mortgage,mortgage,1.0
+7330969,credit card,credit card,1.0
+1307322,mortgage,mortgage,1.0
+7907914,bank account,bank account,1.0
+6186000,credit reporting,credit reporting,0.72
+4150480,debt collection,debt collection,1.0
+7153383,credit reporting,credit reporting,0.98
+2034349,student loan,student loan,1.0
+6971712,credit reporting,credit reporting,1.0
+5849187,credit reporting,credit reporting,1.0
+5349921,credit reporting,bank account,0.67
+6658585,credit reporting,other,0.69
+7718501,credit reporting,credit reporting,0.53
+2624417,credit reporting,credit reporting,0.89
+6617238,credit reporting,credit card,1.0
+2875854,credit reporting,credit reporting,1.0
+3504268,credit reporting,credit reporting,1.0
+3869454,credit reporting,credit reporting,1.0
+4095685,debt collection,debt collection,0.98
+2544839,credit reporting,credit reporting,1.0
+4673340,credit reporting,credit reporting,1.0
+5458075,credit reporting,credit reporting,0.99
+1519550,mortgage,mortgage,0.88

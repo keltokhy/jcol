@@ -1,0 +1,398 @@
+{
+  "date": "2026-09-22",
+  "tool": "jcol",
+  "machine": "Apple M3 Ultra, 96 GiB unified memory",
+  "label_status": "product_group derives from the original administrative product label; proxy agreement only, not accuracy",
+  "task": "Code 'coded_product' (10-label category question) from the complaint narrative; compare with product_group",
+  "codebook": "examples/complaints-codebook.json",
+  "jev": {
+    "source": "benchmarks/results/product-agreement-2026-09-21 (restored from git 0e1e7c6^; not re-run)",
+    "rows": 100,
+    "answered": 100,
+    "agree_with_product_group": 75,
+    "macro_f1_all_10_labels": 0.4961121495327102,
+    "seconds": 6.630382750008721,
+    "calls": 100,
+    "dollars": 0.00374,
+    "requested_model": "typesafe/jev-1.13",
+    "returned_model": "typesafe/jev-1.13-20260917",
+    "settings": "OpenRouter, no answer cache, concurrency 4, $0.10 threshold, 12 s deadline",
+    "provenance": {
+      "date": "2026-09-21 (recorded_at 2026-09-21T04:52:28Z)",
+      "files": {
+        "agree_with_product_group, macro_f1_all_10_labels, answered": "benchmarks/results/product-agreement-2026-09-21/report.json (evaluation.columns.coded_product)",
+        "seconds, calls, dollars, requested_model, returned_model": "benchmarks/results/product-agreement-2026-09-21/report.json (seconds, run.stats, run.identity)",
+        "per-row choices used for local-vs-Jev agreement": "benchmarks/results/product-agreement-2026-09-21/predictions.csv",
+        "sample hash and ordered complaint IDs": "benchmarks/results/product-agreement-2026-09-21/manifest.json"
+      },
+      "restored_from": "git show 0e1e7c6^:<path> in the jcol repo (commit 0e1e7c6 removed them on 2026-09-21)",
+      "majority_label_baseline": "55/100 credit reporting (benchmarks/README.md restored from 0e1e7c6^)",
+      "comparability": "Proxy agreement with an administrative label, not accuracy. Jev ran hosted via OpenRouter with a 12 s deadline; its 6.63 s wall time is not comparable hardware-wise with local wall-clock on the M3 Ultra. No Jev calls were made on 2026-09-22.",
+      "not_available": "No Jev number exists for the 1000-row sample (or its rows 101-1000); those runs have no Jev column."
+    }
+  },
+  "local": {
+    "diffusiongemma-product100": {
+      "provider": "diffusiongemma",
+      "model": "openjev-0.1",
+      "server": "OpenJev commit e04794a; weights mlx-community/diffusiongemma-26B-A4B-it-4bit revision a7a8140",
+      "settings": {
+        "cache": false,
+        "concurrency": 4,
+        "deadline_seconds": 300.0,
+        "budget": 1e-06,
+        "max_chars": null,
+        "xdg_cache_home": "bench/out/local-2026-09-22/cache-diffusiongemma-product100"
+      },
+      "sampling": "100 rows without replacement, Polars sample(n=100, seed=70, shuffle=True)",
+      "sample_sha256": "756f3977203aa3ffba96576baf04f374ef4f23b4c87b0128dba1a87655b09965",
+      "contains_jev_rows": 100,
+      "started_at_new_york": "2026-09-22T20:54:23.908521-04:00",
+      "summary": {
+        "rows": 100,
+        "answered": 100,
+        "unanswered": 0,
+        "agree_with_product_group": 78,
+        "majority_label": {
+          "label": "credit reporting",
+          "rows": 55
+        },
+        "macro_f1_answered_rows_all_10_labels": 0.5091424920991484,
+        "mean_confidence": 0.96038,
+        "seconds": 134.56942670798162,
+        "rows_per_second": 0.7431108420860113,
+        "calls": 100,
+        "shared_or_cached": 0,
+        "errors": 0,
+        "dollars": 0.0,
+        "input_tokens": 63054,
+        "returned_model": "openjev-0.1",
+        "failed_requests": 0,
+        "failure_messages": [],
+        "cache_after_run": []
+      },
+      "jev": {
+        "rows": 100,
+        "local_answered": 100,
+        "agree_with_jev": 86,
+        "on_rows_local_answered": {
+          "local_agrees_with_product_group": 78,
+          "jev_agrees_with_product_group": 75
+        },
+        "on_rows_local_missed": {
+          "rows": 0,
+          "jev_agrees_with_product_group": 0
+        },
+        "source": "benchmarks/results/product-agreement-2026-09-21/predictions.csv (Jev 1.13, recorded 2026-09-21; not re-run)"
+      },
+      "result_dir": "benchmarks/results/local-models-2026-09-22/diffusiongemma-product100",
+      "wall_clock_seconds": 134.56942670798162,
+      "calls": 100,
+      "failed_decisions": 0,
+      "laya_rejections": null,
+      "raw_outputs": [
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product100/manifest.json",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product100/report.json",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product100/predictions.csv",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product100/answers.json",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product100/predictions.parquet",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product100/sample.parquet",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product100.log"
+      ]
+    },
+    "diffusiongemma-product1000": {
+      "provider": "diffusiongemma",
+      "model": "openjev-0.1",
+      "server": "OpenJev commit e04794a; weights mlx-community/diffusiongemma-26B-A4B-it-4bit revision a7a8140",
+      "settings": {
+        "cache": false,
+        "concurrency": 4,
+        "deadline_seconds": 300.0,
+        "budget": 1e-06,
+        "max_chars": null,
+        "xdg_cache_home": "bench/out/local-2026-09-22/cache-diffusiongemma-product1000"
+      },
+      "sampling": "1000 rows without replacement, Polars sample(n=1000, seed=70, shuffle=True)",
+      "sample_sha256": "680a9e31da753811a20bc9fb8b91c2eda0dc4a23070fe84272d4b24345f23d64",
+      "contains_jev_rows": 100,
+      "started_at_new_york": "2026-09-22T20:56:45.264465-04:00",
+      "summary": {
+        "rows": 1000,
+        "answered": 1000,
+        "unanswered": 0,
+        "agree_with_product_group": 830,
+        "majority_label": {
+          "label": "credit reporting",
+          "rows": 596
+        },
+        "macro_f1_answered_rows_all_10_labels": 0.6568511254324657,
+        "mean_confidence": 0.9678410000000002,
+        "seconds": 693.4982652500039,
+        "rows_per_second": 1.4419646740421235,
+        "calls": 1000,
+        "shared_or_cached": 0,
+        "errors": 0,
+        "dollars": 0.0,
+        "input_tokens": 570899,
+        "returned_model": "openjev-0.1",
+        "failed_requests": 0,
+        "failure_messages": [],
+        "cache_after_run": []
+      },
+      "jev": null,
+      "result_dir": "benchmarks/results/local-models-2026-09-22/diffusiongemma-product1000",
+      "repeat_on_shared_rows": {
+        "against": "diffusiongemma-product100",
+        "rows_both_answered": 100,
+        "same_label": 100
+      },
+      "wall_clock_seconds": 693.4982652500039,
+      "calls": 1000,
+      "failed_decisions": 0,
+      "laya_rejections": null,
+      "raw_outputs": [
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product1000/manifest.json",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product1000/report.json",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product1000/predictions.csv",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product1000/answers.json",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product1000/predictions.parquet",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product1000/sample.parquet",
+        "benchmarks/results/local-models-2026-09-22/diffusiongemma-product1000.log"
+      ]
+    },
+    "laya-product100": {
+      "provider": "laya",
+      "model": "laya-421m",
+      "server": "jevkit-core scripts/laya_server.py; laya-mlx commit fc1df62; checkpoint aac6fef/laya-mlx revision 0476785; 512-token window, no truncation",
+      "settings": {
+        "cache": false,
+        "concurrency": 4,
+        "deadline_seconds": 120.0,
+        "budget": 1e-06,
+        "max_chars": null,
+        "xdg_cache_home": "bench/out/local-2026-09-22/cache-laya-product100"
+      },
+      "sampling": "100 rows without replacement, Polars sample(n=100, seed=70, shuffle=True)",
+      "sample_sha256": "756f3977203aa3ffba96576baf04f374ef4f23b4c87b0128dba1a87655b09965",
+      "contains_jev_rows": 100,
+      "started_at_new_york": "2026-09-22T21:08:29.344301-04:00",
+      "summary": {
+        "rows": 100,
+        "answered": 73,
+        "unanswered": 27,
+        "agree_with_product_group": 50,
+        "majority_label": {
+          "label": "credit reporting",
+          "rows": 55
+        },
+        "macro_f1_answered_rows_all_10_labels": 0.45860921778643304,
+        "mean_confidence": 0.5659726027397264,
+        "seconds": 71.38565104099689,
+        "rows_per_second": 1.4008417453889976,
+        "calls": 73,
+        "shared_or_cached": 0,
+        "errors": 81,
+        "dollars": 0.0,
+        "input_tokens": 23785,
+        "returned_model": "laya-421m",
+        "failed_requests": 81,
+        "failure_messages": [
+          "HTTP 422: State exceeds the Laya context budget; use shorter records or explicitly enable audited truncation"
+        ],
+        "laya_audit": {
+          "path": "laya-audit.jsonl",
+          "lines_before": 1981,
+          "lines_after": 2135,
+          "requests": 154,
+          "foreign_requests": 0,
+          "statuses": {
+            "context_rejected": 81,
+            "ok": 73
+          },
+          "rejected_requests": 81,
+          "rejected_rows": 27,
+          "note": "jcol re-asks failed cells in up to two more sweeps, so one refused row can log up to three refusals"
+        },
+        "cache_after_run": []
+      },
+      "jev": {
+        "rows": 100,
+        "local_answered": 73,
+        "agree_with_jev": 50,
+        "on_rows_local_answered": {
+          "local_agrees_with_product_group": 50,
+          "jev_agrees_with_product_group": 53
+        },
+        "on_rows_local_missed": {
+          "rows": 27,
+          "jev_agrees_with_product_group": 22
+        },
+        "source": "benchmarks/results/product-agreement-2026-09-21/predictions.csv (Jev 1.13, recorded 2026-09-21; not re-run)"
+      },
+      "result_dir": "benchmarks/results/local-models-2026-09-22/laya-product100",
+      "wall_clock_seconds": 71.38565104099689,
+      "calls": 73,
+      "failed_decisions": 27,
+      "laya_rejections": {
+        "rejected_rows": 27,
+        "rejected_requests": 81,
+        "foreign_requests": 0
+      },
+      "raw_outputs": [
+        "benchmarks/results/local-models-2026-09-22/laya-product100/manifest.json",
+        "benchmarks/results/local-models-2026-09-22/laya-product100/report.json",
+        "benchmarks/results/local-models-2026-09-22/laya-product100/predictions.csv",
+        "benchmarks/results/local-models-2026-09-22/laya-product100/answers.json",
+        "benchmarks/results/local-models-2026-09-22/laya-product100/predictions.parquet",
+        "benchmarks/results/local-models-2026-09-22/laya-product100/sample.parquet",
+        "benchmarks/results/local-models-2026-09-22/laya-product100.log"
+      ]
+    },
+    "laya-product1000": {
+      "provider": "laya",
+      "model": "laya-421m",
+      "server": "jevkit-core scripts/laya_server.py; laya-mlx commit fc1df62; checkpoint aac6fef/laya-mlx revision 0476785; 512-token window, no truncation",
+      "settings": {
+        "cache": false,
+        "concurrency": 4,
+        "deadline_seconds": 120.0,
+        "budget": 1e-06,
+        "max_chars": null,
+        "xdg_cache_home": "bench/out/local-2026-09-22/cache-laya-product1000"
+      },
+      "sampling": "1000 rows without replacement, Polars sample(n=1000, seed=70, shuffle=True)",
+      "sample_sha256": "680a9e31da753811a20bc9fb8b91c2eda0dc4a23070fe84272d4b24345f23d64",
+      "contains_jev_rows": 100,
+      "started_at_new_york": "2026-09-22T21:09:47.731791-04:00",
+      "summary": {
+        "rows": 1000,
+        "answered": 798,
+        "unanswered": 202,
+        "agree_with_product_group": 562,
+        "majority_label": {
+          "label": "credit reporting",
+          "rows": 596
+        },
+        "macro_f1_answered_rows_all_10_labels": 0.4899496955059267,
+        "mean_confidence": 0.5935977443609022,
+        "seconds": 58.84486933401786,
+        "rows_per_second": 16.993834998999752,
+        "calls": 798,
+        "shared_or_cached": 0,
+        "errors": 606,
+        "dollars": 0.0,
+        "input_tokens": 263018,
+        "returned_model": "laya-421m",
+        "failed_requests": 606,
+        "failure_messages": [
+          "HTTP 422: State exceeds the Laya context budget; use shorter records or explicitly enable audited truncation"
+        ],
+        "laya_audit": {
+          "path": "laya-audit.jsonl",
+          "lines_before": 2135,
+          "lines_after": 3539,
+          "requests": 1404,
+          "foreign_requests": 0,
+          "statuses": {
+            "context_rejected": 606,
+            "ok": 798
+          },
+          "rejected_requests": 606,
+          "rejected_rows": 202,
+          "note": "jcol re-asks failed cells in up to two more sweeps, so one refused row can log up to three refusals"
+        },
+        "cache_after_run": []
+      },
+      "jev": null,
+      "result_dir": "benchmarks/results/local-models-2026-09-22/laya-product1000",
+      "repeat_on_shared_rows": {
+        "against": "laya-product100",
+        "rows_both_answered": 73,
+        "same_label": 73
+      },
+      "wall_clock_seconds": 58.84486933401786,
+      "calls": 798,
+      "failed_decisions": 202,
+      "laya_rejections": {
+        "rejected_rows": 202,
+        "rejected_requests": 606,
+        "foreign_requests": 0
+      },
+      "raw_outputs": [
+        "benchmarks/results/local-models-2026-09-22/laya-product1000/manifest.json",
+        "benchmarks/results/local-models-2026-09-22/laya-product1000/report.json",
+        "benchmarks/results/local-models-2026-09-22/laya-product1000/predictions.csv",
+        "benchmarks/results/local-models-2026-09-22/laya-product1000/answers.json",
+        "benchmarks/results/local-models-2026-09-22/laya-product1000/predictions.parquet",
+        "benchmarks/results/local-models-2026-09-22/laya-product1000/sample.parquet",
+        "benchmarks/results/local-models-2026-09-22/laya-product1000.log"
+      ]
+    }
+  },
+  "servers": {
+    "diffusiongemma": {
+      "endpoint": "http://127.0.0.1:8080/v1/systemone",
+      "model": "openjev-0.1",
+      "identity": "OpenJev commit e04794a; weights mlx-community/diffusiongemma-26B-A4B-it-4bit revision a7a8140",
+      "deadline_seconds": 300.0,
+      "concurrency": 4
+    },
+    "laya": {
+      "endpoint": "http://127.0.0.1:8081/v1/systemone",
+      "model": "laya-421m",
+      "identity": "jevkit-core scripts/laya_server.py; laya-mlx commit fc1df62; checkpoint aac6fef/laya-mlx revision 0476785; 512-token window, no truncation",
+      "deadline_seconds": 120.0,
+      "concurrency": 4
+    }
+  },
+  "comparisons": {
+    "diffusiongemma_vs_laya_product100": {
+      "rows": 100,
+      "rows_laya_answered": {
+        "rows": 73,
+        "laya_agrees_with_product_group": 50,
+        "diffusiongemma_agrees_with_product_group": 53,
+        "diffusiongemma_same_label_as_laya": 54,
+        "majority_label_baseline": 43,
+        "jev_agrees_with_product_group": 53
+      },
+      "rows_laya_refused": {
+        "rows": 27,
+        "diffusiongemma_agrees_with_product_group": 25,
+        "jev_agrees_with_product_group": 22
+      },
+      "diffusiongemma_vs_jev": {
+        "both_agree_with_product_group": 71,
+        "only_diffusiongemma_agrees": 7,
+        "only_jev_agrees": 4
+      }
+    },
+    "diffusiongemma_vs_laya_product1000": {
+      "rows": 1000,
+      "rows_laya_answered": {
+        "rows": 798,
+        "laya_agrees_with_product_group": 562,
+        "diffusiongemma_agrees_with_product_group": 660,
+        "diffusiongemma_same_label_as_laya": 597,
+        "majority_label_baseline": 498
+      },
+      "rows_laya_refused": {
+        "rows": 202,
+        "diffusiongemma_agrees_with_product_group": 170
+      }
+    },
+    "diffusiongemma-product1000_rows_outside_jev_100": {
+      "rows": 900,
+      "answered": 900,
+      "agree_with_product_group": 752,
+      "majority_label_baseline": 541
+    },
+    "laya-product1000_rows_outside_jev_100": {
+      "rows": 900,
+      "answered": 725,
+      "agree_with_product_group": 512,
+      "majority_label_baseline": 541
+    }
+  },
+  "run_conditions": "Runs were serialised: DiffusionGemma product100, DiffusionGemma product1000, Laya product100, Laya product1000, one at a time, each with a fresh XDG_CACHE_HOME under bench/out/local-2026-09-22/ and no answer cache. While one server was being timed the other was loaded but idle (the OpenJev access log shows only this run's 4 client connections during each DiffusionGemma run and no requests after it; the Laya audit log shows no foreign requests during either Laya run). Concurrency 4 and deadlines 300 s / 120 s were used throughout; no deadline errors occurred. No hosted model was called. See benchmarks/results/local-models-2026-09-22/RESULTS-NOTES.md."
+}
