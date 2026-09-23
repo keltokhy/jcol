@@ -1,6 +1,6 @@
 [project]
 name = "jev-col"
-version = "0.5.0"
+version = "0.5.1"
 description = "Apply natural-language codebooks to tables, with resumable annotation and label evaluation."
 readme = "README.md"
 license = "MIT"

@@ -35,7 +35,7 @@ and run `make install-local` (or `uv tool install --force .`). To build a packag
 
 ```bash
 uv build
-uv tool install --force dist/jev_col-0.5.0-py3-none-any.whl
+uv tool install --force dist/jev_col-0.5.1-py3-none-any.whl
 ```
 
 Set `TYPESAFE_API_KEY` or `OPENROUTER_API_KEY`, or put a key in
@@ -168,8 +168,8 @@ Check the remaining inputs yourself for indirect label leakage.
 
 Examples:
 
-- [Product codebook](examples/complaints-codebook.json): narrative-only product classification with proxy labels.
-- [Multiple-field codebook](examples/multifield-codebook.json): narrative and issue used together, with binary and category definitions.
+- [Product codebook](https://github.com/keltokhy/jcol/blob/main/examples/complaints-codebook.json): narrative-only product classification with proxy labels.
+- [Multiple-field codebook](https://github.com/keltokhy/jcol/blob/main/examples/multifield-codebook.json): narrative and issue used together, with binary and category definitions.
 
 ## Batch and Python
 
@@ -237,11 +237,11 @@ before using a derived variable.
 ## How well does it work
 
 One recorded check codes 100 public complaints with the
-[product codebook](examples/complaints-codebook.json), which picks the financial product at the
+[product codebook](https://github.com/keltokhy/jcol/blob/main/examples/complaints-codebook.json), which picks the financial product at the
 center of each narrative from ten labels, and compares the answers with `product_group`, a grouping
 of each complaint's administrative product label. This is proxy agreement, not accuracy: a narrative
 can discuss several products, and the codebook draws some boundaries differently from the reference.
-[benchmarks/README.md](benchmarks/README.md) has the full record and its caveats.
+[benchmarks/README.md](https://github.com/keltokhy/jcol/blob/main/benchmarks/README.md) has the full record and its caveats.
 
 | 100 complaints | Jev 1.13 (OpenRouter) | DiffusionGemma (`openjev-0.1`, local) | Laya (`laya-421m`, local) |
 |---|---:|---:|---:|
@@ -325,7 +325,7 @@ the displayed margins cover sampling uncertainty only. They do not measure class
 ## Data and development
 
 `data/complaints-5k.parquet` contains 5,000 public CFPB complaints and their fields.
-[data/SAMPLE.json](data/SAMPLE.json) records the Hugging Face snapshot, original sampling method,
+[data/SAMPLE.json](https://github.com/keltokhy/jcol/blob/main/data/SAMPLE.json) records the Hugging Face snapshot, original sampling method,
 seed, dates and exact mapping used to derive `product_group`. Original source files and the
 original 5,000-row sampling script are not bundled.
 
@@ -357,7 +357,7 @@ unaffected by this source migration.
 
 From the core checkout, `python scripts/dev.py setup`, `check`, and `wheel-check`
 set up and validate all five consumers in separate environments.
-CI checks out core tag `v0.3.0`. Prompts, question construction, and budget policies
+CI checks out core tag `v0.3.1`. Prompts, question construction, and budget policies
 remain in this repository; answer identity, the answer store, transport, and metering
 are the runtime's. Runtime 0.2 keys and stores answers differently from 0.1, so a cache
 written by an earlier version is re-asked once after upgrading.
