@@ -47,12 +47,12 @@ Reachability does not verify authentication or model availability.
 
 ### Local servers (experimental)
 
-`--api diffusiongemma` and `--api laya` send the same questions to a System One server on your own
-machine, an [OpenJev](https://github.com/razorback16/openjev) or
-[laya-mlx](https://github.com/mizorewww/laya-mlx) process that you run separately. They are never
+`--api diffusiongemma`, `--api laya` and `--api gliner` send the same questions to a System One server on your own
+machine, an [OpenJev](https://github.com/razorback16/openjev), [laya-mlx](https://github.com/mizorewww/laya-mlx)
+or [GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide) process that you run separately. They are never
 chosen automatically, need no key, and count as $0 against the budget unless `JEV_PRICE_PER_MTOK`
-is set; `doctor` lists them. The runtime's [DiffusionGemma](https://github.com/keltokhy/jevkit-core/blob/main/docs/diffusiongemma.md)
-and [Laya](https://github.com/keltokhy/jevkit-core/blob/main/docs/laya.md) guides explain the setup; keep
+is set; `doctor` lists them. The runtime's [DiffusionGemma](https://github.com/keltokhy/jevkit-core/blob/main/docs/diffusiongemma.md),
+[Laya](https://github.com/keltokhy/jevkit-core/blob/main/docs/laya.md) and [GLiNER](https://github.com/keltokhy/jevkit-core/blob/main/docs/gliner.md) guides explain the setup; keep
 `--concurrency` low while a local model warms up.
 See [How well does it work](#how-well-does-it-work) for a comparison with Jev.
 
