@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add `--api gliner`, a local [GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide)
+  server (`JEV_GLINER_URL`, port 8082). Requires `jevkit-runtime>=0.3.2`.
+
 ## 0.5.1
 
 - First release on PyPI. The distribution is named `jev-col`, matching `jev-grep`, `jev-sort` and
