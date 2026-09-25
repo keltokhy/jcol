@@ -5,7 +5,7 @@ import random
 
 import pytest
 
-from jevkit_runtime import AnswerStore, Backend, Client
+from jevkit_runtime import AnswerStore, Backend, Client, answer_key
 from jcol.core import PROVIDERS
 from jcol.engine import Engine
 from jcol.pool import LocalPool, ProcessPool
@@ -13,6 +13,7 @@ from jcol.pool import LocalPool, ProcessPool
 from fakes import FakeAPI, FakePool
 
 BACKEND = Backend("openrouter", PROVIDERS["openrouter"].url, "jev-test", key="test-key")
+JOINT = Backend("diffusiongemma", PROVIDERS["diffusiongemma"].url, "openjev-latest", joint_reads=True)
 
 TEXTS = ["this is fraud about my mortgage!!", "a late fee on my credit card", "fraud again, a credit card!",
          "nothing much", "a late fee on my credit card", "my mortgage servicer lost a payment!"]
@@ -29,7 +30,7 @@ async def until(queue: asyncio.Queue, kind: str) -> dict:
 
 
 async def started(texts, pool, **kw) -> tuple[Engine, asyncio.Queue]:
-    engine = Engine(texts, pool, backend=BACKEND, **kw)
+    engine = Engine(texts, pool, **({"backend": BACKEND} | kw))
     queue: asyncio.Queue = asyncio.Queue()
     engine.listeners.add(queue)
     await engine.start()
@@ -218,6 +219,58 @@ def test_answers_come_back_from_the_cache(tmp_path):
         cache.db.close()
     assert len(paid.jobs) == 5 and not free.jobs
     assert again.cached == 6 and again.columns["c1"].values == first.columns["c1"].values
+
+
+def test_a_joint_read_comes_back_from_the_cache_only_as_the_same_call(tmp_path):
+    """DiffusionGemma answers each question in the light of the others in its call. An answer given beside
+    another column is not the answer the question would get alone, so the cache serves it only to the same call."""
+    async def fill(cache, headers):
+        pool = FakePool()
+        engine, queue = await started(TEXTS, pool, backend=JOINT, cache=cache)
+        try:
+            for header in headers:
+                engine.commit(header)
+            for _ in headers:
+                await until(queue, "done")
+            return pool
+        finally:
+            await engine.close()
+
+    both = ["alleges fraud?", "product: mortgage, credit card, other"]
+    cache = AnswerStore(tmp_path / "answers.sqlite")
+    try:
+        first = run(fill(cache, both))
+        again = run(fill(cache, both))
+        alone = run(fill(cache, both[:1]))
+    finally:
+        cache.db.close()
+    assert len(first.jobs) == 5 and all(sorted(questions) == ["c1", "c2"] for _, _, questions, _ in first.jobs)
+    assert not again.jobs
+    assert len(alone.jobs) == 5 and all(list(questions) == ["c1"] for _, _, questions, _ in alone.jobs)
+
+
+def test_cached_answers_say_who_gave_them(tmp_path):
+    api, cache = FakeAPI(), AnswerStore(tmp_path / "answers.sqlite")
+
+    async def go():
+        pool = LocalPool(Client(BACKEND, transport=api.transport), per_worker=4, warmup=False)
+        engine, queue = await started(TEXTS, pool, cache=cache)
+        try:
+            engine.commit("alleges fraud?")
+            await until(queue, "done")
+            return engine
+        finally:
+            await engine.close()
+
+    try:
+        question = run(go()).columns["c1"].spec.question
+        entries = [cache.entry(answer_key(BACKEND, text, question)) for text in set(TEXTS)]
+    finally:
+        cache.db.close()
+    assert len(entries) == 5
+    for entry in entries:
+        assert entry.metadata["provider"] == "openrouter" and entry.metadata["requested_model"] == "jev-test"
+        assert entry.metadata["resolved_model"] == "typesafe/jev-test" and "source" not in entry.metadata
 
 
 def test_removing_a_column_tells_the_page():

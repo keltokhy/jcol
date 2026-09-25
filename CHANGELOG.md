@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Fix answer reuse on `--api diffusiongemma`. DiffusionGemma answers each question in the light of the
+  others in its call, but jcol cached each column's answer on its own, so an answer given beside one set
+  of columns could be served to another. Its answers are now keyed on the whole call, as
+  `jevkit-runtime` keys them, and served from the cache only to the same call. DiffusionGemma answers
+  cached by earlier versions are no longer used; other providers are unaffected.
+  ([#3](https://github.com/keltokhy/jcol/issues/3))
+- Answers jcol writes to the shared cache now record the provider, the requested model and the model
+  that answered, as the runtime's own entries do.
+
 ## 0.6.0
 
 - Add `--api gliner`, a local [GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide)
