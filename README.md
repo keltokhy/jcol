@@ -290,8 +290,8 @@ inserted into a short question template. Use a JSON codebook and batch mode for 
 | `--text COLUMN [COLUMN ...]` | Selected inputs; default is the longest string column on average |
 | `--limit N` | First N rows |
 | `--max-chars N` | 4,000 characters per serialized row; warns on truncation; 0 sends full rows |
-| `--budget DOLLARS` | 2.00; a per-invocation spending threshold, not a hard cap |
-| `--workers N` / `--per-worker N` | 16 processes, 64 background calls each; workers 0 runs in-process |
+| `--budget DOLLARS` | 2.00, or `$JEV_BUDGET`; no call goes out that would take spending past it; `none` for no limit |
+| `--workers N` / `--per-worker N` | 16 sending processes, 64 background calls each; workers 0 sends in-process |
 | `--api` / `--model` | Backend and model ID; `JEV_MODEL` is also accepted |
 | `--no-cache` | Disable the separate answer cache, while retaining project persistence |
 | `--port` / `--no-open` | Port 8765; optionally suppress opening the browser |
@@ -302,16 +302,16 @@ the displayed margins cover sampling uncertainty only. They do not measure class
 
 ## Costs, persistence and limits
 
-- Budget checks use cost already reported by completed requests. In-flight calls can exceed the
-  threshold. Batch mode bounds them with `--concurrency`; browser previews can spend outside
-  background budget checks. Budget and cost counters reset each invocation. A saved project
-  preserves cells, not a cumulative spending limit.
-- Answers also cache in `~/.cache/jev/answers.sqlite`, shared with the other JevKit tools. Keys
-  include provider, endpoint, requested model, serialized input and question; entries written by
-  versions before 0.4 are not reused. `JEV_URL` overrides the endpoint. No API keys are stored in
-  projects or exports.
-- Default model IDs are aliases. Pin a model for a study; a project cannot detect a server moving
-  an alias to new model weights. Cached and saved answers remain frozen under the requested ID.
+- Every call, background or on screen, sets its estimated price aside before it goes out, and
+  the first goes alone to learn the real price, so calls in flight together cannot pass the
+  budget; only a price that rises while calls are in the air can. Budget and cost counters reset
+  each invocation. A saved project preserves cells, not a cumulative spending limit.
+- Answers also cache in `~/.cache/jev/answers.v3.sqlite`, shared with the other JevKit tools. Keys
+  include provider, endpoint, requested model, serialized input and question. `JEV_URL` overrides
+  the endpoint. No API keys are stored in projects or exports.
+- The model is pinned to a Jev release (`jev-1.13.0`, `typesafe/jev-1.13` on OpenRouter), so a
+  project's answers do not mix versions when an alias moves. `--model jev-latest` asks for the
+  alias; the run's record in `metadata["run"]` names every model that answered.
 - The full table and results are held in memory. The browser receives previews and source fields
   for every row and sorts locally. This is intended for thousands of rows, not out-of-core datasets.
 - Transient failures are retried; the scheduler makes up to two additional sweeps for missing cells.
@@ -357,7 +357,7 @@ unaffected by this source migration.
 
 From the core checkout, `python scripts/dev.py setup`, `check`, and `wheel-check`
 set up and validate all five consumers in separate environments.
-CI checks out core tag `v0.3.2`. Prompts, question construction, and budget policies
-remain in this repository; answer identity, the answer store, transport, and metering
-are the runtime's. Runtime 0.2 keys and stores answers differently from 0.1, so a cache
-written by an earlier version is re-asked once after upgrading.
+The codebook, the column grammar, the two-lane scheduler and projects remain in this repository;
+answer identity, the answer store, transport, metering, the budget and the worker processes are
+the runtime's. Runtime 0.4 keeps answers in `answers.v3.sqlite`, so the first run after upgrading
+re-asks once.

@@ -6,7 +6,9 @@ random order, so the rows finished so far are always a random sample of the tabl
 computed from them is honest.
 
 Every call carries one row and every column that still needs that row, because extra questions in a call
-cost almost no time. Identical texts are asked once: complaint data is full of form letters.
+cost almost no time. Identical texts are asked once: complaint data is full of form letters. The runtime's
+client does the asking: the cache, sharing a call already in the air, the budget, re-sending slow calls,
+and sending from worker processes when it has them.
 """
 
 from __future__ import annotations
@@ -16,10 +18,12 @@ import random
 import time
 from dataclasses import dataclass, field
 
-from jevkit_runtime import AnswerStore, Backend, answer_keys
+from jevkit_runtime import Client, JevBudgetExceeded, JevError, JevFatal, Noul
 from .spec import Spec, parse
 
 FLUSH_EVERY = 0.04  # seconds between batches sent to the browser
+HEDGE_AFTER = 0.35  # seconds; measured: trims a screenful's worst case from about 1.4 s to 0.7 s
+WARM_UP = {"q": Noul("This is a greeting.")}
 
 
 @dataclass
@@ -38,11 +42,13 @@ class Column:
 
 
 class Engine:
-    def __init__(self, texts: list[str], pool, *, backend: Backend, cache: AnswerStore | None = None, budget: float = 2.0,
-                 max_chars: int | None = 4000, seed: int = 70, project=None):
-        self.texts, self.pool, self.backend, self.cache = texts, pool, backend, cache
-        self.model, self.endpoint, self.project = backend.model, backend.url, project
-        self.budget, self.max_chars, self.n = budget, max_chars, len(texts)
+    """`capacity` bounds the background lane's rows in the air; the hot lane never waits for it."""
+
+    def __init__(self, texts: list[str], client: Client, *, capacity: int = 64, max_chars: int | None = 4000,
+                 seed: int = 70, project=None, warm_up: bool = False):
+        self.texts, self.client, self.project = texts, client, project
+        self.model, self.endpoint = client.backend.model, client.backend.url
+        self.max_chars, self.n, self.warm_up = max_chars, len(texts), warm_up
         self.order = list(range(self.n))
         random.Random(seed).shuffle(self.order)
         self.columns: dict[str, Column] = {}
@@ -53,25 +59,32 @@ class Engine:
         self.fatal: str | None = None
         self.idle = asyncio.Event()
         self.idle.set()
-        self._waiting: dict[str, list[tuple[int, str]]] = {}  # cache key -> the (row, column) cells awaiting it
         self._asked: set[tuple[int, str]] = set()
-        self._jobs: dict[int, tuple[list[tuple[str, str]], bool]] = {}  # job id -> ([(column id, cache key)], hot)
-        self._job_ids = self._col_ids = 0
+        self._inflight = 0
+        self._col_ids = 0
         self._preview_id: str | None = None
         self._outbox: list[list] = []
-        self._slots = asyncio.Semaphore(pool.capacity)
+        self._slots = asyncio.Semaphore(capacity)
         self._hot_pending = 0
         self._wake, self._restart = asyncio.Event(), False
         self._tasks: set[asyncio.Task] = set()
-        pool.on_result = self._on_result
         if project:
             self.columns = {c.id: c for c in project.columns()}
             self._col_ids = max((int(cid[1:]) for cid in self.columns), default=0)
 
+    @property
+    def budget(self) -> float:
+        return self.client.budget.limit
+
     # ---- lifecycle -------------------------------------------------------------------------------------
 
     async def start(self) -> None:
-        await self.pool.start()
+        await self.client.start()
+        if self.warm_up:  # opens the connections, and under a limit teaches the budget the price
+            try:
+                await self.client.ask("warm up", WARM_UP)
+            except (JevError, JevFatal, JevBudgetExceeded):
+                pass
         for coro in (self._background(), self._flusher()):
             task = asyncio.ensure_future(coro)
             self._tasks.add(task)
@@ -83,7 +96,7 @@ class Engine:
         for task in self._tasks:
             task.cancel()
         await asyncio.gather(*self._tasks, return_exceptions=True)
-        await self.pool.close()
+        await self.client.close()
 
     # ---- what the browser asks for -------------------------------------------------------------------
 
@@ -147,10 +160,11 @@ class Engine:
                 "cells": [[c.id, r, v, p] for c in cols for r, (v, p) in c.values.items()], "stats": self.stats()}
 
     def stats(self) -> dict:
-        t = self.pool.totals()
-        return {"calls": t["calls"], "cached": self.cached, "hedges": t["hedges"], "tokens": t["tokens"],
-                "dollars": round(t["cost"], 5), "errors": self.errors, "inflight": len(self._jobs),
-                "budget": self.budget, "over_budget": self.over_budget, "model": t["model"] or self.model}
+        m = self.client.meter
+        return {"calls": m.calls, "cached": self.cached, "hedges": m.hedges, "tokens": m.input_tokens,
+                "dollars": round(m.cost, 5), "errors": self.errors, "inflight": self._inflight,
+                "budget": None if self.client.budget.unlimited else self.budget, "over_budget": self.over_budget,
+                "model": m.model or self.model}
 
     # ---- the two lanes -------------------------------------------------------------------------------
 
@@ -176,32 +190,24 @@ class Engine:
             await self._wake.wait()
             self._wake.clear()
             pos = 0
-            while pos < self.n:
-                if self.over_budget:
-                    break
+            while pos < self.n and not self.over_budget:
                 if self._restart:
                     self._restart, pos = False, 0
                 row = self.order[pos]
                 pos += 1
                 if not self._needs(row, committed_only=True):
                     continue
-                if self.pool.totals()["cost"] >= self.budget:
-                    self.over_budget = True
-                    self._send({"type": "budget", "budget": self.budget})
-                    break
                 while self._hot_pending:  # someone is waiting on their screen; do not queue more behind it
                     await asyncio.sleep(0.01)
                 await self._slots.acquire()
-                if self.over_budget or self.pool.totals()["cost"] >= self.budget:
+                if self.over_budget:
                     self._slots.release()
-                    self.over_budget = True
-                    self._send({"type": "budget", "budget": self.budget})
                     break
                 cols = self._needs(row, committed_only=True)  # the wait may have been long; ask only what is still missing
                 if not cols or not self._ask(row, cols, hot=False):
                     self._slots.release()
             # a failed call leaves its cell empty; once the stragglers land, sweep again for what is still missing
-            while self._jobs:
+            while self._inflight:
                 await asyncio.sleep(0.05)
             missing = any(c.committed and len(c.values) < self.n for c in self.columns.values())
             if missing and not self.over_budget and sweeps < 2:
@@ -213,67 +219,53 @@ class Engine:
                     self.idle.set()
 
     def _ask(self, row: int, cols: list[Column], *, hot: bool) -> bool:
-        """Fill what the cache knows, join calls already in the air, and send the rest. True if a call went out.
-
-        A joint-read backend answers each question in the light of the others in its call, so there the
-        runtime keys every answer on the whole call: it is served from the cache whole or asked again whole.
-        """
+        """Fill what the cache knows now, and send the rest. True if a call went out."""
         state = self.texts[row][:self.max_chars]
-        keys = answer_keys(self.backend, state, {c.id: c.spec.question for c in cols})
-        hits = {cid: hit for cid, key in keys.items() if self.cache and (hit := self.cache.get(key)) is not None}
-        if self.backend.joint_reads and len(hits) != len(keys):
-            hits = {}
-        missing = []
+        plan = self.client.plan(state, {c.id: c.spec.question for c in cols})
         for c in cols:
-            if c.id in hits and self._fill(c, row, hits[c.id]):
+            if c.id in plan.hits and self._fill(c, row, plan.hits[c.id]):
                 self.cached += 1
-            else:
-                missing.append(c)
-        if self.backend.joint_reads and len(missing) != len(cols):
-            # Only the missing columns go out, so their answers belong to that smaller call.
-            keys = answer_keys(self.backend, state, {c.id: c.spec.question for c in missing})
-        send: list[tuple[Column, str]] = []
-        for c in missing:
-            key = keys[c.id]
-            self._asked.add((row, c.id))
-            waiters = self._waiting.setdefault(key, [])
-            waiters.append((row, c.id))
-            if len(waiters) == 1:
-                send.append((c, key))
-            else:
-                self.cached += 1  # the same text and question are already in the air
-        if not send:
+        if plan.complete:
             return False
-        self._job_ids += 1
-        self._jobs[self._job_ids] = ([(c.id, key) for c, key in send], hot)
+        waiting = [c for c in cols if c.id in plan.misses]
+        for c in waiting:
+            self._asked.add((row, c.id))
+        self._inflight += 1
         self._hot_pending += hot
-        self.pool.submit((self._job_ids, state, {c.id: c.spec.question for c, _ in send}, hot))
+        task = asyncio.ensure_future(self._answer(row, waiting, plan, hot))
+        self._tasks.add(task)
+        task.add_done_callback(self._tasks.discard)
         return True
 
-    def _on_result(self, job_id: int, answers: dict | None, error: str | None) -> None:
-        asked, hot = self._jobs.pop(job_id, ([], False))
-        if hot:
-            self._hot_pending -= 1
-        else:
-            self._slots.release()
-        if error:
-            self.errors += 1
-            if error.startswith("fatal: "):
+    async def _answer(self, row: int, waiting: list[Column], plan, hot: bool) -> None:
+        answers = None
+        try:
+            answers = await self.client.send(plan, priority=hot, hedge_after=HEDGE_AFTER if hot else None)
+        except JevBudgetExceeded:
+            if not self.over_budget:
                 self.over_budget = True
-                self.fatal = error[7:]
-                self._send({"type": "fatal", "message": error[7:]})
-        origins = getattr(answers, "origins", {})  # who answered; a pool's answers come from Client.ask
-        for col_id, key in asked:
-            answer = None if answers is None else answers.get(col_id)
-            valid = False
-            for row, cid in self._waiting.pop(key, []):
-                self._asked.discard((row, cid))
-                if answer is not None and (c := self.columns.get(cid)):
-                    valid = self._fill(c, row, answer) or valid
-            if valid and self.cache:
-                # Stored as the runtime stores its own answers: provenance without the per-ask source.
-                origin = {k: v for k, v in origins.get(col_id, {}).items() if k != "source"}
-                self.cache.put(key, answer, origin or None)
+                self._send({"type": "budget", "budget": self.budget})
+        except JevFatal as e:
+            self.errors += 1
+            self.over_budget, self.fatal = True, str(e)
+            self._send({"type": "fatal", "message": str(e)})
+        except JevError:
+            self.errors += 1
+        finally:
+            self._inflight -= 1
+            if hot:
+                self._hot_pending -= 1
+            else:
+                self._slots.release()
+            for c in waiting:
+                self._asked.discard((row, c.id))
+        if answers is None:
+            return
+        for c in waiting:
+            if c.id in answers and (col := self.columns.get(c.id)) is not None:
+                if answers.origins[c.id].get("source") == "shared":
+                    self.cached += 1  # the same text and question were already in the air
+                self._fill(col, row, answers[c.id])
 
     def _fill(self, c: Column, row: int, answer: dict) -> bool:
         try:
@@ -303,7 +295,7 @@ class Engine:
         while True:
             await asyncio.sleep(FLUSH_EVERY)
             now = time.perf_counter()
-            if self._outbox or (self._jobs and now - last_stats > 0.25):
+            if self._outbox or (self._inflight and now - last_stats > 0.25):
                 cells, self._outbox = self._outbox, []
                 self._send({"type": "cells", "cells": cells, "stats": self.stats()})
                 last_stats = now
