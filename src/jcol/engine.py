@@ -16,7 +16,7 @@ import random
 import time
 from dataclasses import dataclass, field
 
-from jevkit_runtime import AnswerStore, Backend, answer_key
+from jevkit_runtime import AnswerStore, Backend, answer_keys
 from .spec import Spec, parse
 
 FLUSH_EVERY = 0.04  # seconds between batches sent to the browser
@@ -213,15 +213,28 @@ class Engine:
                     self.idle.set()
 
     def _ask(self, row: int, cols: list[Column], *, hot: bool) -> bool:
-        """Fill what the cache knows, join calls already in the air, and send the rest. True if a call went out."""
+        """Fill what the cache knows, join calls already in the air, and send the rest. True if a call went out.
+
+        A joint-read backend answers each question in the light of the others in its call, so there the
+        runtime keys every answer on the whole call: it is served from the cache whole or asked again whole.
+        """
         state = self.texts[row][:self.max_chars]
-        send: list[tuple[Column, str]] = []
+        keys = answer_keys(self.backend, state, {c.id: c.spec.question for c in cols})
+        hits = {cid: hit for cid, key in keys.items() if self.cache and (hit := self.cache.get(key)) is not None}
+        if self.backend.joint_reads and len(hits) != len(keys):
+            hits = {}
+        missing = []
         for c in cols:
-            key = answer_key(self.backend, state, c.spec.question)
-            if self.cache and (hit := self.cache.get(key)) is not None:
-                if self._fill(c, row, hit):
-                    self.cached += 1
-                    continue
+            if c.id in hits and self._fill(c, row, hits[c.id]):
+                self.cached += 1
+            else:
+                missing.append(c)
+        if self.backend.joint_reads and len(missing) != len(cols):
+            # Only the missing columns go out, so their answers belong to that smaller call.
+            keys = answer_keys(self.backend, state, {c.id: c.spec.question for c in missing})
+        send: list[tuple[Column, str]] = []
+        for c in missing:
+            key = keys[c.id]
             self._asked.add((row, c.id))
             waiters = self._waiting.setdefault(key, [])
             waiters.append((row, c.id))
@@ -249,6 +262,7 @@ class Engine:
                 self.over_budget = True
                 self.fatal = error[7:]
                 self._send({"type": "fatal", "message": error[7:]})
+        origins = getattr(answers, "origins", {})  # who answered; a pool's answers come from Client.ask
         for col_id, key in asked:
             answer = None if answers is None else answers.get(col_id)
             valid = False
@@ -257,7 +271,9 @@ class Engine:
                 if answer is not None and (c := self.columns.get(cid)):
                     valid = self._fill(c, row, answer) or valid
             if valid and self.cache:
-                self.cache.put(key, answer)
+                # Stored as the runtime stores its own answers: provenance without the per-ask source.
+                origin = {k: v for k, v in origins.get(col_id, {}).items() if k != "source"}
+                self.cache.put(key, answer, origin or None)
 
     def _fill(self, c: Column, row: int, answer: dict) -> bool:
         try:
