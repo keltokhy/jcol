@@ -20,20 +20,20 @@ def test_invalid_typed_answers_are_rejected(spec, answer):
 def test_a_plain_header_is_a_yes_no_question():
     spec = parse("  alleges   fraud? ")
     assert spec == Spec("noul", "alleges fraud")
-    assert spec.question == {"type": "noul", "instructions": 'The text fits this description: "alleges fraud"'}
+    assert spec.question.body() == {"type": "noul", "instructions": 'The text fits this description: "alleges fraud"'}
 
 
 def test_a_comma_list_is_a_set_of_categories():
     spec = parse("product: mortgage, credit card, other, mortgage,")
     assert spec == Spec("choice", "product", ("mortgage", "credit card", "other"))
-    assert spec.question == {"type": "choice", "instructions": "Choose the product that best describes the text.",
+    assert spec.question.body() == {"type": "choice", "instructions": "Choose the product that best describes the text.",
                              "criteria": {"mortgage": "mortgage", "credit card": "credit card", "other": "other"}}
 
 
 def test_less_than_signs_make_a_scale():
     spec = parse("tone: calm < upset < furious")
     assert spec == Spec("score", "tone", ("calm", "upset", "furious"))
-    assert spec.question == {"type": "score", "instructions": "Rate the text on this scale: tone.",
+    assert spec.question.body() == {"type": "score", "instructions": "Rate the text on this scale: tone.",
                              "criteria": ["calm", "upset", "furious"]}
 
 

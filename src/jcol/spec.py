@@ -8,7 +8,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-import math
+
+from jevkit_runtime import Choice, Noul, Question, Score
 
 
 @dataclass(frozen=True)
@@ -20,40 +21,26 @@ class Spec:
     descriptions: tuple[str, ...] = field(default=())
 
     @property
-    def question(self) -> dict:
+    def question(self) -> Question:
+        """The runtime question this column asks: it validates every answer, options and bounds included."""
         if self.kind == "noul":
-            return {"type": "noul", "instructions": self.definition or f'The text fits this description: "{self.name}"'}
+            return Noul(self.definition or f'The text fits this description: "{self.name}"')
         if self.kind == "choice":
-            return {"type": "choice", "instructions": self.definition or f"Choose the {self.name} that best describes the text.",
-                    "criteria": dict(zip(self.options, self.descriptions or self.options))}
-        return {"type": "score", "instructions": self.definition or f"Rate the text on this scale: {self.name}.",
-                "criteria": list(self.options)}
+            return Choice(self.definition or f"Choose the {self.name} that best describes the text.",
+                          dict(zip(self.options, self.descriptions or self.options)))
+        return Score(self.definition or f"Rate the text on this scale: {self.name}.", self.options)
 
     def cell(self, answer: dict) -> tuple[float | str, float]:
         """(value, confidence) for the table. Yes/no columns show the probability itself."""
-        if not isinstance(answer, dict):
-            raise ValueError("answer must be an object")
+        question = self.question
+        question.validate(answer)
+        confidence = question.confidence(answer)
+        value = question.value(answer)
         if self.kind == "noul":
-            p = float(answer["noul"])
-            if not math.isfinite(p) or not 0 <= p <= 1:
-                raise ValueError("binary probability must be between 0 and 1")
-            return round(p, 3), round(max(p, 1 - p), 3)
+            return round(value, 3), round(confidence, 3)
         if self.kind == "choice":
-            label = answer["choice"]
-            if label not in self.options:
-                raise ValueError(f"unknown category: {label!r}")
-            probabilities = answer.get("probabilities") or {}
-            if not isinstance(probabilities, dict):
-                raise ValueError("probabilities must be an object")
-            p = probabilities.get(label, answer.get("confidence") or 0.0)
-            if not math.isfinite(float(p)) or not 0 <= float(p) <= 1:
-                raise ValueError("confidence must be between 0 and 1")
-            return label, round(float(p), 3)
-        if not math.isfinite(float(answer["score"])) or not 0 <= float(answer["score"]) <= len(self.options) - 1:
-            raise ValueError("score is outside its scale")
-        if not math.isfinite(float(answer.get("confidence") or 0.0)) or not 0 <= float(answer.get("confidence") or 0.0) <= 1:
-            raise ValueError("confidence must be between 0 and 1")
-        return round(float(answer["score"]), 2), round(float(answer.get("confidence") or 0.0), 3)
+            return value, round(confidence or 0.0, 3)
+        return round(value, 2), round(confidence or 0.0, 3)
 
 
 def parse(header: str) -> Spec | None:

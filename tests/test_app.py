@@ -29,12 +29,14 @@ def table(tmp_path):
 def api(monkeypatch):
     """Whatever `build` constructs talks to a fake; a real server or browser window is an error."""
     fake = FakeAPI()
-    monkeypatch.setattr(jcol_app, "Client", lambda backend, **kw: Client(backend, transport=fake.transport, **kw))
 
-    def refuse(*args, **kw):
-        raise AssertionError("a test tried to start worker processes")
+    def client(backend, **kw):
+        if kw.pop("workers", 0):
+            raise AssertionError("a test tried to start worker processes")
+        kw.pop("per_worker", None)
+        return Client(backend, transport=fake.transport, **kw)
 
-    monkeypatch.setattr(jcol_app, "ProcessPool", refuse)
+    monkeypatch.setattr(jcol_app, "Client", client)
     return fake
 
 
@@ -141,7 +143,7 @@ def test_a_column_is_previewed_committed_filled_and_removed_over_the_socket(tabl
         assert until(ws, "removed") == {"type": "removed", "id": "c2"}
 
     assert api.bodies[0]["state"] == "warm up"
-    assert {b["model"] for b in api.bodies} == {"~typesafe/jev-latest"}
+    assert {b["model"] for b in api.bodies} == {"typesafe/jev-1.13"}
     assert all(set(b) == {"model", "state", "questions"} for b in api.bodies)
 
 

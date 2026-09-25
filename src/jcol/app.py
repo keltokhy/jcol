@@ -28,10 +28,11 @@ from starlette.routing import Route, WebSocketRoute
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from . import __version__
-from jevkit_runtime import AnswerStore, Client, JevFatal, resolve
+from jevkit_runtime import AnswerStore, Budget, Client, JevFatal, resolve
+from jevkit_runtime.cli import parse_budget
+
 from .core import PROVIDERS
 from .engine import Engine
-from .pool import LocalPool, ProcessPool
 from .project import Project
 from .tables import append_columns, identity, read_table, row_texts, select_inputs
 
@@ -78,10 +79,11 @@ def load_table(path: Path, text: str | list[str] | None, limit: int | None):
     return df, inputs[0] if len(inputs) == 1 else inputs
 
 
-def build(df: pl.DataFrame, text, *, source: str, budget: float, api: str | None, model: str | None,
+def build(df: pl.DataFrame, text, *, source: str, budget: float | Budget, api: str | None, model: str | None,
           cache: bool, workers: int, per_worker: int, project: Path | None = None,
           max_chars: int | None = 4000) -> Starlette:
-    if not math.isfinite(budget) or budget < 0 or workers < 0 or per_worker <= 0:
+    budget = budget if isinstance(budget, Budget) else Budget(budget) if budget >= 0 else None
+    if budget is None or workers < 0 or per_worker <= 0:
         raise ValueError("budget and workers must be nonnegative; per-worker must be positive")
     if max_chars is not None and max_chars <= 0:
         raise ValueError("max-chars must be positive, or 0 to send full rows")
@@ -90,10 +92,11 @@ def build(df: pl.DataFrame, text, *, source: str, budget: float, api: str | None
     backend = resolve(PROVIDERS, api, model=model)
     model, endpoint = backend.model, backend.url
     store = Project(project, identity(df, inputs, model=model, endpoint=endpoint, max_chars=max_chars)) if project else None
-    pool = (ProcessPool(backend, workers, per_worker) if workers > 0
-            else LocalPool(Client(backend, timeout=12), per_worker))
-    engine = Engine(texts, pool, backend=backend, cache=AnswerStore() if cache else None, budget=budget,
-                    max_chars=max_chars, project=store)
+    # One process tops out near 200 calls a second; workers send from processes of their own.
+    client = Client(backend, timeout=12, concurrency=per_worker, store=AnswerStore() if cache else None,
+                    budget=budget, workers=workers, per_worker=per_worker)
+    engine = Engine(texts, client, capacity=max(workers, 1) * per_worker, max_chars=max_chars, project=store,
+                    warm_up=True)
     fields = [c for c in df.columns if c not in inputs]
     table = {
         "version": __version__, "source": source, "n": df.height, "text": ", ".join(inputs), "inputs": list(inputs),
@@ -174,8 +177,8 @@ def build(df: pl.DataFrame, text, *, source: str, budget: float, api: str | None
             yield
         finally:
             await engine.close()
-            if engine.cache:
-                engine.cache.db.close()
+            if client.store:
+                client.store.close()
             if store:
                 store.close()
 
@@ -191,9 +194,10 @@ def cli(argv=None) -> None:
     ap.add_argument("file", help="a .parquet, .csv or .tsv table")
     ap.add_argument("--text", nargs="+", metavar="COLUMN", help="input columns Jev reads (default: the one with the most text)")
     ap.add_argument("--limit", type=int, metavar="N", help="use only the first N rows")
-    ap.add_argument("--budget", type=float, default=2.0, metavar="DOLLARS", help="stop spending at this much (default 2.00)")
+    ap.add_argument("--budget", type=parse_budget, default=None, metavar="DOLLARS",
+                    help="send no call that would take spending past this (default 2.00, or $JEV_BUDGET; none for no limit)")
     ap.add_argument("--port", type=int, default=8765)
-    ap.add_argument("--api", choices=("typesafe", "openrouter"), help="which API to call (default: whichever has a key)")
+    ap.add_argument("--api", choices=list(PROVIDERS), help="which API to call (default: whichever has a key)")
     ap.add_argument("--model", metavar="ID")
     ap.add_argument("--no-cache", action="store_true", help="do not read or write the answer cache")
     ap.add_argument("--workers", type=int, default=16, metavar="N",
@@ -211,7 +215,8 @@ def cli(argv=None) -> None:
         project = None if a.no_project else (a.project or Path(str(a.file) + ".jcol.sqlite"))
         if project and project.resolve() == Path(a.file).resolve():
             raise ValueError("project and source table paths must be distinct")
-        app = build(df, text, source=Path(a.file).name, budget=a.budget, api=a.api, model=a.model,
+        budget = Budget.from_settings(2.0) if a.budget is None else Budget(a.budget)
+        app = build(df, text, source=Path(a.file).name, budget=budget, api=a.api, model=a.model,
                     cache=not a.no_cache, workers=a.workers, per_worker=a.per_worker, project=project,
                     max_chars=None if a.max_chars == 0 else a.max_chars)
     except (JevFatal, ValueError, OSError) as e:
@@ -220,7 +225,8 @@ def cli(argv=None) -> None:
     if truncated:
         print(f"jcol: warning: {truncated} rows truncated to {a.max_chars} characters; use --max-chars 0 for full rows", file=sys.stderr)
     url = f"http://127.0.0.1:{a.port}"
-    print(f"jcol: {df.height:,} rows of {Path(a.file).name}; reading column {text!r}; budget ${a.budget:.2f}\njcol: {url}",
+    limit = "no budget limit" if budget.unlimited else f"budget ${budget.limit:.2f}"
+    print(f"jcol: {df.height:,} rows of {Path(a.file).name}; reading column {text!r}; {limit}\njcol: {url}",
           file=sys.stderr)
     if not a.no_open:
         webbrowser.open(url)

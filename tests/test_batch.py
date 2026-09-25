@@ -174,12 +174,12 @@ def test_existing_output_or_invalid_gold_fails_before_calls(df, api):
     assert not api.bodies
 
 
-def test_async_notebook_entry_point(df, api):
+def test_both_entry_points_work_inside_a_running_loop(df, api):
     async def go():
-        with pytest.raises(RuntimeError, match="annotate_async"):
-            jcol.annotate(df, BOOK)
-        return await jcol.annotate_async(df, BOOK, cache=False)
-    assert asyncio.run(go()).complete
+        from_sync = jcol.annotate(df, BOOK, cache=False)   # a notebook cell: runs on a thread of its own
+        return from_sync, await jcol.annotate_async(df, BOOK, cache=False)
+    from_sync, from_async = asyncio.run(go())
+    assert from_sync.complete and from_async.complete and from_sync.table.equals(from_async.table)
 
 
 def test_cli_run_and_offline_evaluate(df, api, tmp_path, monkeypatch):

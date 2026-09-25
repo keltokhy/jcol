@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 import io
 import json
 import os
@@ -17,7 +18,8 @@ import polars as pl
 from . import __version__
 from .batch import annotate, prepare, validate_settings
 from .codebook import Codebook
-from jevkit_runtime import JevError, JevFatal, Settings
+from jevkit_runtime.cli import parse_budget
+from jevkit_runtime import Budget, JevError, JevFatal, Settings
 from .core import PROVIDERS
 from .evaluation import evaluate
 from .project import read_project
@@ -93,7 +95,9 @@ def parser() -> Parser:
     saved = p.add_mutually_exclusive_group()
     saved.add_argument("--project", type=Path, help="checkpoint path (default: OUTPUT.jcol.sqlite)")
     saved.add_argument("--no-project", action="store_true", help="explicitly disable checkpointing")
-    p.add_argument("--budget", type=float, default=2.0, help="per-invocation spending threshold in dollars (default: 2)")
+    p.add_argument("--budget", type=parse_budget, default=None, metavar="DOLLARS",
+                   help="send no call that would take this invocation's spending past this "
+                        "(default: 2, or $JEV_BUDGET; none for no limit)")
     p.add_argument("--concurrency", type=int, default=32, help="maximum calls in flight (default: 32)")
     p.add_argument("--max-chars", type=int, help="truncate serialized rows; default sends full rows")
     p.add_argument("--no-cache", action="store_true", help="disable shared answer cache; retain project checkpoints")
@@ -278,13 +282,15 @@ def _run(a):
         _output_format(a)
     a.project = a.project or (Path(str(a.output) + ".jcol.sqlite") if a.output and a.output != "-" and not a.no_project else None)
     _paths([a.file, a.codebook], [a.output, a.report], a.project)
+    a.budget = (Budget.from_settings(2.0) if a.budget is None else Budget(a.budget)).limit
     validate_settings(a.budget, a.concurrency, a.max_chars)
     df, book = _read(a), Codebook.load(a.codebook)
     if a.dry_run:
         data = _validation(df, book, max_chars=a.max_chars)
         config = _doctor(argparse.Namespace(api=a.api, model=a.model, check=False))
         data.update(dry_run=True, project=str(a.project) if a.project else None,
-                    api=config["api"], model=config["model"], ready=config["ready"], budget=a.budget,
+                    api=config["api"], model=config["model"], ready=config["ready"],
+                    budget=None if math.isinf(a.budget) else a.budget,
                     concurrency=a.concurrency, resume=False)
         if a.project and a.project.exists():
             context, columns, counts = read_project(a.project)

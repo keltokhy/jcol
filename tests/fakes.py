@@ -19,18 +19,25 @@ def answer(state: str, q: dict) -> dict:
 
 
 class FakeAPI:
-    """An httpx transport handler. `script` is a list of status codes to return before answering normally."""
+    """An httpx transport handler. `script` is a list of status codes to return before answering normally;
+    `fail` maps a text to how many times a call about it fails with 503 first; `status` refuses every call."""
 
-    def __init__(self, *, cost=0.0001, report_cost=True, script=(), delay=0.0):
+    def __init__(self, *, cost=0.0001, report_cost=True, script=(), delay=0.0, fail=None, status=None):
         self.bodies, self.cost, self.report_cost, self.script, self.delay = [], cost, report_cost, list(script), delay
+        self.fail, self.status = dict(fail or {}), status
 
     async def __call__(self, request: httpx.Request) -> httpx.Response:
         body = json.loads(request.content)
         self.bodies.append(body)
         if self.delay:
             await asyncio.sleep(self.delay)
+        if self.status is not None:
+            return httpx.Response(self.status, json={"error": {"message": f"scripted {self.status}"}})
         if self.script and (status := self.script.pop(0)) != 200:
             return httpx.Response(status, json={"error": {"message": f"scripted {status}"}})
+        if self.fail.get(body["state"]):
+            self.fail[body["state"]] -= 1
+            return httpx.Response(503, json={"error": {"message": "scripted 503"}})
         usage = {"input_tokens": 300} | ({"cost": self.cost} if self.report_cost else {})
         found = {qid: answer(body["state"], q) for qid, q in body["questions"].items()}
         return httpx.Response(200, json={"model": "typesafe/jev-test", "answers": found, "usage": usage})
@@ -41,40 +48,5 @@ class FakeAPI:
 
     @property
     def rows(self) -> list[dict]:
-        """The requests that carried a row of the table, which leaves out a pool's warm-up call."""
+        """The requests that carried a row of the table, which leaves out a warm-up call."""
         return [b for b in self.bodies if b["state"] != "warm up"]
-
-
-class FakePool:
-    """What the engine needs from a pool, answered on the next turn of the event loop.
-
-    `fail` maps a text to how many times a call about it should fail before it succeeds, or to an error
-    message that ends the run."""
-
-    def __init__(self, *, capacity=64, cost=0.0, fail=None):
-        self.capacity, self.on_result, self.cost, self.fail = capacity, None, cost, dict(fail or {})
-        self.jobs, self.spent = [], 0.0
-
-    async def start(self) -> None:
-        pass
-
-    async def close(self) -> None:
-        pass
-
-    def submit(self, job) -> None:
-        self.jobs.append(job)
-        asyncio.get_running_loop().call_soon(self._finish, job)
-
-    def _finish(self, job) -> None:
-        job_id, state, questions, hot = job
-        self.spent += self.cost
-        pending = self.fail.get(state)
-        if isinstance(pending, str):
-            return self.on_result(job_id, None, pending)
-        if pending:
-            self.fail[state] = pending - 1
-            return self.on_result(job_id, None, "gave up after 12s (HTTP 503)")
-        self.on_result(job_id, {qid: answer(state, q) for qid, q in questions.items()}, None)
-
-    def totals(self) -> dict:
-        return {"calls": len(self.jobs), "hedges": 0, "retries": 0, "tokens": 0, "cost": self.spent, "model": ""}
