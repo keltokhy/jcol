@@ -15,27 +15,27 @@ The output retains every source column and adds a value and confidence for each 
 The command checkpoints successful cells in `coded.parquet.jcol.sqlite`; rerunning the same
 command resumes missing cells. The browser also saves its committed columns across restarts.
 
-Version 0.3.1 includes a Python API and an optional browser interface. It has **not been
-published to PyPI**; install from Git or a built wheel. Software tests use a local fake
-API and do not establish model accuracy. See [Validation](#validation).
+jcol also has a Python API and an optional browser interface. Software tests use a local
+fake API and do not establish model accuracy. See [Validation](#validation).
 
 ## Install
 
 Python 3.10 or later:
 
 ```bash
-uv tool install 'git+https://github.com/keltokhy/jcol.git'
+uv tool install jev-col        # the command it installs is jcol
 jcol --help
 jcol doctor
 ```
 
-This installs `jcol` on PATH in its own environment. If your shell cannot find it, run
+This installs `jcol` on PATH in its own environment. For `import jcol`, add `jev-col` to your
+project (`uv add jev-col` or `pip install jev-col`). If your shell cannot find the command, run
 `uv tool update-shell` and restart the shell. For local development, clone the repository
 and run `make install-local` (or `uv tool install --force .`). To build a package:
 
 ```bash
 uv build
-uv tool install --force dist/jev_col-0.6.0-py3-none-any.whl
+uv tool install --force dist/jev_col-*.whl
 ```
 
 Set `TYPESAFE_API_KEY` or `OPENROUTER_API_KEY`, or put a key in
