@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.1
 
 - Needs polars 1.10 or later (was 1.0). Earlier versions print a warning to stderr when reading a table
   from stdin, which corrupts the JSON report written there, and polars 1.0 cannot read empty JSONL input.
@@ -22,7 +22,7 @@ On `jevkit-runtime` 0.4 ([jevkit-core#14](https://github.com/keltokhy/jevkit-cor
 - A System One gateway of your own is offered; the model is pinned to `jev-1.13.0`.
 - The cache moves to `~/.cache/jev/answers.v3.sqlite`; the first run after upgrading re-asks.
 
-## Unreleased
+## 0.7.1
 
 - Fix answer reuse on `--api diffusiongemma`. DiffusionGemma answers each question in the light of the
   others in its call, but jcol cached each column's answer on its own, so an answer given beside one set
