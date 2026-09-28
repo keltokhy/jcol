@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Needs polars 1.10 or later (was 1.0). Earlier versions print a warning to stderr when reading a table
+  from stdin, which corrupts the JSON report written there, and polars 1.0 cannot read empty JSONL input.
+
 ## 0.7.0
 
 On `jevkit-runtime` 0.4 ([jevkit-core#14](https://github.com/keltokhy/jevkit-core/issues/14)).
